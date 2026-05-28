@@ -336,9 +336,9 @@ MIT License - see LICENSE file for details
 
 ## 🔗 Related Documentation
 
-- [Backend API Documentation](../docs/API_DOCUMENTATION.md)
-- [Architecture Guide](../docs/ARCHITECTURE.md)
-- [Deployment Guide](../docs/BUILD_AND_DEPLOYMENT.md)
+<!-- - [Backend API Documentation](./docs/a) -->
+- [Architecture Guide](./docs/ARCHITECTURE.md)
+- [Deployment Guide](./docs/BUILD_AND_DEPLOYMENT.md)
 
 ## 📞 Support
 
