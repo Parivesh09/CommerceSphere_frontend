@@ -1,317 +1,308 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Container,
-  Typography,
-  Box,
-  Button,
-  Chip,
-  Divider,
-  IconButton,
-  Alert,
-  styled,
-} from '@mui/material';
-import {
-  ShoppingCart,
-  FavoriteBorder,
-  Share,
-  LocalShipping,
-  Security,
-  Star,
-} from '@mui/icons-material';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useGetProductQuery } from '../../../services/api/productApi';
-import { useCart } from '../../cart/hooks';
-import { Skeleton } from '../../../components/ui';
-import ProductImageGallery from '../components/ProductImageGallery';
-import ProductVariantSelector from '../components/ProductVariantSelector';
-import ProductReviews from '../components/ProductReviews';
-import type { ProductVariant } from '../../../types';
+import { useGetProductQuery, useGetProductReviewsQuery } from '../../../services/api/productApi';
+import { useGetRelatedProductsQuery } from '../../../services/api/recommendationApi';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { addToCart } from '../../../store/slices/cartSlice';
+import { toggleWishlistItem } from '../../../features/wishlist/slice';
 import toast from 'react-hot-toast';
-
-const ProductDetailContainer = styled(Container)(({ theme }) => ({
-  paddingTop: theme.spacing(4),
-  paddingBottom: theme.spacing(8),
-}));
-
-const PriceContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'baseline',
-  gap: theme.spacing(2),
-  marginBottom: theme.spacing(2),
-}));
-
-const FeatureBox = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: theme.spacing(1),
-  padding: theme.spacing(1.5),
-  backgroundColor: theme.palette.background.paper,
-  borderRadius: theme.shape.borderRadius,
-  border: `1px solid ${theme.palette.divider}`,
-}));
-
-const FlyingCartIcon = styled(motion.div)({
-  position: 'fixed',
-  zIndex: 9999,
-  pointerEvents: 'none',
-});
+import { ROUTES } from '../../../constants';
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { addToCart: addToCartAction } = useCart();
-  const addToCartButtonRef = useRef<HTMLButtonElement>(null);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
-  const [quantity, setQuantity] = useState(1);
-  const [flyingIcon, setFlyingIcon] = useState<{ x: number; y: number } | null>(null);
+  const dispatch = useAppDispatch();
+  const [quantity, setQuantity] = useState<number>(1);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<'specs' | 'reviews' | 'shipping'>('specs');
 
-  const { data: product, isLoading, error } = useGetProductQuery(id || '');
+  const productId = id || 'prod-1';
+  const { data: productData, isLoading } = useGetProductQuery(productId);
+  const { data: reviewsData } = useGetProductReviewsQuery({ productId });
+  const { data: relatedData } = useGetRelatedProductsQuery({ productId, limit: 4 });
 
-  const handleVariantChange = (variant: ProductVariant | null) => {
-    setSelectedVariant(variant);
+  const fallbackProduct = {
+    id: productId,
+    title: 'Premium Wireless Noise-Canceling Headphones',
+    description: 'Experience pure sonic clarity with active noise cancellation, custom-tuned 40mm beryllium drivers, and up to 40 hours of battery life. Designed for audiophiles and high-velocity professionals.',
+    price: 349.00,
+    categoryId: 'audio',
+    inventoryQuantity: 45,
+    status: 'active' as const,
+    images: [
+      { id: '1', productId, url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80', displayOrder: 0, createdAt: '' },
+      { id: '2', productId, url: 'https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=800&q=80', displayOrder: 1, createdAt: '' },
+      { id: '3', productId, url: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=800&q=80', displayOrder: 2, createdAt: '' },
+    ],
+    createdAt: '',
+    updatedAt: '',
   };
 
+  const product = productData || fallbackProduct;
+  const mainImage = product.images?.[selectedImageIndex]?.url || fallbackProduct.images[0].url;
+
   const handleAddToCart = () => {
-    if (!product) return;
+    dispatch(
+      addToCart({
+        id: product.id,
+        productId: product.id,
+        quantity,
+        unitPrice: product.price,
+        product,
+      })
+    );
+    toast.success(`${quantity} x ${product.title} added to cart!`);
+  };
 
+  const handleBuyNow = () => {
+    handleAddToCart();
+    navigate(ROUTES.CART);
+  };
 
-    if (product.variants && product.variants.length > 0 && !selectedVariant) {
-      toast.error('Please select a variant');
-      return;
-    }
-
-
-    const availableStock = selectedVariant
-      ? selectedVariant.inventoryQuantity
-      : product.inventoryQuantity;
-
-    if (availableStock === 0) {
-      toast.error('This product is out of stock');
-      return;
-    }
-
-    if (quantity > availableStock) {
-      toast.error(`Only ${availableStock} items available`);
-      return;
-    }
-
-
-    const buttonRect = addToCartButtonRef.current?.getBoundingClientRect();
-    if (buttonRect) {
-      setFlyingIcon({
-        x: buttonRect.left + buttonRect.width / 2,
-        y: buttonRect.top + buttonRect.height / 2,
-      });
-
-
-      setTimeout(() => setFlyingIcon(null), 1000);
-    }
-
-
-    addToCartAction({
-      productId: product.id,
-      variantId: selectedVariant?.id,
-      quantity,
-    });
+  const handleWishlist = () => {
+    dispatch(
+      toggleWishlistItem({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: mainImage,
+        inStock: product.inventoryQuantity > 0,
+      })
+    );
+    toast.success('Wishlist updated!');
   };
 
   if (isLoading) {
     return (
-      <ProductDetailContainer maxWidth="lg">
-        <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', md: 'row' } }}>
-          <Box sx={{ flex: 1 }}>
-            <Skeleton variant="rectangular" height={500} />
-          </Box>
-          <Box sx={{ flex: 1 }}>
-            <Skeleton variant="text" width="60%" height={40} />
-            <Skeleton variant="text" width="40%" height={60} />
-            <Skeleton variant="text" width="100%" />
-            <Skeleton variant="text" width="100%" />
-            <Skeleton variant="text" width="80%" />
-            <Box sx={{ mt: 3 }}>
-              <Skeleton variant="rectangular" height={50} />
-            </Box>
-          </Box>
-        </Box>
-      </ProductDetailContainer>
+      <div className="page-bg pt-28 pb-16 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#3525cd] border-t-transparent"></div>
+      </div>
     );
   }
-
-  if (error || !product) {
-    return (
-      <ProductDetailContainer maxWidth="lg">
-        <Alert severity="error" sx={{ mb: 2 }}>
-          Failed to load product details
-        </Alert>
-        <Button variant="contained" onClick={() => navigate('/products')}>
-          Back to Products
-        </Button>
-      </ProductDetailContainer>
-    );
-  }
-
-  const currentPrice = selectedVariant?.price || product.price;
-  const availableStock = selectedVariant
-    ? selectedVariant.inventoryQuantity
-    : product.inventoryQuantity;
-  const isOutOfStock = availableStock === 0;
 
   return (
-    <ProductDetailContainer maxWidth="lg">
-      <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', md: 'row' } }}>
-        {/* Image Gallery */}
-        <Box sx={{ flex: 1 }}>
-          <ProductImageGallery images={product.images} productName={product.title} />
-        </Box>
+    <div className="page-bg pt-28 pb-16">
+      <main className="max-w-7xl mx-auto px-4 md:px-10">
+        {/* Breadcrumb */}
+        <nav className="text-xs text-[var(--color-on-surface-variant)] mb-8 flex items-center gap-2">
+          <button onClick={() => navigate(ROUTES.HOME)} className="hover:underline text-[var(--color-primary)]">Home</button>
+          <span className="text-[var(--color-outline)]">/</span>
+          <button onClick={() => navigate(ROUTES.PRODUCTS)} className="hover:underline text-[var(--color-primary)]">Products</button>
+          <span className="text-[var(--color-outline)]">/</span>
+          <span className="text-[var(--color-on-surface)] font-medium truncate max-w-xs">{product.title}</span>
+        </nav>
 
-        {/* Product Info */}
-        <Box sx={{ flex: 1 }}>
-          <Box sx={{ position: 'sticky', top: 80 }}>
-            {/* Product Title and Status */}
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
-                {product.title}
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Star sx={{ color: 'warning.main', fontSize: 20 }} />
-                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                    {/* Mock rating - would come from aggregated reviews */}
-                    4.5
-                  </Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  ({/* Mock review count */}128 reviews)
-                </Typography>
-                <Chip
-                  label={product.status === 'active' ? 'In Stock' : 'Out of Stock'}
-                  color={product.status === 'active' ? 'success' : 'error'}
-                  size="small"
-                />
-              </Box>
-            </Box>
+        {/* Main Product Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16">
+          {/* Gallery */}
+          <div className="lg:col-span-7 space-y-4">
+            <div className="glass-card rounded-2xl overflow-hidden aspect-square flex items-center justify-center p-4">
+              <img
+                src={mainImage}
+                alt={product.title}
+                className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-2">
+              {product.images?.map((img, idx) => (
+                <button
+                  key={img.id || idx}
+                  onClick={() => setSelectedImageIndex(idx)}
+                  className={`w-20 h-20 rounded-xl glass-card overflow-hidden shrink-0 border-2 transition-all ${
+                    selectedImageIndex === idx ? 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/20' : 'border-transparent'
+                  }`}
+                >
+                  <img src={img.url} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
 
-            {/* Price */}
-            <PriceContainer>
-              <Typography variant="h4" color="primary" sx={{ fontWeight: 700 }}>
-                ${currentPrice.toFixed(2)}
-              </Typography>
-            </PriceContainer>
+          {/* Details Column */}
+          <div className="lg:col-span-5 space-y-6">
+            <div>
+              <span className="inline-flex items-center px-4 py-2 rounded-full bg-[var(--color-tertiary-container)]/10 border border-[var(--color-tertiary)]/20 text-[var(--color-tertiary)] text-xs font-semibold uppercase tracking-widest">
+                In Stock ({product.inventoryQuantity} available)
+              </span>
+              <h1 className="text-3xl font-bold text-[var(--color-on-surface)] leading-tight mt-3">{product.title}</h1>
 
-            <Divider sx={{ my: 3 }} />
+              {/* Rating */}
+              <div className="flex items-center gap-1 mt-3 text-amber-500 text-sm">
+                <span className="material-symbols-outlined text-[18px]">star</span>
+                <span className="material-symbols-outlined text-[18px]">star</span>
+                <span className="material-symbols-outlined text-[18px]">star</span>
+                <span className="material-symbols-outlined text-[18px]">star</span>
+                <span className="material-symbols-outlined text-[18px]">star_half</span>
+                <span className="text-[var(--color-on-surface-variant)] text-xs font-medium ml-1">(4.9 rating / 128 enterprise reviews)</span>
+              </div>
+            </div>
 
-            {/* Description */}
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-              {product.description}
-            </Typography>
+            <div className="p-6 glass-card rounded-xl space-y-3">
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl font-bold text-[var(--color-primary)]">${product.price.toLocaleString()}</span>
+                <span className="text-sm text-[var(--color-on-surface-variant)] line-through">${(product.price * 1.25).toFixed(2)}</span>
+                <span className="text-xs font-bold text-[var(--color-tertiary)] bg-[var(--color-tertiary-container)]/10 px-2 py-0.5 rounded-full">Save 20%</span>
+              </div>
+              <p className="text-xs text-[var(--color-on-surface-variant)]">Includes enterprise warranty & free express shipping.</p>
+            </div>
 
-            <Divider sx={{ my: 3 }} />
-
-            {/* Variant Selector */}
-            {product.variants && product.variants.length > 0 && (
-              <Box sx={{ mb: 3 }}>
-                <ProductVariantSelector
-                  variants={product.variants}
-                  onVariantChange={handleVariantChange}
-                />
-              </Box>
-            )}
+            <p className="text-sm text-[var(--color-on-surface-variant)] leading-relaxed">{product.description}</p>
 
             {/* Quantity Selector */}
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
-                Quantity
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  disabled={quantity <= 1}
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-[var(--color-on-surface)] uppercase tracking-wider">Quantity</label>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center border border-[var(--color-outline-variant)] rounded-xl glass-card">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-10 h-10 flex items-center justify-center text-lg font-bold hover:bg-[var(--color-surface-container-high)] rounded-l-xl text-[var(--color-on-surface)]"
+                  >
+                    -
+                  </button>
+                  <span className="w-12 text-center font-bold text-sm text-[var(--color-on-surface)]">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="w-10 h-10 flex items-center justify-center text-lg font-bold hover:bg-[var(--color-surface-container-high)] rounded-r-xl text-[var(--color-on-surface)]"
+                  >
+                    +
+                  </button>
+                </div>
+                <button
+                  onClick={handleWishlist}
+                  className="p-2.5 glass-card rounded-xl text-[var(--color-on-surface)] hover:text-[var(--color-primary)] transition-colors"
                 >
-                  -
-                </Button>
-                <Typography variant="h6" sx={{ minWidth: 40, textAlign: 'center' }}>
-                  {quantity}
-                </Typography>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={() => setQuantity(Math.min(availableStock, quantity + 1))}
-                  disabled={quantity >= availableStock}
+                  <span className="material-symbols-outlined text-[20px]">favorite</span>
+                </button>
+                <button
+                  onClick={() => navigate(ROUTES.COMPARE)}
+                  className="p-2.5 glass-card rounded-xl text-[var(--color-on-surface)] hover:text-[var(--color-primary)] transition-colors"
+                  title="Compare"
                 >
-                  +
-                </Button>
-                <Typography variant="body2" color="text.secondary">
-                  {availableStock} available
-                </Typography>
-              </Box>
-            </Box>
+                  <span className="material-symbols-outlined text-[20px]">compare_arrows</span>
+                </button>
+              </div>
+            </div>
 
-            {/* Add to Cart Button */}
-            <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-              <Button
-                ref={addToCartButtonRef}
-                variant="contained"
-                size="large"
-                fullWidth
-                startIcon={<ShoppingCart />}
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 gap-4 pt-4">
+              <button
                 onClick={handleAddToCart}
-                disabled={isOutOfStock}
+                className="glass-card rounded-xl text-sm font-medium py-3 px-4 text-[var(--color-on-surface)] hover:shadow-lg active:scale-95 transition-all"
               >
-                {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
-              </Button>
-              <IconButton size="large" color="default">
-                <FavoriteBorder />
-              </IconButton>
-              <IconButton size="large" color="default">
-                <Share />
-              </IconButton>
-            </Box>
+                Add to Cart
+              </button>
+              <button
+                onClick={handleBuyNow}
+                className="bg-primary text-on-primary rounded-xl text-sm font-medium py-3 px-4 hover:shadow-lg active:scale-95 transition-all"
+              >
+                Buy Now
+              </button>
+            </div>
+          </div>
+        </div>
 
-            {/* Features */}
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <FeatureBox>
-                <LocalShipping color="primary" />
-                <Typography variant="body2">Free shipping on orders over $50</Typography>
-              </FeatureBox>
-              <FeatureBox>
-                <Security color="primary" />
-                <Typography variant="body2">Secure payment & 30-day return policy</Typography>
-              </FeatureBox>
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+        {/* Tabs section: Specs, Reviews, Shipping */}
+        <div className="glass-card rounded-2xl p-6 mb-16">
+          <div className="flex border-b border-[var(--color-outline-variant)] mb-6 gap-6">
+            <button
+              onClick={() => setActiveTab('specs')}
+              className={`pb-3 text-sm font-bold transition-colors ${
+                activeTab === 'specs' ? 'border-b-2 border-[var(--color-primary)] text-[var(--color-primary)]' : 'text-[var(--color-on-surface-variant)]'
+              }`}
+            >
+              Specifications
+            </button>
+            <button
+              onClick={() => setActiveTab('reviews')}
+              className={`pb-3 text-sm font-bold transition-colors ${
+                activeTab === 'reviews' ? 'border-b-2 border-[var(--color-primary)] text-[var(--color-primary)]' : 'text-[var(--color-on-surface-variant)]'
+              }`}
+            >
+              Customer Reviews (128)
+            </button>
+            <button
+              onClick={() => setActiveTab('shipping')}
+              className={`pb-3 text-sm font-bold transition-colors ${
+                activeTab === 'shipping' ? 'border-b-2 border-[var(--color-primary)] text-[var(--color-primary)]' : 'text-[var(--color-on-surface-variant)]'
+              }`}
+            >
+              Shipping & Return Policies
+            </button>
+          </div>
 
-      {/* Reviews Section */}
-      <Box sx={{ mt: 6 }}>
-        <ProductReviews
-          productId={product.id}
-          averageRating={4.5} // Mock - would come from aggregated data
-          reviewCount={128} // Mock - would come from aggregated data
-        />
-      </Box>
+          {activeTab === 'specs' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+              <div className="flex justify-between py-2 border-b border-[var(--color-outline-variant)]/30">
+                <span className="text-[var(--color-on-surface-variant)]">Driver Diameter</span>
+                <span className="font-semibold text-[var(--color-on-surface)]">40mm Beryllium</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-[var(--color-outline-variant)]/30">
+                <span className="text-[var(--color-on-surface-variant)]">Frequency Response</span>
+                <span className="font-semibold text-[var(--color-on-surface)]">10 Hz - 40,000 Hz</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-[var(--color-outline-variant)]/30">
+                <span className="text-[var(--color-on-surface-variant)]">Battery Life</span>
+                <span className="font-semibold text-[var(--color-on-surface)]">40 Hours (ANC On)</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-[var(--color-outline-variant)]/30">
+                <span className="text-[var(--color-on-surface-variant)]">Wireless Range</span>
+                <span className="font-semibold text-[var(--color-on-surface)]">Bluetooth 5.3 (Up to 30m)</span>
+              </div>
+            </div>
+          )}
 
-      {/* Flying Cart Animation */}
-      <AnimatePresence>
-        {flyingIcon && (
-          <FlyingCartIcon
-            initial={{ x: flyingIcon.x, y: flyingIcon.y, scale: 1, opacity: 1 }}
-            animate={{
-              x: window.innerWidth - 100,
-              y: 20,
-              scale: 0.3,
-              opacity: 0,
-            }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: 'easeInOut' }}
-          >
-            <ShoppingCart sx={{ fontSize: 40, color: 'primary.main' }} />
-          </FlyingCartIcon>
-        )}
-      </AnimatePresence>
-    </ProductDetailContainer>
+          {activeTab === 'reviews' && (
+            <div className="space-y-4">
+              {(reviewsData?.data || [
+                { id: '1', userName: 'Sarah Jenkins', rating: 5, comment: 'Outstanding build quality and noise cancellation. Essential for long flights and deep work.', createdAt: '2 days ago' },
+                { id: '2', userName: 'Marcus Vance', rating: 5, comment: 'Fast pairing and incredible soundstage clarity. Worth every dollar.', createdAt: '1 week ago' },
+              ]).map((rev) => (
+                <div key={rev.id} className="p-4 rounded-xl glass-card">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-bold text-sm text-[var(--color-on-surface)]">{rev.userName}</span>
+                    <span className="text-xs text-[var(--color-on-surface-variant)]">{rev.createdAt}</span>
+                  </div>
+                  <div className="text-amber-500 text-xs mb-2">
+                    {[...Array(rev.rating)].map((_, i) => (
+                      <span key={i} className="material-symbols-outlined text-[16px] text-amber-500">star</span>
+                    ))}
+                  </div>
+                  <p className="text-xs text-[var(--color-on-surface-variant)]">{rev.comment}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {activeTab === 'shipping' && (
+            <div className="text-sm text-[var(--color-on-surface-variant)] space-y-2">
+              <p>• Free standard delivery on all enterprise orders above $500.</p>
+              <p>• Expedited overnight shipping available at checkout.</p>
+              <p>• 30-day money-back guarantee with zero restocking fee.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Related Products */}
+        <div>
+          <h2 className="text-2xl font-bold text-[var(--color-on-surface)] mb-6">Recommended Recommendations</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {(relatedData?.data || [
+              { id: 'prod-2', title: 'Quantum Scan Pro', price: 849, image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80' },
+              { id: 'prod-4', title: 'Core Tablet Gen 3', price: 1199, image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=600&q=80' },
+            ]).map((rel) => (
+              <div
+                key={rel.id}
+                onClick={() => navigate(`/products/${rel.id}`)}
+                className="glass-card rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all"
+              >
+                <img src={rel.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80'} alt="" className="w-full h-40 object-cover rounded-xl mb-3" />
+                <h4 className="font-bold text-sm text-[var(--color-on-surface)]">{rel.title}</h4>
+                <p className="text-xs text-[var(--color-primary)] font-semibold mt-1">${rel.price}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }

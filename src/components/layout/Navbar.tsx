@@ -1,291 +1,166 @@
 import { useState } from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  IconButton,
-  Badge,
-  Box,
-  InputBase,
-  alpha,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Divider,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
-import {
-  ShoppingCart,
-  Search as SearchIcon,
-  AccountCircle,
-  Menu as MenuIcon,
-  Close as CloseIcon,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { setCartDrawerOpen } from '../../store/slices/uiSlice';
-import { ThemeToggle } from '../ui/ThemeToggle';
 import { ROUTES } from '../../constants';
+
+const navLinks = [
+  { label: 'Shop', path: ROUTES.PRODUCTS },
+  { label: 'Collections', path: ROUTES.CATEGORIES },
+  { label: 'Enterprise', path: '/enterprise' },
+  { label: 'Support', path: '/support' },
+];
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useAppDispatch();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
-  const { itemCount } = useAppSelector((state) => state.cart);
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { itemCount } = useAppSelector((s) => s.cart);
+  const { isAuthenticated, user } = useAppSelector((s) => s.auth);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleCartClick = () => {
-    dispatch(setCartDrawerOpen(true));
-  };
-
-  const handleNavigate = (path: string) => {
-    navigate(path);
-    setMobileMenuOpen(false);
-  };
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
-  const navigationItems = [
-    { label: 'Home', path: ROUTES.HOME },
-    { label: 'Products', path: ROUTES.PRODUCTS },
-    { label: 'Categories', path: '/categories' },
-    ...(isAuthenticated ? [{ label: 'Orders', path: ROUTES.ORDERS }] : []),
-  ];
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <>
-      <AppBar
-        position="fixed"
-        elevation={1}
-        sx={{ bgcolor: 'background.paper', color: 'text.primary' }}
-        component="nav"
-        id="navigation"
+      <nav
+        className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm h-20 flex items-center"
         role="navigation"
         aria-label="Main navigation"
       >
-        <Toolbar sx={{ gap: { xs: 1, sm: 2 } }}>
-          {/* Mobile Menu Button */}
-          {isMobile && (
-            <IconButton
-              color="inherit"
-              aria-label="Open navigation menu"
-              edge="start"
-              onClick={toggleMobileMenu}
-              sx={{ minWidth: 44, minHeight: 44 }}
+        <div className="flex justify-between items-center w-full px-margin-desktop max-w-7xl mx-auto">
+          <div className="flex items-center gap-xl">
+            <a
+              className="font-display-lg text-display-lg tracking-tighter text-on-surface cursor-pointer"
+              onClick={() => navigate(ROUTES.HOME)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(ROUTES.HOME); } }}
+              role="button"
+              tabIndex={0}
+              aria-label="CommerceSphere home"
             >
-              <MenuIcon />
-            </IconButton>
-          )}
-
-          {/* Logo */}
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              cursor: 'pointer',
-              fontWeight: 700,
-              mr: { xs: 0, md: 4 },
-              fontSize: { xs: '1rem', sm: '1.25rem' },
-              flexShrink: 0,
-            }}
-            onClick={() => handleNavigate(ROUTES.HOME)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleNavigate(ROUTES.HOME);
-              }
-            }}
-            aria-label="CommerceSphere home"
-          >
-            CommerceSphere
-          </Typography>
-
-          {/* Desktop Navigation Links */}
-          {!isMobile && (
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              {navigationItems.map((item) => (
-                <Button
-                  key={item.path}
-                  color="inherit"
-                  onClick={() => handleNavigate(item.path)}
-                  aria-label={`Navigate to ${item.label}`}
+              CommerceSphere
+            </a>
+            <div className="hidden md:flex gap-md items-center">
+              {navLinks.map((link) => (
+                <a
+                  key={link.path}
+                  className={`font-body-md text-body-md transition-all active:scale-95 cursor-pointer ${
+                    isActive(link.path)
+                      ? 'text-primary font-bold border-b-2 border-primary pb-1'
+                      : 'text-on-surface-variant hover:text-primary'
+                  }`}
+                  onClick={() => navigate(link.path)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(link.path); } }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Navigate to ${link.label}`}
                 >
-                  {item.label}
-                </Button>
+                  {link.label}
+                </a>
               ))}
-            </Box>
-          )}
-
-          {/* Search Bar - Hidden on mobile, shown on tablet+ */}
-          {!isMobile && (
-            <Box
-              sx={{
-                position: 'relative',
-                borderRadius: 1,
-                backgroundColor: alpha('#000', 0.05),
-                '&:hover': {
-                  backgroundColor: alpha('#000', 0.08),
-                },
-                marginLeft: 2,
-                width: '100%',
-                maxWidth: 400,
-              }}
-            >
-              <Box
-                sx={{
-                  padding: 2,
-                  height: '100%',
-                  position: 'absolute',
-                  pointerEvents: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <SearchIcon aria-hidden="true" />
-              </Box>
-              <InputBase
-                placeholder="Search products..."
-                sx={{
-                  color: 'inherit',
-                  width: '100%',
-                  '& .MuiInputBase-input': {
-                    padding: 1,
-                    paddingLeft: 6,
-                    width: '100%',
-                  },
-                }}
-                onClick={() => handleNavigate(ROUTES.SEARCH)}
-                inputProps={{
-                  'aria-label': 'Search products',
-                  role: 'searchbox',
-                }}
-              />
-            </Box>
-          )}
-
-          <Box sx={{ flexGrow: 1 }} />
-
-          {/* Mobile Search Icon */}
-          {isMobile && (
-            <IconButton
-              color="inherit"
-              onClick={() => handleNavigate(ROUTES.SEARCH)}
+            </div>
+          </div>
+          <div className="flex items-center gap-sm">
+            <button
+              className="p-2 hover:bg-surface-container-low transition-colors duration-200 rounded-full"
+              onClick={() => navigate(ROUTES.SEARCH)}
               aria-label="Search products"
-              sx={{ minWidth: 44, minHeight: 44 }}
             >
-              <SearchIcon />
-            </IconButton>
-          )}
-
-          {/* Theme Toggle */}
-          <ThemeToggle />
-
-          {/* Cart Icon */}
-          <IconButton
-            color="inherit"
-            onClick={handleCartClick}
-            aria-label={`Shopping cart with ${itemCount} items`}
-            sx={{ minWidth: 44, minHeight: 44 }}
-          >
-            <Badge badgeContent={itemCount} color="primary">
-              <ShoppingCart />
-            </Badge>
-          </IconButton>
-
-          {/* Auth Button/Icon */}
-          {isAuthenticated ? (
-            <IconButton
-              color="inherit"
-              onClick={() => handleNavigate(ROUTES.PROFILE)}
-              aria-label="View profile"
-              sx={{ minWidth: 44, minHeight: 44 }}
+              <span className="material-symbols-outlined text-on-surface-variant">search</span>
+            </button>
+            <button
+              className="p-2 hover:bg-surface-container-low transition-colors duration-200 rounded-full relative"
+              onClick={() => dispatch(setCartDrawerOpen(true))}
+              aria-label={`Shopping cart with ${itemCount} items`}
             >
-              <AccountCircle />
-            </IconButton>
-          ) : (
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={() => handleNavigate(ROUTES.LOGIN)}
-              aria-label="Login to your account"
-              sx={{
-                minWidth: { xs: 'auto', sm: 80 },
-                px: { xs: 2, sm: 3 },
-                fontSize: { xs: '0.875rem', sm: '1rem' },
-              }}
-            >
-              {isMobile ? 'Login' : 'Login'}
-            </Button>
-          )}
-        </Toolbar>
-      </AppBar>
-
-      {/* Mobile Navigation Drawer */}
-      <Drawer
-        anchor="left"
-        open={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
-        sx={{
-          display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': {
-            width: '80%',
-            maxWidth: 320,
-          },
-        }}
-      >
-        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            Menu
-          </Typography>
-          <IconButton
-            onClick={() => setMobileMenuOpen(false)}
-            aria-label="Close navigation menu"
-            sx={{ minWidth: 44, minHeight: 44 }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        <Divider />
-        <List>
-          {navigationItems.map((item) => (
-            <ListItem key={item.path} disablePadding>
-              <ListItemButton
-                onClick={() => handleNavigate(item.path)}
-                sx={{ minHeight: 48 }}
+              <span className="material-symbols-outlined text-on-surface-variant">shopping_bag</span>
+              {itemCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {itemCount > 9 ? '9+' : itemCount}
+                </span>
+              )}
+            </button>
+            {isAuthenticated ? (
+              <button
+                className="p-2 hover:bg-surface-container-low transition-colors duration-200 rounded-full"
+                onClick={() => navigate(ROUTES.PROFILE)}
+                aria-label="View profile"
               >
-                <ListItemText primary={item.label} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        {!isAuthenticated && (
-          <Box sx={{ p: 2 }}>
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={() => handleNavigate(ROUTES.LOGIN)}
-              sx={{ minHeight: 44 }}
+                <span className="material-symbols-outlined text-on-surface-variant">person</span>
+              </button>
+            ) : (
+              <button
+                className="px-xl py-2.5 bg-primary text-on-primary rounded-xl font-body-md hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
+                onClick={() => navigate(ROUTES.LOGIN)}
+                aria-label="Login to your account"
+              >
+                {isAuthenticated ? '' : 'Login'}
+              </button>
+            )}
+            <button
+              className="md:hidden p-2 hover:bg-surface-container-low transition-colors duration-200 rounded-full"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open navigation menu"
             >
-              Login
-            </Button>
-          </Box>
-        )}
-      </Drawer>
+              <span className="material-symbols-outlined text-on-surface-variant">menu</span>
+            </button>
+          </div>
+        </div>
+      </nav>
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm"
+          onClick={() => setMobileOpen(false)}
+          role="presentation"
+        >
+          <div
+            className="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest shadow-xl p-md animate-slide-right"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-label="Mobile navigation menu"
+          >
+            <div className="flex justify-between items-center mb-lg">
+              <span className="font-headline-md text-headline-md font-bold text-on-surface">Menu</span>
+              <button
+                className="p-2 hover:bg-surface-container-low rounded-full transition-colors"
+                onClick={() => setMobileOpen(false)}
+                aria-label="Close navigation menu"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <div className="flex flex-col gap-xs">
+              {[...navLinks, { label: 'Home', path: ROUTES.HOME }].map((link) => (
+                <a
+                  key={link.path}
+                  className={`px-sm py-3 rounded-lg font-body-md transition-all cursor-pointer ${
+                    isActive(link.path)
+                      ? 'active-nav-item'
+                      : 'text-on-surface-variant hover:bg-surface-container-high'
+                  }`}
+                  onClick={() => { navigate(link.path); setMobileOpen(false); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(link.path); setMobileOpen(false); } }}
+                  role="button"
+                  tabIndex={0}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+            {!isAuthenticated && (
+              <div className="mt-lg pt-lg border-t border-outline-variant/30">
+                <button
+                  className="w-full px-xl py-3 bg-primary text-on-primary rounded-xl font-body-md hover:shadow-lg transition-all active:scale-95"
+                  onClick={() => { navigate(ROUTES.LOGIN); setMobileOpen(false); }}
+                >
+                  Login
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }

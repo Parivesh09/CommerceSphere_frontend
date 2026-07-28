@@ -1,278 +1,199 @@
-import {
-  Container,
-  Typography,
-  Box,
-  Button,
-  IconButton,
-  Paper,
-  Divider,
-} from '@mui/material';
-import { Add, Remove, Delete, ShoppingCart, ArrowForward } from '@mui/icons-material';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../hooks';
-import { formatCurrency } from '../utils';
+import { useAppSelector } from '../../../hooks/useAppSelector';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { updateQuantity, removeFromCart, clearCart } from '../../../store/slices/cartSlice';
 import { ROUTES } from '../../../constants';
+import toast from 'react-hot-toast';
 
-/**
- * Cart Page Component
- * 
- * Features:
- * - Full cart view with item list
- * - Quantity controls with optimistic updates
- * - Real-time total calculations
- * - Responsive layout
- * 
- * Validates: Requirements 6.1, 6.2, 6.3, 6.4
- */
 export default function CartPage() {
   const navigate = useNavigate();
-  const { cart, updateQuantity, removeItem } = useCart();
+  const dispatch = useAppDispatch();
+  const { items, subtotal, tax, shipping, total } = useAppSelector((state) => state.cart);
+  const [promoCode, setPromoCode] = useState('');
+  const [discount, setDiscount] = useState(0);
 
-  const handleIncrement = (productId: string, variantId: string | undefined, currentQuantity: number) => {
-    updateQuantity(productId, variantId, currentQuantity + 1);
-  };
+  const freeShippingThreshold = 500;
+  const progressPercent = Math.min(100, (subtotal / freeShippingThreshold) * 100);
 
-  const handleDecrement = (productId: string, variantId: string | undefined, currentQuantity: number) => {
-    if (currentQuantity > 1) {
-      updateQuantity(productId, variantId, currentQuantity - 1);
+  const handleApplyPromo = () => {
+    if (promoCode.trim().toUpperCase() === 'ENTERPRISE20') {
+      setDiscount(subtotal * 0.2);
+      toast.success('20% Enterprise Promo Code Applied!');
+    } else if (promoCode.trim()) {
+      toast.error('Invalid promo code');
     }
   };
 
-  const handleRemove = (productId: string, variantId?: string | undefined) => {
-    removeItem(productId, variantId);
-  };
-
-  const handleCheckout = () => {
-    navigate(ROUTES.CHECKOUT);
-  };
-
-  const handleContinueShopping = () => {
-    navigate(ROUTES.PRODUCTS);
-  };
-
-  if (cart.items.length === 0) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '60vh',
-            gap: 3,
-          }}
-        >
-          <ShoppingCart sx={{ fontSize: 120, color: 'text.secondary', opacity: 0.3 }} />
-          <Typography variant="h4" color="text.secondary">
-            Your cart is empty
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Add some products to get started
-          </Typography>
-          <Button
-            variant="contained"
-            size="large"
-            onClick={handleContinueShopping}
-            endIcon={<ArrowForward />}
-          >
-            Continue Shopping
-          </Button>
-        </Box>
-      </Container>
-    );
-  }
+  const finalTotal = Math.max(0, total - discount);
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Shopping Cart
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-        {cart.items.reduce((sum, item) => sum + item.quantity, 0)} items in your cart
-      </Typography>
+    <div className="page-bg pt-28 pb-16">
+      <main className="max-w-7xl mx-auto px-6 md:px-10">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Your Shopping Cart</h1>
+        <p className="text-sm text-muted mb-8">Review items, apply corporate discount codes, and proceed to secure checkout.</p>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, gap: 3 }}>
-        {/* Cart Items */}
-        <Box>
-          <AnimatePresence>
-            {cart.items.map((item) => (
-              <motion.div
-                key={`${item.productId}-${item.variantId || 'default'}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Paper
-                  sx={{
-                    p: 2,
-                    mb: 2,
-                    display: 'flex',
-                    gap: 2,
-                    alignItems: 'center',
-                  }}
-                >
-                  {/* Product Image Placeholder */}
-                  <Box
-                    sx={{
-                      width: { xs: 80, sm: 120 },
-                      height: { xs: 80, sm: 120 },
-                      bgcolor: 'grey.200',
-                      borderRadius: 1,
-                      flexShrink: 0,
-                    }}
-                  />
-
-                  {/* Product Details */}
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography variant="h6" noWrap>
-                      Product {item.productId}
-                    </Typography>
-                    {item.variantId && (
-                      <Typography variant="body2" color="text.secondary">
-                        Variant: {item.variantId}
-                      </Typography>
-                    )}
-                    <Typography variant="h6" color="primary" sx={{ mt: 1 }}>
-                      {formatCurrency(item.unitPrice)}
-                    </Typography>
-
-                    {/* Quantity Controls */}
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 2,
-                        mt: 2,
-                        flexWrap: 'wrap',
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleDecrement(item.productId, item.variantId, item.quantity)}
-                          disabled={item.quantity <= 1}
-                        >
-                          <Remove />
-                        </IconButton>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            minWidth: 40,
-                            textAlign: 'center',
-                            fontWeight: 'bold',
-                          }}
-                        >
-                          {item.quantity}
-                        </Typography>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleIncrement(item.productId, item.variantId, item.quantity)}
-                        >
-                          <Add />
-                        </IconButton>
-                      </Box>
-
-                      <Typography variant="body2" color="text.secondary">
-                        Subtotal: {formatCurrency(item.unitPrice * item.quantity)}
-                      </Typography>
-
-                      <IconButton
-                        color="error"
-                        onClick={() => handleRemove(item.productId, item.variantId)}
-                        sx={{ ml: 'auto' }}
-                      >
-                        <Delete />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </Paper>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-
-          <Button
-            variant="outlined"
-            onClick={handleContinueShopping}
-            sx={{ mt: 2 }}
-          >
-            Continue Shopping
-          </Button>
-        </Box>
-
-        {/* Order Summary */}
-        <Box>
-          <Paper
-            sx={{
-              p: 3,
-              position: { md: 'sticky' },
-              top: { md: 16 },
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              Order Summary
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-
-            <Box sx={{ mb: 2 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
-                <Typography variant="body1">Subtotal</Typography>
-                <Typography variant="body1">{formatCurrency(cart.subtotal)}</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
-                <Typography variant="body1">Tax (8%)</Typography>
-                <Typography variant="body1">{formatCurrency(cart.tax)}</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
-                <Typography variant="body1">Shipping</Typography>
-                <Typography variant="body1">
-                  {cart.shipping === 0 ? (
-                    <Typography sx={{ color: 'success.main', fontWeight: 'bold' }}>
-                      FREE
-                    </Typography>
-                  ) : (
-                    formatCurrency(cart.shipping)
-                  )}
-                </Typography>
-              </Box>
-
-              {cart.subtotal < 50 && cart.subtotal > 0 && (
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-                  Add {formatCurrency(50 - cart.subtotal)} more for free shipping
-                </Typography>
-              )}
-
-              <Divider sx={{ my: 2 }} />
-
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="h6">Total</Typography>
-                <Typography variant="h6" color="primary">
-                  {formatCurrency(cart.total)}
-                </Typography>
-              </Box>
-            </Box>
-
-            <Button
-              variant="contained"
-              fullWidth
-              size="large"
-              onClick={handleCheckout}
-              endIcon={<ArrowForward />}
-              sx={{ mt: 2 }}
+        {items.length === 0 ? (
+          <div className="surface-card rounded-3xl p-12 text-center max-w-lg mx-auto space-y-4">
+            <span className="material-symbols-outlined text-[64px] text-slate-300">shopping_cart</span>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Your Cart is Empty</h2>
+            <p className="text-sm text-muted">Looks like you haven't added any enterprise hardware to your order yet.</p>
+            <button
+              onClick={() => navigate(ROUTES.PRODUCTS)}
+              className="button-primary"
             >
-              Proceed to Checkout
-            </Button>
+              Browse Catalog
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Cart Items Column */}
+            <div className="lg:col-span-8 space-y-6">
+              {/* Free Shipping Bar */}
+              <div className="surface-card rounded-2xl p-4 space-y-2">
+                <div className="flex justify-between text-xs font-semibold">
+                  <span>
+                    {subtotal >= freeShippingThreshold
+                      ? '🎉 You unlocked FREE Enterprise Express Shipping!'
+                      : `Add $${(freeShippingThreshold - subtotal).toFixed(2)} more for FREE Express Shipping`}
+                  </span>
+                  <span>{progressPercent.toFixed(0)}%</span>
+                </div>
+                <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-[#3525cd] to-emerald-500 transition-all duration-500"
+                    style={{ width: `${progressPercent}%` }}
+                  ></div>
+                </div>
+              </div>
 
-            <Box sx={{ mt: 3, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
-              <Typography variant="caption" color="text.secondary">
-                Secure checkout powered by Stripe
-              </Typography>
-            </Box>
-          </Paper>
-        </Box>
-      </Box>
-    </Container>
+              {/* Items List */}
+              <div className="surface-card rounded-3xl p-6 space-y-6">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+                  <h2 className="font-bold text-lg text-slate-900 dark:text-slate-100">Order Items ({items.length})</h2>
+                  <button
+                    onClick={() => dispatch(clearCart())}
+                    className="text-xs text-rose-600 font-semibold hover:underline"
+                  >
+                    Clear Cart
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-slate-100 last:border-0 last:pb-0"
+                    >
+                      <div className="flex items-center gap-4 w-full sm:w-auto">
+                        <img
+                          src={item.product?.images?.[0]?.url || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=300&q=80'}
+                          alt={item.product?.title}
+                          className="w-20 h-20 object-cover rounded-2xl bg-white shrink-0 border border-slate-100"
+                        />
+                        <div>
+                          <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">{item.product?.title || 'Enterprise Product'}</h3>
+                          <p className="text-xs text-muted mt-1">SKU: {item.productId}</p>
+                          <span className="text-xs font-semibold text-[#3525cd]">${item.unitPrice.toLocaleString()} each</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between w-full sm:w-auto gap-6">
+                        {/* Quantity Controls */}
+                        <div className="flex items-center border border-slate-200 rounded-xl bg-white dark:bg-slate-900">
+                          <button
+                            onClick={() => dispatch(updateQuantity({ id: item.id, quantity: Math.max(1, item.quantity - 1) }))}
+                            className="w-8 h-8 flex items-center justify-center font-bold hover:bg-slate-100 rounded-l-xl text-sm"
+                          >
+                            -
+                          </button>
+                          <span className="w-8 text-center text-xs font-bold">{item.quantity}</span>
+                          <button
+                            onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity + 1 }))}
+                            className="w-8 h-8 flex items-center justify-center font-bold hover:bg-slate-100 rounded-r-xl text-sm"
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <span className="font-bold text-sm text-[#0b1c30] w-24 text-right">
+                          ${(item.unitPrice * item.quantity).toLocaleString()}
+                        </span>
+
+                        <button
+                          onClick={() => dispatch(removeFromCart(item.id))}
+                          className="p-1.5 text-slate-400 hover:text-rose-600 transition-colors"
+                          title="Remove item"
+                        >
+                          <span className="material-symbols-outlined text-[20px]">delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Order Summary Sidebar */}
+            <div className="lg:col-span-4 space-y-6">
+              <div className="surface-card rounded-3xl p-6 space-y-6">
+                <h2 className="font-bold text-lg text-slate-900 dark:text-slate-100 pb-3 border-b border-slate-200">Order Summary</h2>
+
+                {/* Promo Input */}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Promo code (e.g. ENTERPRISE20)"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                    className="input-field flex-grow text-xs"
+                  />
+                  <button
+                    onClick={handleApplyPromo}
+                    className="button-primary text-xs"
+                  >
+                    Apply
+                  </button>
+                </div>
+
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between text-muted">
+                    <span>Subtotal</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">${subtotal.toLocaleString()}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-emerald-600 font-semibold">
+                      <span>Promo Discount</span>
+                      <span>-${discount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-muted">
+                    <span>Estimated Tax (8%)</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">${tax.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-muted">
+                    <span>Shipping Fee</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">
+                      {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
+                    </span>
+                  </div>
+                  <div className="pt-3 border-t border-slate-200 flex justify-between items-baseline">
+                    <span className="font-bold text-base text-[#0b1c30]">Total</span>
+                    <span className="text-2xl font-bold text-[#3525cd]">${finalTotal.toFixed(2)}</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => navigate(ROUTES.CHECKOUT)}
+                  className="w-full py-4 bg-[#3525cd] text-white font-bold rounded-xl shadow-lg shadow-[#3525cd]/25 hover:bg-[#2c1eb3] transition-all active:scale-95 text-center text-sm flex items-center justify-center gap-2"
+                >
+                  Proceed to Checkout <span className="material-symbols-outlined text-[18px]">lock</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
   );
 }

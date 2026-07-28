@@ -25,6 +25,13 @@ export const productApi = baseApi.injectEndpoints({
         url: '/products',
         params,
       }),
+      transformResponse: (response: { products: Product[]; total: number }, meta, arg) => ({
+        data: response.products,
+        total: response.total,
+        page: arg.page || 1,
+        pageSize: arg.pageSize || 20,
+        totalPages: Math.ceil(response.total / (arg.pageSize || 20)),
+      }),
       providesTags: (result) =>
         result
           ? [

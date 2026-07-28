@@ -13,8 +13,8 @@ interface CartState {
   isGuest: boolean;
 }
 
-const TAX_RATE = 0.08; // 8% tax rate
-const SHIPPING_THRESHOLD = 50; // Free shipping over $50
+const TAX_RATE = 0.08;
+const SHIPPING_THRESHOLD = 50;
 const SHIPPING_COST = 5.99;
 
 const calculateTotals = (
@@ -55,16 +55,6 @@ const initialState: CartState = {
   isGuest: true,
 };
 
-/**
- * Cart slice for local state management
- * 
- * Handles:
- * - Guest cart with localStorage persistence
- * - Local cart state before API sync
- * - Optimistic updates coordination
- * 
- * Validates: Requirements 6.1, 6.2, 6.3, 6.6
- */
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
@@ -93,6 +83,28 @@ const cartSlice = createSlice({
       saveGuestCartToStorage(state.items);
     },
 
+    addToCart: (state, action: PayloadAction<CartItem>) => {
+      const existingItem = state.items.find(
+        (item) =>
+          item.productId === action.payload.productId &&
+          item.variantId === action.payload.variantId
+      );
+
+      if (existingItem) {
+        existingItem.quantity += action.payload.quantity;
+      } else {
+        state.items.push(action.payload);
+      }
+
+      const totals = calculateTotals(state.items);
+      state.subtotal = totals.subtotal;
+      state.tax = totals.tax;
+      state.shipping = totals.shipping;
+      state.total = totals.total;
+      state.itemCount = totals.itemCount;
+
+      saveGuestCartToStorage(state.items);
+    },
 
     updateGuestCartQuantity: (
       state,
@@ -129,6 +141,26 @@ const cartSlice = createSlice({
       }
     },
 
+    updateQuantity: (
+      state,
+      action: PayloadAction<{ id: string; quantity: number }>
+    ) => {
+      const item = state.items.find((i) => i.productId === action.payload.id);
+      if (item) {
+        if (action.payload.quantity <= 0) {
+          state.items = state.items.filter((i) => i.productId !== action.payload.id);
+        } else {
+          item.quantity = action.payload.quantity;
+        }
+        const totals = calculateTotals(state.items);
+        state.subtotal = totals.subtotal;
+        state.tax = totals.tax;
+        state.shipping = totals.shipping;
+        state.total = totals.total;
+        state.itemCount = totals.itemCount;
+        saveGuestCartToStorage(state.items);
+      }
+    },
 
     removeFromGuestCart: (
       state,
@@ -152,6 +184,19 @@ const cartSlice = createSlice({
       saveGuestCartToStorage(state.items);
     },
 
+    removeFromCart: (
+      state,
+      action: PayloadAction<string>
+    ) => {
+      state.items = state.items.filter((i) => i.productId !== action.payload);
+      const totals = calculateTotals(state.items);
+      state.subtotal = totals.subtotal;
+      state.tax = totals.tax;
+      state.shipping = totals.shipping;
+      state.total = totals.total;
+      state.itemCount = totals.itemCount;
+      saveGuestCartToStorage(state.items);
+    },
 
     clearGuestCart: (state) => {
       state.items = [];
@@ -163,6 +208,15 @@ const cartSlice = createSlice({
       localStorage.removeItem(STORAGE_KEYS.CART);
     },
 
+    clearCart: (state) => {
+      state.items = [];
+      state.subtotal = 0;
+      state.tax = 0;
+      state.shipping = 0;
+      state.total = 0;
+      state.itemCount = 0;
+      localStorage.removeItem(STORAGE_KEYS.CART);
+    },
 
     setCartAuthenticated: (state) => {
       state.isGuest = false;
@@ -194,9 +248,13 @@ const cartSlice = createSlice({
 
 export const {
   addToGuestCart,
+  addToCart,
   updateGuestCartQuantity,
+  updateQuantity,
   removeFromGuestCart,
+  removeFromCart,
   clearGuestCart,
+  clearCart,
   setCartAuthenticated,
   syncCartFromApi,
 } = cartSlice.actions;

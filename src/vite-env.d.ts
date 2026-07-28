@@ -13,8 +13,16 @@ interface ImportMetaEnv {
   readonly VITE_SENTRY_DSN?: string;
   readonly VITE_ENABLE_SERVICE_WORKER: string;
   readonly VITE_CACHE_DURATION: string;
+  readonly DEV: boolean;
+  readonly PROD: boolean;
+  readonly MODE: string;
 }
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
+}
+
+declare module '*.css' {
+  const content: Record<string, string>;
+  export default content;
 }

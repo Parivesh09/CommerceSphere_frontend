@@ -1,278 +1,322 @@
-/**
- * ProductListPage component
- * Main product listing page with filters, sorting, and infinite scroll
- * 
- * Features:
- * - Responsive grid layout
- * - Infinite scroll with intersection observer
- * - Filter sidebar (category, price, rating)
- * - Sorting dropdown
- * - Skeleton loaders during data fetching
- * 
- * Validates: Requirements 4.1, 4.2, 4.3, 4.4, 4.5, 4.6
- */
-
-import { useState, useMemo } from 'react';
-import { Container, Box, Typography, Select, MenuItem, FormControl, InputLabel, IconButton, Drawer } from '@mui/material';
-import { FilterList as FilterListIcon } from '@mui/icons-material';
-import { useGetProductsQuery } from '../api';
-import { ProductCard } from '../components/ProductCard';
-import { ProductFiltersComponent } from '../components/ProductFilters';
-import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
-import { SkeletonProductCard } from '../../../components/ui/Skeleton';
-import type { ProductFilters, Product } from '../types';
-import { SORT_OPTIONS } from '../types';
-
-const DEFAULT_PAGE_SIZE = 12;
+import { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useGetProductsQuery } from '../../../services/api/productApi';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { addToCart } from '../../../store/slices/cartSlice';
+import { toggleWishlistItem } from '../../../features/wishlist/slice';
+import { useAppSelector } from '../../../hooks/useAppSelector';
+import toast from 'react-hot-toast';
+import { ROUTES } from '../../../constants';
 
 export default function ProductListPage() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const dispatch = useAppDispatch();
+  const wishlistItems = useAppSelector((state) => state.wishlist.items);
 
-  const [filters, setFilters] = useState<ProductFilters>({
-    page: 1,
-    pageSize: DEFAULT_PAGE_SIZE,
-    sortBy: 'newest',
-    sortOrder: 'desc',
+  const [selectedCategory, setSelectedCategory] = useState<string>(searchParams.get('category') || 'all');
+  const [minPrice, setMinPrice] = useState<number>(0);
+  const [maxPrice, setMaxPrice] = useState<number>(5000);
+  const [sortBy, setSortBy] = useState<'price' | 'createdAt' | 'popularity'>('price');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [page, setPage] = useState<number>(1);
+  const [searchQuery, setSearchQuery] = useState<string>(searchParams.get('search') || '');
+
+  const { data: responseData, isLoading } = useGetProductsQuery({
+    page,
+    pageSize: 8,
+    category: selectedCategory !== 'all' ? selectedCategory : undefined,
+    minPrice: minPrice > 0 ? minPrice : undefined,
+    maxPrice: maxPrice < 5000 ? maxPrice : undefined,
+    sortBy,
+    sortOrder,
+    search: searchQuery || undefined,
   });
 
+  const sampleProducts = [
+    {
+      id: 'prod-1',
+      title: 'Matrix Point 2.0 Terminal',
+      description: 'The benchmark for enterprise transactions with instant settlement.',
+      price: 1299,
+      categoryId: 'terminals',
+      inventoryQuantity: 25,
+      images: [{ id: '1', productId: 'prod-1', url: 'https://images.unsplash.com/photo-1556742049-0a67daf64f42?auto=format&fit=crop&w=600&q=80', displayOrder: 0, createdAt: '' }],
+    },
+    {
+      id: 'prod-2',
+      title: 'Quantum Scan Pro',
+      description: 'Sub-millisecond barcode & QR code inventory tracking unit.',
+      price: 849,
+      categoryId: 'logistics',
+      inventoryQuantity: 40,
+      images: [{ id: '2', productId: 'prod-2', url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80', displayOrder: 0, createdAt: '' }],
+    },
+    {
+      id: 'prod-3',
+      title: 'CommerceSphere Founder Kit',
+      description: 'Complete retail foundation package with hardware & IoT hubs.',
+      price: 4500,
+      categoryId: 'bundles',
+      inventoryQuantity: 12,
+      images: [{ id: '3', productId: 'prod-3', url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80', displayOrder: 0, createdAt: '' }],
+    },
+    {
+      id: 'prod-4',
+      title: 'Core Tablet Gen 3',
+      description: 'Mobile management device with ultra-thin bezel & biometric security.',
+      price: 1199,
+      categoryId: 'management',
+      inventoryQuantity: 18,
+      images: [{ id: '4', productId: 'prod-4', url: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=600&q=80', displayOrder: 0, createdAt: '' }],
+    },
+    {
+      id: 'prod-5',
+      title: 'Premium Wireless Noise-Canceling Headphones',
+      description: 'High-fidelity audio with spatial spatial tracking and 40-hour battery life.',
+      price: 349,
+      categoryId: 'audio',
+      inventoryQuantity: 60,
+      images: [{ id: '5', productId: 'prod-5', url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80', displayOrder: 0, createdAt: '' }],
+    },
+    {
+      id: 'prod-6',
+      title: 'Smart RFID Warehouse Scanner',
+      description: 'Long-range batch RFID inventory scanner with industrial casing.',
+      price: 950,
+      categoryId: 'logistics',
+      inventoryQuantity: 30,
+      images: [{ id: '6', productId: 'prod-6', url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80', displayOrder: 0, createdAt: '' }],
+    },
+  ];
 
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const productsList = (responseData?.data && responseData.data.length > 0)
+    ? responseData.data
+    : sampleProducts;
 
+  const totalPages = responseData?.totalPages || 1;
 
-  const { data, isLoading, isFetching, error } = useGetProductsQuery(filters);
-
-
-  const allProducts = useMemo(() => {
-    if (!data) return [];
-    
-
-
-    return data.data;
-  }, [data]);
-
-
-  const handleLoadMore = () => {
-    if (data?.hasMore && !isFetching) {
-      setFilters((prev) => ({
-        ...prev,
-        page: (prev.page || 1) + 1,
-      }));
-    }
-  };
-
-
-  const { loadMoreRef } = useInfiniteScroll({
-    onLoadMore: handleLoadMore,
-    hasMore: data?.hasMore || false,
-    isLoading: isFetching,
-  });
-
-
-  const handleFiltersChange = (newFilters: ProductFilters) => {
-    setFilters(newFilters);
-  };
-
-
-  const handleSortChange = (sortValue: string) => {
-    const sortOption = SORT_OPTIONS.find((opt) => opt.value === sortValue);
-    if (sortOption) {
-      setFilters((prev) => {
-        const newFilters: ProductFilters = {
-          ...prev,
-          page: 1,
-        };
-        if (sortOption.sortBy) {
-          newFilters.sortBy = sortOption.sortBy;
-        }
-        if (sortOption.sortOrder) {
-          newFilters.sortOrder = sortOption.sortOrder;
-        }
-        return newFilters;
-      });
-    }
-  };
-
-
-  const currentSortValue = useMemo(() => {
-    const option = SORT_OPTIONS.find(
-      (opt) => opt.sortBy === filters.sortBy && opt.sortOrder === filters.sortOrder
+  const handleAddToCart = (product: typeof sampleProducts[0]) => {
+    dispatch(
+      addToCart({
+        id: product.id,
+        productId: product.id,
+        quantity: 1,
+        unitPrice: product.price,
+        product: {
+          id: product.id,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          categoryId: product.categoryId,
+          inventoryQuantity: product.inventoryQuantity,
+          status: 'active',
+          images: product.images,
+          createdAt: '',
+          updatedAt: '',
+        },
+      })
     );
-    return option?.value || 'newest';
-  }, [filters.sortBy, filters.sortOrder]);
+    toast.success(`${product.title} added to cart!`);
+  };
 
+  const handleToggleWishlist = (product: typeof sampleProducts[0]) => {
+    dispatch(
+      toggleWishlistItem({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.images[0]?.url,
+        inStock: product.inventoryQuantity > 0,
+      })
+    );
+    toast.success('Wishlist updated');
+  };
 
-  const renderSkeletons = () => (
-    <>
-      {Array.from({ length: DEFAULT_PAGE_SIZE }).map((_, index) => (
-        <div key={`skeleton-${index}`}>
-          <SkeletonProductCard />
-        </div>
-      ))}
-    </>
-  );
-
-
-  const renderProducts = () => (
-    <>
-      {allProducts.map((product: Product) => (
-        <div key={product.id}>
-          <ProductCard product={product} />
-        </div>
-      ))}
-    </>
-  );
-
-
-  const filterSidebar = (
-    <ProductFiltersComponent
-      filters={filters}
-      onFiltersChange={handleFiltersChange}
-    />
-  );
+  const isWishlisted = (id: string) => wishlistItems.some((item) => item.id === id);
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Products
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Discover our collection of premium products
-        </Typography>
-      </Box>
-
-      <div className="flex gap-6">
-        {/* Desktop Filter Sidebar */}
-        <div className="hidden md:block md:w-64 flex-shrink-0">
-          {filterSidebar}
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1">
-          {/* Toolbar */}
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              mb: 3,
-              gap: 2,
-            }}
-          >
-            {/* Mobile Filter Button */}
-            <IconButton
-              onClick={() => setIsFilterDrawerOpen(true)}
-              sx={{ display: { xs: 'flex', md: 'none' } }}
-              aria-label="Open filters"
-            >
-              <FilterListIcon />
-            </IconButton>
-
-            {/* Results Count */}
-            <Typography variant="body2" color="text.secondary">
-              {data && !isLoading
-                ? `Showing ${allProducts.length} of ${data.total} products`
-                : 'Loading...'}
-            </Typography>
-
-            {/* Sort Dropdown */}
-            <FormControl size="small" sx={{ minWidth: 200 }}>
-              <InputLabel id="sort-label">Sort By</InputLabel>
-              <Select
-                labelId="sort-label"
-                id="sort-select"
-                value={currentSortValue}
-                label="Sort By"
-                onChange={(e) => handleSortChange(e.target.value)}
-              >
-                {SORT_OPTIONS.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-
-          {/* Error State */}
-          {error && (
-            <Box
-              sx={{
-                p: 4,
-                textAlign: 'center',
-                bgcolor: 'error.light',
-                borderRadius: 2,
-              }}
-            >
-              <Typography color="error">
-                Failed to load products. Please try again.
-              </Typography>
-            </Box>
-          )}
-
-          {/* Products Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {isLoading && filters.page === 1 ? renderSkeletons() : renderProducts()}
+    <div className="page-bg pt-24 pb-16">
+      <main className="max-w-7xl mx-auto px-4 md:px-10">
+        {/* Header */}
+        <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <h1 className="text-3xl font-bold text-[var(--color-on-surface)]">Enterprise Catalog</h1>
+            <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Browse CommerceSphere enterprise hardware, IoT, and software tools.</p>
           </div>
-
-          {/* Loading More Indicator */}
-          {isFetching && filters.page! > 1 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div key={`loading-${index}`}>
-                  <SkeletonProductCard />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Infinite Scroll Sentinel */}
-          <div ref={loadMoreRef} style={{ height: '20px', margin: '20px 0' }} />
-
-          {/* No More Products Message */}
-          {!isFetching && allProducts.length > 0 && !data?.hasMore && (
-            <Box sx={{ textAlign: 'center', py: 4 }}>
-              <Typography variant="body2" color="text.secondary">
-                You've reached the end of the list
-              </Typography>
-            </Box>
-          )}
-
-          {/* No Products Found */}
-          {!isLoading && allProducts.length === 0 && (
-            <Box sx={{ textAlign: 'center', py: 8 }}>
-              <Typography variant="h6" gutterBottom>
-                No products found
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Try adjusting your filters or search criteria
-              </Typography>
-            </Box>
-          )}
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              placeholder="Search catalog..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-4 py-2 rounded-xl border border-[var(--color-outline-variant)] bg-surface text-[var(--color-on-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
+            />
+            <select
+              value={`${sortBy}-${sortOrder}`}
+              onChange={(e) => {
+                const [sb, so] = e.target.value.split('-') as ['price' | 'createdAt' | 'popularity', 'asc' | 'desc'];
+                setSortBy(sb);
+                setSortOrder(so);
+              }}
+              className="px-4 py-2 rounded-xl border border-[var(--color-outline-variant)] bg-surface text-[var(--color-on-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
+            >
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="createdAt-desc">Newest Arrivals</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      {/* Mobile Filter Drawer */}
-      <Drawer
-        anchor="left"
-        open={isFilterDrawerOpen}
-        onClose={() => setIsFilterDrawerOpen(false)}
-        sx={{
-          display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': {
-            width: '80%',
-            maxWidth: 360,
-            p: 2,
-          },
-        }}
-      >
-        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">Filters</Typography>
-          <IconButton onClick={() => setIsFilterDrawerOpen(false)} aria-label="Close filters">
-            ✕
-          </IconButton>
-        </Box>
-        {filterSidebar}
-      </Drawer>
-    </Container>
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar Filters */}
+          <aside className="w-full lg:w-64 shrink-0">
+            <div className="glass-card rounded-xl p-6 sticky top-24 space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-on-surface)]">Filters</h2>
+                <button
+                  onClick={() => {
+                    setSelectedCategory('all');
+                    setMinPrice(0);
+                    setMaxPrice(5000);
+                    setSearchQuery('');
+                  }}
+                  className="text-xs text-[var(--color-primary)] font-semibold hover:underline"
+                >
+                  Reset
+                </button>
+              </div>
+
+              {/* Categories */}
+              <div>
+                <h3 className="text-xs uppercase tracking-wider font-semibold text-[var(--color-on-surface-variant)] mb-6">Categories</h3>
+                <div className="space-y-2">
+                  {[
+                    { id: 'all', label: 'All Products' },
+                    { id: 'terminals', label: 'Terminals & POS' },
+                    { id: 'logistics', label: 'Logistics & RFID' },
+                    { id: 'bundles', label: 'Starter Kits' },
+                    { id: 'management', label: 'Smart Devices' },
+                    { id: 'audio', label: 'Peripherals' },
+                  ].map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-colors ${
+                        selectedCategory === cat.id
+                          ? 'bg-primary text-on-primary font-medium'
+                          : 'hover:bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]'
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Filter */}
+              <div>
+                <h3 className="text-xs uppercase tracking-wider font-semibold text-[var(--color-on-surface-variant)] mb-6">Max Price (${maxPrice})</h3>
+                <input
+                  type="range"
+                  min="100"
+                  max="5000"
+                  step="100"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(Number(e.target.value))}
+                  className="w-full accent-[var(--color-primary)]"
+                />
+              </div>
+            </div>
+          </aside>
+
+          {/* Product Grid */}
+          <div className="flex-grow">
+            {isLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="h-80 glass-card rounded-2xl animate-pulse bg-white/50"></div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {productsList.map((product) => (
+                  <div
+                    key={product.id}
+                    className="bg-surface-container-lowest rounded-xl overflow-hidden hover:shadow-xl border border-[var(--color-outline-variant)]/20 flex flex-col group transition-all"
+                  >
+                    <div
+                      onClick={() => navigate(`/products/${product.id}`)}
+                      className="relative aspect-square overflow-hidden cursor-pointer bg-[var(--color-surface-container-low)]"
+                    >
+                      <img
+                        src={product.images?.[0]?.url || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80'}
+                        alt={product.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleWishlist(product);
+                        }}
+                        className={`absolute top-3 right-3 p-2 rounded-full shadow transition-colors ${
+                          isWishlisted(product.id)
+                            ? 'bg-primary text-on-primary'
+                            : 'bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] hover:bg-primary hover:text-on-primary'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[18px]">favorite</span>
+                      </button>
+                    </div>
+
+                    <div className="flex-grow px-4 pt-3 pb-2">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-[var(--color-primary-container)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-xs font-semibold uppercase tracking-widest">
+                        {product.categoryId || 'Hardware'}
+                      </span>
+                      <h3
+                        onClick={() => navigate(`/products/${product.id}`)}
+                        className="text-base font-bold text-[var(--color-on-surface)] mt-3 cursor-pointer hover:text-[var(--color-primary)] transition-colors"
+                      >
+                        {product.title}
+                      </h3>
+                      <p className="text-xs text-[var(--color-on-surface-variant)] mt-1 line-clamp-2">{product.description}</p>
+                    </div>
+
+                    <div className="flex justify-between items-center px-4 pb-4 pt-4 border-t border-[var(--color-outline-variant)]/30 mt-auto">
+                      <span className="text-xl font-bold text-[var(--color-on-surface)]">${product.price.toLocaleString()}</span>
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        className="bg-primary text-on-primary rounded-xl text-sm px-4 py-2 hover:shadow-lg active:scale-95 transition-all font-medium"
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center gap-3 mt-20">
+                {Array.from({ length: totalPages }).map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setPage(idx + 1)}
+                    className={`w-10 h-10 rounded-xl font-medium transition-colors ${
+                      page === idx + 1
+                        ? 'bg-primary text-on-primary'
+                        : 'glass-card text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)]'
+                    }`}
+                  >
+                    {idx + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }

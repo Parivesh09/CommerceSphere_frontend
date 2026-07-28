@@ -3,11 +3,8 @@
     "target": "ES2022",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "esnext",
-    "types": ["vite/client"],
     "skipLibCheck": true,
     "ignoreDeprecations": "6.0",
-
-
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
@@ -16,21 +13,18 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
 
-
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/components/*": ["src/components/*"],
-      "@/features/*": ["src/features/*"],
-      "@/hooks/*": ["src/hooks/*"],
-      "@/store/*": ["src/store/*"],
-      "@/services/*": ["src/services/*"],
-      "@/utils/*": ["src/utils/*"],
-      "@/types/*": ["src/types/*"],
-      "@/theme/*": ["src/theme/*"],
-      "@/constants/*": ["src/constants/*"]
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/features/*": ["./src/features/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/store/*": ["./src/store/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/theme/*": ["./src/theme/*"],
+      "@/constants/*": ["./src/constants/*"]
     },
-
 
     "strict": false,
     "noImplicitAny": false,
@@ -40,7 +34,6 @@
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-
 
     "noUnusedLocals": false,
     "noUnusedParameters": false,

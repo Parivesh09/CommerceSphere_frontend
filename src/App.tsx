@@ -11,77 +11,71 @@ import { NetworkStatusIndicator } from './components/NetworkStatusIndicator';
 import { ErrorBoundary, RootErrorFallback, RouteErrorFallback } from './components/error';
 import { ROUTES } from './constants';
 
-
 import MainLayout from './layouts/MainLayout';
 import AdminLayout from './layouts/AdminLayout';
-
 
 import {
   LazyHomePage,
   LazyProductListPage,
   LazyProductDetailPage,
+  LazySearchResultsPage,
+  LazyCategoriesPage,
+  LazyCompareProductsPage,
   LazyCartPage,
   LazyCheckoutPage,
   LazyOrderConfirmationPage,
   LazyOrdersPage,
   LazyOrderDetailPage,
+  LazyTrackOrderPage,
+  LazyInvoiceBillingPage,
   LazyProfilePage,
   LazyWishlistPage,
   LazyLoginPage,
   LazyRegisterPage,
   LazyAdminDashboard,
   LazyAdminProductsPage,
+  LazyAdminProductEditorPage,
   LazyAdminOrdersPage,
-  LazyAdminOrderDetailPage,
+  LazyAdminInventoryPage,
+  LazyAdminUsersPage,
+  LazyAdminAnalyticsPage,
+  LazyAdminVendorsPage,
+  LazyAdminRolesPage,
+  LazyEnterpriseLandingPage,
+  LazyApiPortalPage,
+  LazySupportCenterPage,
+  LazyNotFoundPage,
+  LazyMaintenancePage,
   prefetchLikelyRoutes,
 } from './routes/lazyRoutes';
 
-
 import { ProtectedRoute } from './features/auth/components';
-
 import './styles/index.css';
 
-/**
- * Hook to prefetch likely next routes based on current location
- * Validates: Requirements 16.1, 16.5
- */
 function usePrefetchRoutes() {
   const location = useLocation();
-  
-  useEffect(() => {
 
+  useEffect(() => {
     const timer = setTimeout(() => {
       prefetchLikelyRoutes(location.pathname);
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, [location.pathname]);
 }
 
-/**
- * Routes component with error boundaries and network status
- * Must be inside Router to use useLocation
- * 
- * Validates: Requirements 11.1, 14.1, 14.3, 16.1, 16.5
- */
 function AppRoutes() {
   const location = useLocation();
-  
-
   usePrefetchRoutes();
-  
+
   return (
     <>
-      {/* Skip navigation for keyboard users */}
       <SkipNavigation />
-      
-      {/* Network status indicator for offline detection */}
       <NetworkStatusIndicator />
-      
-      {/* AnimatePresence enables exit animations for route changes */}
+
       <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>
-          {/* Public Routes with route-level error boundaries */}
+          {/* Public Auth Routes */}
           <Route
             path={ROUTES.LOGIN}
             element={
@@ -99,7 +93,10 @@ function AppRoutes() {
             }
           />
 
-          {/* Main App Routes with route-level error boundaries */}
+          {/* Standalone Pages */}
+          <Route path={ROUTES.MAINTENANCE} element={<LazyMaintenancePage />} />
+
+          {/* Main App Routes */}
           <Route element={<MainLayout />}>
             <Route
               path={ROUTES.HOME}
@@ -126,6 +123,30 @@ function AppRoutes() {
               }
             />
             <Route
+              path={ROUTES.CATEGORIES}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazyCategoriesPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path={ROUTES.SEARCH}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazySearchResultsPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path={ROUTES.COMPARE}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazyCompareProductsPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
               path={ROUTES.CART}
               element={
                 <ErrorBoundary level="route" fallback={RouteErrorFallback}>
@@ -141,8 +162,40 @@ function AppRoutes() {
                 </ErrorBoundary>
               }
             />
-            
-            {/* Protected Routes - Require Authentication */}
+            <Route
+              path={ROUTES.TRACK_ORDER}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazyTrackOrderPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path={ROUTES.ENTERPRISE}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazyEnterpriseLandingPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path={ROUTES.DEVELOPER}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazyApiPortalPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path={ROUTES.SUPPORT}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazySupportCenterPage />
+                </ErrorBoundary>
+              }
+            />
+
+            {/* Protected Routes */}
             <Route
               path={ROUTES.CHECKOUT}
               element={
@@ -184,6 +237,16 @@ function AppRoutes() {
               }
             />
             <Route
+              path={ROUTES.INVOICE}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <ProtectedRoute>
+                    <LazyInvoiceBillingPage />
+                  </ProtectedRoute>
+                </ErrorBoundary>
+              }
+            />
+            <Route
               path={ROUTES.PROFILE}
               element={
                 <ErrorBoundary level="route" fallback={RouteErrorFallback}>
@@ -195,7 +258,7 @@ function AppRoutes() {
             />
           </Route>
 
-          {/* Admin Routes - Require Admin Role */}
+          {/* Admin Routes */}
           <Route
             path={ROUTES.ADMIN}
             element={
@@ -223,6 +286,22 @@ function AppRoutes() {
               }
             />
             <Route
+              path={ROUTES.ADMIN_PRODUCT_NEW}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazyAdminProductEditorPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_PRODUCT_EDIT}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazyAdminProductEditorPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
               path={ROUTES.ADMIN_ORDERS}
               element={
                 <ErrorBoundary level="route" fallback={RouteErrorFallback}>
@@ -231,10 +310,10 @@ function AppRoutes() {
               }
             />
             <Route
-              path={`${ROUTES.ADMIN_ORDERS}/:id`}
+              path={ROUTES.ADMIN_INVENTORY}
               element={
                 <ErrorBoundary level="route" fallback={RouteErrorFallback}>
-                  <LazyAdminOrderDetailPage />
+                  <LazyAdminInventoryPage />
                 </ErrorBoundary>
               }
             />
@@ -242,7 +321,7 @@ function AppRoutes() {
               path={ROUTES.ADMIN_USERS}
               element={
                 <ErrorBoundary level="route" fallback={RouteErrorFallback}>
-                  <div>Admin Users</div>
+                  <LazyAdminUsersPage />
                 </ErrorBoundary>
               }
             />
@@ -250,11 +329,30 @@ function AppRoutes() {
               path={ROUTES.ADMIN_ANALYTICS}
               element={
                 <ErrorBoundary level="route" fallback={RouteErrorFallback}>
-                  <div>Admin Analytics</div>
+                  <LazyAdminAnalyticsPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_VENDORS}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazyAdminVendorsPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_ROLES}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazyAdminRolesPage />
                 </ErrorBoundary>
               }
             />
           </Route>
+
+          {/* Catch-all 404 */}
+          <Route path="*" element={<LazyNotFoundPage />} />
         </Routes>
       </AnimatePresence>
       <WebSocketStatus />
@@ -262,9 +360,6 @@ function AppRoutes() {
   );
 }
 
-/**
- * App content with providers
- */
 function AppContent() {
   return (
     <ThemeProvider>
@@ -278,11 +373,6 @@ function AppContent() {
   );
 }
 
-/**
- * Root App component with root-level error boundary
- * 
- * Validates: Requirement 14.1
- */
 function App() {
   return (
     <ErrorBoundary level="root" fallback={RootErrorFallback}>

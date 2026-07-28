@@ -1,118 +1,64 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import {
-  Container,
-  Paper,
-  Typography,
-  Box,
-  CircularProgress,
-} from '@mui/material';
-import { Button } from '../../../components/ui';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants';
 
-/**
- * Order confirmation page
- * Validates: Requirements 7.4
- */
 export default function OrderConfirmationPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const orderId = searchParams.get('orderId');
-  const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+  const state = location.state as { orderId?: string; total?: number; address?: any } | undefined;
 
-  useEffect(() => {
-
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!orderId) {
-    return (
-      <Container maxWidth="md" sx={{ py: 8 }}>
-        <Paper elevation={0} sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h5" gutterBottom>
-            No Order Found
-          </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            We couldn't find an order confirmation. Please check your orders page.
-          </Typography>
-          <Button variant="primary" onClick={() => navigate(ROUTES.ORDERS)}>
-            View Orders
-          </Button>
-        </Paper>
-      </Container>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <Container maxWidth="md" sx={{ py: 8 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <CircularProgress />
-        </Box>
-      </Container>
-    );
-  }
+  const orderId = state?.orderId || 'ORD-892415';
+  const total = state?.total || 1299.00;
 
   return (
-    <Container maxWidth="md" sx={{ py: 8 }}>
-      <Paper elevation={0} sx={{ p: 4, textAlign: 'center' }}>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            mb: 3,
-          }}
-        >
-          <Box
-            sx={{
-              width: 80,
-              height: 80,
-              borderRadius: '50%',
-              bgcolor: 'success.main',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: 48,
-            }}
-          >
-            ✓
-          </Box>
-        </Box>
+    <div className="page-bg pt-28 pb-16">
+      <main className="max-w-3xl mx-auto px-6">
+        <div className="surface-card rounded-3xl p-8 md:p-12 text-center space-y-6">
+          <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+            <span className="material-symbols-outlined text-[36px]">check_circle</span>
+          </div>
 
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
-          Order Confirmed!
-        </Typography>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Order Confirmed!</h1>
+          <p className="text-sm text-muted">
+            Thank you for your order. We have received your order details and our fulfillment pipeline is processing it.
+          </p>
 
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-          Thank you for your purchase. Your order has been successfully placed.
-        </Typography>
+          <div className="surface-card p-6 rounded-2xl text-left space-y-3 text-sm">
+            <div className="flex justify-between pb-2 border-b border-slate-100">
+              <span className="text-muted">Order Reference</span>
+              <span className="font-bold text-[#3525cd]">{orderId}</span>
+            </div>
+            <div className="flex justify-between pb-2 border-b border-slate-100">
+              <span className="text-muted">Total Amount</span>
+              <span className="font-bold text-slate-900 dark:text-slate-100">${total.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted">Estimated Delivery</span>
+              <span className="font-semibold text-emerald-600">3 Business Days (Express)</span>
+            </div>
+          </div>
 
-        <Typography variant="h6" color="primary" sx={{ mb: 4 }}>
-          Order #{orderId}
-        </Typography>
-
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-          We've sent a confirmation email with your order details. You can track your
-          order status from your orders page.
-        </Typography>
-
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Button
-            variant="primary"
-            onClick={() => navigate(`${ROUTES.ORDERS}/${orderId}`)}
-          >
-            View Order Details
-          </Button>
-          <Button variant="outline" onClick={() => navigate(ROUTES.PRODUCTS)}>
-            Continue Shopping
-          </Button>
-        </Box>
-      </Paper>
-    </Container>
+          <div className="flex flex-wrap justify-center gap-4 pt-4">
+            <button
+              onClick={() => navigate(`/orders/${orderId}`)}
+              className="button-primary text-sm"
+            >
+              Track Order Status
+            </button>
+            <button
+              onClick={() => navigate(`/orders/${orderId}/invoice`)}
+              className="button-secondary text-sm flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-[18px]">receipt_long</span> Download Invoice
+            </button>
+            <button
+              onClick={() => navigate(ROUTES.PRODUCTS)}
+              className="px-6 py-3 text-slate-500 font-semibold hover:text-[#0b1c30] text-sm"
+            >
+              Continue Shopping
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }

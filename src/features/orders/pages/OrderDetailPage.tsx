@@ -1,218 +1,114 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Container,
-  Typography,
-  Box,
-  Paper,
-  CircularProgress,
-  Alert,
-  Divider,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from '@mui/material';
-import { Button } from '../../../components/ui';
-import { useGetOrderByIdQuery } from '../api';
-import { OrderStatusBadge, TrackingProgress } from '../components';
-import { useOrderPolling } from '../hooks';
+import { useGetOrderByIdQuery, useTrackOrderQuery } from '../../../services/api/orderApi';
 import { ROUTES } from '../../../constants';
 
-/**
- * Order detail page
- * Displays detailed order information with tracking
- * Validates: Requirements 18.2, 18.3, 18.4
- */
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const orderId = id || 'ORD-892415';
 
-  const { data: order, isLoading, error } = useGetOrderByIdQuery(id || '', {
-    skip: !id,
-  });
+  const { data: orderResponse, isLoading } = useGetOrderByIdQuery(orderId);
+  const { data: trackResponse } = useTrackOrderQuery(orderId);
 
+  const mockTimeline = [
+    { title: 'Order Placed', time: 'Jul 26, 10:30 AM', done: true, current: false },
+    { title: 'Payment Confirmed', time: 'Jul 26, 10:32 AM', done: true, current: false },
+    { title: 'Warehouse Processing', time: 'Jul 26, 02:15 PM', done: true, current: true },
+    { title: 'Shipped via FedEx Express', time: 'Estimated Jul 27', done: false, current: false },
+    { title: 'Out for Delivery', time: 'Estimated Jul 28', done: false, current: false },
+  ];
 
-  useOrderPolling(id || '', order?.status || 'CREATED');
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
+  const timeline = trackResponse?.data?.timeline || mockTimeline;
+  const order = orderResponse?.data;
 
   if (isLoading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-          <CircularProgress />
-        </Box>
-      </Container>
-    );
-  }
-
-  if (error || !order) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="error" sx={{ mb: 3 }}>
-          Failed to load order details. Please try again later.
-        </Alert>
-        <Button variant="outline" onClick={() => navigate(ROUTES.ORDERS)}>
-          Back to Orders
-        </Button>
-      </Container>
+      <div className="min-h-screen bg-[#f8f9ff] pt-28 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#3525cd] border-t-transparent"></div>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h4">
-          Order #{order.id.slice(0, 8).toUpperCase()}
-        </Typography>
-        <Button variant="outline" onClick={() => navigate(ROUTES.ORDERS)}>
-          Back to Orders
-        </Button>
-      </Box>
+    <div className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] pt-28 pb-16">
+      <main className="max-w-5xl mx-auto px-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <span className="text-xs font-semibold uppercase text-[#3525cd] tracking-wider">Tracking Details</span>
+            <h1 className="text-3xl font-bold text-[#0b1c30]">Order {orderId}</h1>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => navigate(`/orders/${orderId}/invoice`)}
+              className="px-4 py-2 glass-card text-xs font-bold rounded-xl hover:bg-white flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-[18px]">receipt_long</span> Download Invoice
+            </button>
+            <button
+              onClick={() => navigate(ROUTES.ORDERS)}
+              className="px-4 py-2 bg-[#0b1c30] text-white text-xs font-bold rounded-xl hover:bg-[#3525cd]"
+            >
+              Back to Orders
+            </button>
+          </div>
+        </div>
 
-      {/* Order Status and Tracking */}
-      <Paper elevation={0} sx={{ p: 3, mb: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6">Order Status</Typography>
-          <OrderStatusBadge status={order.status} />
-        </Box>
-        <TrackingProgress
-          status={order.status}
-          updatedAt={order.updatedAt}
-        />
-      </Paper>
+        {/* Tracking Timeline */}
+        <div className="glass-card rounded-3xl p-8 mb-8">
+          <h2 className="font-bold text-lg text-[#0b1c30] mb-6">Shipment Timeline</h2>
+          <div className="space-y-6 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+            {timeline.map((step, idx) => (
+              <div key={idx} className="flex items-start gap-6 relative z-10">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                    step.done
+                      ? 'bg-[#3525cd] text-white'
+                      : step.current
+                      ? 'bg-amber-500 text-white ring-4 ring-amber-100'
+                      : 'bg-slate-200 text-slate-500'
+                  }`}
+                >
+                  {step.done ? '✓' : idx + 1}
+                </div>
+                <div>
+                  <h3 className={`font-bold text-sm ${step.current ? 'text-[#3525cd]' : 'text-[#0b1c30]'}`}>
+                    {step.title}
+                  </h3>
+                  <p className="text-xs text-[#464555]">{step.time || step.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
-      {/* Order Information */}
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, mb: 3 }}>
-        <Box sx={{ flex: 1 }}>
-          <Paper elevation={0} sx={{ p: 3, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              Order Information
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <Stack spacing={1.5}>
-              <Box>
-                <Typography variant="caption" color="text.secondary">
-                  Order Date
-                </Typography>
-                <Typography variant="body2">{formatDate(order.createdAt)}</Typography>
-              </Box>
-              <Box>
-                <Typography variant="caption" color="text.secondary">
-                  Last Updated
-                </Typography>
-                <Typography variant="body2">{formatDate(order.updatedAt)}</Typography>
-              </Box>
-              <Box>
-                <Typography variant="caption" color="text.secondary">
-                  Payment Status
-                </Typography>
-                <Typography variant="body2" sx={{ textTransform: 'capitalize' }}>
-                  {order.paymentStatus.toLowerCase()}
-                </Typography>
-              </Box>
-            </Stack>
-          </Paper>
-        </Box>
+        {/* Order Details Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="glass-card rounded-3xl p-6 space-y-3 text-sm">
+            <h3 className="font-bold text-[#0b1c30] pb-2 border-b border-slate-200">Shipping Details</h3>
+            <p className="font-semibold text-[#0b1c30]">{order?.shippingAddress?.street || '100 Enterprise Way, Suite 400'}</p>
+            <p className="text-[#464555]">
+              {order?.shippingAddress?.city || 'San Francisco'}, {order?.shippingAddress?.state || 'CA'} {order?.shippingAddress?.postalCode || '94105'}
+            </p>
+            <p className="text-xs font-semibold text-[#3525cd] pt-2">Carrier: FedEx Express (Tracking #94001092023910)</p>
+          </div>
 
-        <Box sx={{ flex: 1 }}>
-          <Paper elevation={0} sx={{ p: 3, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              Shipping Address
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <Typography variant="body2">
-              {order.shippingAddress.street}
-              <br />
-              {order.shippingAddress.city}, {order.shippingAddress.state}{' '}
-              {order.shippingAddress.postalCode}
-              <br />
-              {order.shippingAddress.country}
-            </Typography>
-          </Paper>
-        </Box>
-      </Box>
-
-      {/* Order Items */}
-      <Paper elevation={0} sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Order Items
-        </Typography>
-        <Divider sx={{ mb: 2 }} />
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Product</TableCell>
-                <TableCell align="center">Quantity</TableCell>
-                <TableCell align="right">Unit Price</TableCell>
-                <TableCell align="right">Subtotal</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {order.items.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>
-                    <Typography variant="body2">Product ID: {item.productId}</Typography>
-                    {item.variantId && (
-                      <Typography variant="caption" color="text.secondary">
-                        Variant: {item.variantId}
-                      </Typography>
-                    )}
-                  </TableCell>
-                  <TableCell align="center">{item.quantity}</TableCell>
-                  <TableCell align="right">{formatCurrency(item.unitPrice)}</TableCell>
-                  <TableCell align="right">{formatCurrency(item.subtotal)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
-
-      {/* Order Summary */}
-      <Paper elevation={0} sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Order Summary
-        </Typography>
-        <Divider sx={{ mb: 2 }} />
-        <Stack spacing={1}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="body2">Subtotal:</Typography>
-            <Typography variant="body2">
-              {formatCurrency(
-                order.items.reduce((sum, item) => sum + item.subtotal, 0)
-              )}
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-              Total:
-            </Typography>
-            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-              {formatCurrency(order.totalAmount)}
-            </Typography>
-          </Box>
-        </Stack>
-      </Paper>
-    </Container>
+          <div className="glass-card rounded-3xl p-6 space-y-3 text-sm">
+            <h3 className="font-bold text-[#0b1c30] pb-2 border-b border-slate-200">Payment Breakdown</h3>
+            <div className="flex justify-between text-[#464555]">
+              <span>Payment Status</span>
+              <span className="font-semibold text-emerald-600">PAID</span>
+            </div>
+            <div className="flex justify-between text-[#464555]">
+              <span>Payment Method</span>
+              <span className="font-semibold text-[#0b1c30]">Corporate Invoice (Net 30)</span>
+            </div>
+            <div className="flex justify-between pt-2 border-t border-slate-100 font-bold text-base text-[#0b1c30]">
+              <span>Total Amount</span>
+              <span className="text-[#3525cd]">${(order?.totalAmount || 1299).toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }

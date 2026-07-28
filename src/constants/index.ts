@@ -12,17 +12,29 @@ export const ROUTES = {
   CHECKOUT: '/checkout',
   ORDERS: '/orders',
   ORDER_DETAIL: '/orders/:id',
+  TRACK_ORDER: '/track-order',
   PROFILE: '/profile',
   WISHLIST: '/wishlist',
+  COMPARE: '/compare',
   SEARCH: '/search',
   LOGIN: '/login',
   REGISTER: '/register',
   ADMIN: '/admin',
   ADMIN_PRODUCTS: '/admin/products',
+  ADMIN_PRODUCT_NEW: '/admin/products/new',
+  ADMIN_PRODUCT_EDIT: '/admin/products/:id/edit',
   ADMIN_ORDERS: '/admin/orders',
+  ADMIN_INVENTORY: '/admin/inventory',
   ADMIN_USERS: '/admin/users',
   ADMIN_ANALYTICS: '/admin/analytics',
+  ADMIN_VENDORS: '/admin/vendors',
+  ADMIN_ROLES: '/admin/roles',
   ADMIN_SETTINGS: '/admin/settings',
+  INVOICE: '/orders/:id/invoice',
+  ENTERPRISE: '/enterprise',
+  DEVELOPER: '/developer',
+  SUPPORT: '/support',
+  MAINTENANCE: '/maintenance',
 } as const;
 
 export const API_TAGS = {
@@ -39,6 +51,8 @@ export const API_TAGS = {
   SEARCH: 'Search',
   ANALYTICS: 'Analytics',
   NOTIFICATIONS: 'Notifications',
+  VENDORS: 'Vendors',
+  ROLES: 'Roles',
 } as const;
 
 export const STORAGE_KEYS = {

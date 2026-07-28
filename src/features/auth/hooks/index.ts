@@ -1,7 +1,7 @@
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { logout as logoutAction } from '../../../store/slices/authSlice';
-import { useLogoutMutation } from '../api';
+import { useLogoutUserMutation } from '../../../services/api/authApi';
 import { useCallback } from 'react';
 import { baseApi } from '../../../services/api/baseApi';
 
@@ -37,12 +37,12 @@ export const useAuth = () => {
  */
 export const useLogout = () => {
   const dispatch = useAppDispatch();
-  const [logoutMutation] = useLogoutMutation();
+  const [logoutUserMutation] = useLogoutUserMutation();
 
   const logout = useCallback(async () => {
     try {
 
-      await logoutMutation().unwrap();
+      await logoutUserMutation().unwrap();
     } catch (error) {
 
       console.error('Logout API call failed:', error);
@@ -53,7 +53,7 @@ export const useLogout = () => {
 
       dispatch(baseApi.util.resetApiState());
     }
-  }, [dispatch, logoutMutation]);
+  }, [dispatch, logoutUserMutation]);
 
   return logout;
 };
