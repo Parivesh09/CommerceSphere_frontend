@@ -23,30 +23,30 @@ export default function OrderDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#f8f9ff] pt-28 flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#3525cd] border-t-transparent"></div>
+      <div className="min-h-screen bg-background pt-28 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] pt-28 pb-16">
-      <main className="max-w-5xl mx-auto px-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div className="min-h-screen bg-background text-on-surface pt-28 pb-16">
+      <main className="max-w-5xl mx-auto px-margin-mobile">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-gutter mb-8">
           <div>
-            <span className="text-xs font-semibold uppercase text-[#3525cd] tracking-wider">Tracking Details</span>
-            <h1 className="text-3xl font-bold text-[#0b1c30]">Order {orderId}</h1>
+            <span className="font-label-md text-label-md uppercase text-primary tracking-wider">Tracking Details</span>
+            <h1 className="font-headline-lg text-headline-lg text-on-surface">Order {orderId}</h1>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-sm">
             <button
               onClick={() => navigate(`/orders/${orderId}/invoice`)}
-              className="px-4 py-2 glass-card text-xs font-bold rounded-xl hover:bg-white flex items-center gap-2"
+              className="px-4 py-2 glass-card font-label-md text-label-md rounded-xl hover:bg-surface flex items-center gap-sm"
             >
               <span className="material-symbols-outlined text-[18px]">receipt_long</span> Download Invoice
             </button>
             <button
               onClick={() => navigate(ROUTES.ORDERS)}
-              className="px-4 py-2 bg-[#0b1c30] text-white text-xs font-bold rounded-xl hover:bg-[#3525cd]"
+              className="px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:brightness-90"
             >
               Back to Orders
             </button>
@@ -54,27 +54,27 @@ export default function OrderDetailPage() {
         </div>
 
         {/* Tracking Timeline */}
-        <div className="glass-card rounded-3xl p-8 mb-8">
-          <h2 className="font-bold text-lg text-[#0b1c30] mb-6">Shipment Timeline</h2>
-          <div className="space-y-6 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+        <div className="glass-card rounded-2xl p-lg mb-8">
+          <h2 className="font-headline-md text-headline-md text-on-surface mb-6">Shipment Timeline</h2>
+          <div className="gap-gutter flex flex-col relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-0.5 before:bg-outline-variant">
             {timeline.map((step, idx) => (
-              <div key={idx} className="flex items-start gap-6 relative z-10">
+              <div key={idx} className="flex items-start gap-md relative z-10">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-label-md text-label-md shrink-0 ${
                     step.done
-                      ? 'bg-[#3525cd] text-white'
+                      ? 'bg-primary text-on-primary'
                       : step.current
                       ? 'bg-amber-500 text-white ring-4 ring-amber-100'
-                      : 'bg-slate-200 text-slate-500'
+                      : 'bg-surface-variant text-on-surface-variant'
                   }`}
                 >
                   {step.done ? '✓' : idx + 1}
                 </div>
                 <div>
-                  <h3 className={`font-bold text-sm ${step.current ? 'text-[#3525cd]' : 'text-[#0b1c30]'}`}>
+                  <h3 className={`font-body-sm text-body-sm font-bold ${step.current ? 'text-primary' : 'text-on-surface'}`}>
                     {step.title}
                   </h3>
-                  <p className="text-xs text-[#464555]">{step.time || step.description}</p>
+                  <p className="font-body-sm text-body-sm text-on-surface-variant">{step.time || step.description}</p>
                 </div>
               </div>
             ))}
@@ -82,29 +82,29 @@ export default function OrderDetailPage() {
         </div>
 
         {/* Order Details Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="glass-card rounded-3xl p-6 space-y-3 text-sm">
-            <h3 className="font-bold text-[#0b1c30] pb-2 border-b border-slate-200">Shipping Details</h3>
-            <p className="font-semibold text-[#0b1c30]">{order?.shippingAddress?.street || '100 Enterprise Way, Suite 400'}</p>
-            <p className="text-[#464555]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+          <div className="glass-card rounded-2xl p-md gap-sm flex flex-col font-body-sm text-body-sm">
+            <h3 className="font-headline-md text-headline-md text-on-surface pb-2 border-b border-outline-variant">Shipping Details</h3>
+            <p className="font-bold text-on-surface">{order?.shippingAddress?.street || '100 Enterprise Way, Suite 400'}</p>
+            <p className="text-on-surface-variant">
               {order?.shippingAddress?.city || 'San Francisco'}, {order?.shippingAddress?.state || 'CA'} {order?.shippingAddress?.postalCode || '94105'}
             </p>
-            <p className="text-xs font-semibold text-[#3525cd] pt-2">Carrier: FedEx Express (Tracking #94001092023910)</p>
+            <p className="font-label-md text-label-md text-primary pt-2">Carrier: FedEx Express (Tracking #94001092023910)</p>
           </div>
 
-          <div className="glass-card rounded-3xl p-6 space-y-3 text-sm">
-            <h3 className="font-bold text-[#0b1c30] pb-2 border-b border-slate-200">Payment Breakdown</h3>
-            <div className="flex justify-between text-[#464555]">
+          <div className="glass-card rounded-2xl p-md gap-sm flex flex-col font-body-sm text-body-sm">
+            <h3 className="font-headline-md text-headline-md text-on-surface pb-2 border-b border-outline-variant">Payment Breakdown</h3>
+            <div className="flex justify-between text-on-surface-variant">
               <span>Payment Status</span>
-              <span className="font-semibold text-emerald-600">PAID</span>
+              <span className="font-bold text-emerald-600">PAID</span>
             </div>
-            <div className="flex justify-between text-[#464555]">
+            <div className="flex justify-between text-on-surface-variant">
               <span>Payment Method</span>
-              <span className="font-semibold text-[#0b1c30]">Corporate Invoice (Net 30)</span>
+              <span className="font-bold text-on-surface">Corporate Invoice (Net 30)</span>
             </div>
-            <div className="flex justify-between pt-2 border-t border-slate-100 font-bold text-base text-[#0b1c30]">
+            <div className="flex justify-between pt-2 border-t border-outline-variant font-bold text-body-md text-on-surface">
               <span>Total Amount</span>
-              <span className="text-[#3525cd]">${(order?.totalAmount || 1299).toLocaleString()}</span>
+              <span className="text-primary">${(order?.totalAmount || 1299).toLocaleString()}</span>
             </div>
           </div>
         </div>

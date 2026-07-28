@@ -5,16 +5,16 @@ export function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] flex items-center justify-center p-6 text-center">
-      <div className="max-w-md w-full glass-card rounded-3xl p-10 space-y-6">
-        <h1 className="text-7xl font-extrabold text-[#3525cd]">404</h1>
-        <h2 className="text-xl font-bold text-[#0b1c30]">Page Not Found</h2>
-        <p className="text-xs text-[#464555]">
+    <div className="min-h-screen bg-background text-on-surface flex items-center justify-center p-md text-center">
+      <div className="max-w-md w-full glass-card rounded-2xl p-lg gap-gutter flex flex-col items-center">
+        <h1 className="font-headline-lg text-headline-lg text-primary" style={{ fontSize: '4rem', lineHeight: 1 }}>404</h1>
+        <h2 className="font-headline-md text-headline-md text-on-surface">Page Not Found</h2>
+        <p className="font-body-sm text-body-sm text-on-surface-variant">
           The resource or page you requested could not be located on the CommerceSphere enterprise platform.
         </p>
         <button
           onClick={() => navigate(ROUTES.HOME)}
-          className="px-6 py-3 bg-[#3525cd] text-white text-xs font-bold rounded-xl shadow-lg hover:bg-[#2c1eb3] transition-all"
+          className="px-6 py-3 bg-primary text-on-primary font-label-md text-label-md rounded-xl shadow-lg hover:brightness-90 transition-all"
         >
           Return to Homepage
         </button>

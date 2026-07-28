@@ -22,15 +22,15 @@ export const WishlistPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-100">
+      <div className="min-h-screen bg-background text-on-surface mx-auto px-margin-mobile md:px-margin-desktop py-xl">
+        <h1 className="font-headline-lg text-headline-lg text-on-surface mb-8">
           My Wishlist
         </h1>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-gutter sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, index) => (
             <Card key={index} padding="none">
               <Skeleton className="aspect-square w-full" />
-              <div className="p-4">
+              <div className="p-md">
                 <Skeleton className="mb-2 h-4 w-3/4" />
                 <Skeleton className="mb-2 h-6 w-1/2" />
                 <Skeleton className="h-10 w-full" />
@@ -44,25 +44,13 @@ export const WishlistPage: React.FC = () => {
 
   if (wishlistCount === 0) {
     return (
-      <div className="container mx-auto px-4 py-16">
-        <div className="mx-auto max-w-md text-center">
-          <svg
-            className="mx-auto h-24 w-24 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-            />
-          </svg>
-          <h2 className="mt-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
+      <div className="min-h-screen bg-background text-on-surface flex items-center justify-center p-md text-center">
+        <div className="max-w-md w-full glass-card rounded-2xl p-lg gap-gutter flex flex-col items-center">
+          <span className="material-symbols-outlined text-[48px] text-on-surface-variant">favorite</span>
+          <h2 className="font-headline-md text-headline-md text-on-surface">
             Your wishlist is empty
           </h2>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <p className="font-body-sm text-body-sm text-on-surface-variant">
             Start adding products you love to your wishlist
           </p>
           <Button
@@ -79,17 +67,17 @@ export const WishlistPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background text-on-surface mx-auto px-margin-mobile md:px-margin-desktop py-xl">
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="font-headline-lg text-headline-lg text-on-surface">
           My Wishlist
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="font-body-sm text-body-sm text-on-surface-variant">
           {wishlistCount} {wishlistCount === 1 ? 'item' : 'items'}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-gutter sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {wishlistItems.map((item) => {
           const product = item.product;
           const primaryImage = product.images?.find((img) => img.order === 0) || product.images?.[0];
@@ -103,11 +91,11 @@ export const WishlistPage: React.FC = () => {
               key={item.id}
               hoverable
               padding="none"
-              className="group overflow-hidden"
+              className="group overflow-hidden glass-card rounded-2xl"
               onClick={() => navigate(ROUTES.PRODUCT_DETAIL.replace(':id', product.id))}
             >
               {/* Product Image */}
-              <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700">
+              <div className="relative aspect-square overflow-hidden bg-surface-variant">
                 {primaryImage ? (
                   <img
                     src={primaryImage.url}
@@ -116,19 +104,19 @@ export const WishlistPage: React.FC = () => {
                     loading="lazy"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-gray-400">
-                    No Image
+                  <div className="flex h-full w-full items-center justify-center text-on-surface-variant font-body-sm text-body-sm">
+                    <span className="material-symbols-outlined text-[36px]">image</span>
                   </div>
                 )}
 
                 {/* Wishlist Button */}
-                <div className="absolute right-2 top-2">
+                <div className="absolute right-sm top-sm">
                   <WishlistButton productId={product.id} size="md" />
                 </div>
 
                 {/* Discount Badge */}
                 {hasDiscount && (
-                  <div className="absolute left-2 top-2 rounded-full bg-red-500 px-2 py-1 text-xs font-semibold text-white">
+                  <div className="absolute left-sm top-sm rounded-full bg-red-500 px-2 py-1 font-label-md text-label-md text-on-primary">
                     -{discountPercentage}%
                   </div>
                 )}
@@ -136,7 +124,7 @@ export const WishlistPage: React.FC = () => {
                 {/* Out of Stock Badge */}
                 {product.stock === 0 && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                    <span className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-gray-900">
+                    <span className="rounded-xl bg-surface px-4 py-2 font-body-sm text-body-sm font-bold text-on-surface">
                       Out of Stock
                     </span>
                   </div>
@@ -144,19 +132,19 @@ export const WishlistPage: React.FC = () => {
               </div>
 
               {/* Product Info */}
-              <div className="p-4">
+              <div className="p-md gap-sm flex flex-col">
                 {/* Category */}
-                <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <p className="font-label-md text-label-md uppercase tracking-wide text-on-surface-variant">
                   {product.category}
                 </p>
 
                 {/* Product Name */}
-                <h3 className="mt-1 line-clamp-2 text-base font-semibold text-gray-900 dark:text-gray-100">
+                <h3 className="line-clamp-2 font-body-sm text-body-sm font-bold text-on-surface">
                   {product.name}
                 </h3>
 
                 {/* Rating */}
-                <div className="mt-2 flex items-center gap-1">
+                <div className="flex items-center gap-sm">
                   <div className="flex items-center">
                     {Array.from({ length: 5 }).map((_, index) => (
                       <svg
@@ -164,7 +152,7 @@ export const WishlistPage: React.FC = () => {
                         className={`h-4 w-4 ${
                           index < Math.floor(product.rating)
                             ? 'text-yellow-400'
-                            : 'text-gray-300 dark:text-gray-600'
+                            : 'text-on-surface-variant'
                         }`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
@@ -173,18 +161,18 @@ export const WishlistPage: React.FC = () => {
                       </svg>
                     ))}
                   </div>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="font-body-sm text-body-sm text-on-surface-variant">
                     ({product.reviewCount})
                   </span>
                 </div>
 
                 {/* Price */}
-                <div className="mt-3 flex items-center gap-2">
-                  <span className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                <div className="flex items-center gap-sm">
+                  <span className="font-headline-md text-headline-md text-on-surface">
                     ${product.price.toFixed(2)}
                   </span>
                   {hasDiscount && (
-                    <span className="text-sm text-gray-500 line-through dark:text-gray-400">
+                    <span className="font-body-sm text-body-sm text-on-surface-variant line-through">
                       ${product.compareAtPrice!.toFixed(2)}
                     </span>
                   )}

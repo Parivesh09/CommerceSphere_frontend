@@ -27,10 +27,10 @@ export function AdminVendorsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-[#0b1c30]">Vendor Management</h1>
-          <p className="text-sm text-[#464555] mt-1">Manage 3rd party enterprise hardware suppliers, SLAs, and onboarding status.</p>
+          <h1 className="text-3xl font-bold text-on-surface">Vendor Management</h1>
+          <p className="text-sm text-on-surface-variant mt-1">Manage 3rd party enterprise hardware suppliers, SLAs, and onboarding status.</p>
         </div>
-        <button onClick={() => toast.success('Vendor onboarding request sent')} className="px-4 py-2 bg-[#3525cd] text-white text-xs font-bold rounded-xl shadow">
+        <button onClick={() => toast.success('Vendor onboarding request sent')} className="px-4 py-2 bg-primary text-on-primary text-xs font-bold rounded-xl shadow">
           + Onboard New Vendor
         </button>
       </div>
@@ -42,7 +42,7 @@ export function AdminVendorsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-slate-200 text-xs font-bold uppercase text-slate-400">
+                <tr className="border-b border-outline-variant text-xs font-bold uppercase text-on-surface-variant">
                   <th className="pb-3">Company</th>
                   <th className="pb-3">Contact Email</th>
                   <th className="pb-3">Rating</th>
@@ -51,15 +51,15 @@ export function AdminVendorsPage() {
                   <th className="pb-3 text-right">Update Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-outline-variant">
                 {vendors.map((v) => (
-                  <tr key={v.id} className="hover:bg-slate-50">
-                    <td className="py-3 font-bold text-[#0b1c30]">{v.companyName}</td>
-                    <td className="py-3 text-[#464555]">{v.email}</td>
-                    <td className="py-3 text-amber-500 font-semibold">★ {v.rating}</td>
-                    <td className="py-3 font-bold text-[#3525cd]">${v.totalSales.toLocaleString()}</td>
+                  <tr key={v.id} className="hover:bg-surface-container-low">
+                    <td className="py-3 font-bold text-on-surface">{v.companyName}</td>
+                    <td className="py-3 text-on-surface-variant">{v.email}</td>
+                    <td className="py-3 text-secondary-fixed-dim font-semibold">★ {v.rating}</td>
+                    <td className="py-3 font-bold text-primary">${v.totalSales.toLocaleString()}</td>
                     <td className="py-3">
-                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${v.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${v.status === 'active' ? 'bg-tertiary-fixed text-tertiary' : 'bg-secondary-fixed text-secondary'}`}>
                         {v.status.toUpperCase()}
                       </span>
                     </td>
@@ -67,7 +67,7 @@ export function AdminVendorsPage() {
                       <select
                         value={v.status}
                         onChange={(e) => handleStatusChange(v.id, e.target.value as Vendor['status'])}
-                        className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-[#0b1c30]"
+                        className="px-3 py-1 bg-surface-container-lowest border border-outline-variant rounded-lg text-xs font-semibold text-on-surface"
                       >
                         <option value="active">ACTIVE</option>
                         <option value="pending">PENDING</option>

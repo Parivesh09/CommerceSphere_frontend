@@ -29,8 +29,8 @@ export function AdminInventoryPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-[#0b1c30]">Inventory Management</h1>
-        <p className="text-sm text-[#464555] mt-1">Real-time stock tracking, reserved allocation, and reorder point alerts.</p>
+        <h1 className="text-3xl font-bold text-on-surface">Inventory Management</h1>
+        <p className="text-sm text-on-surface-variant mt-1">Real-time stock tracking, reserved allocation, and reorder point alerts.</p>
       </div>
 
       <div className="glass-card rounded-3xl p-6 space-y-4">
@@ -40,7 +40,7 @@ export function AdminInventoryPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-slate-200 text-xs font-bold uppercase text-slate-400">
+                <tr className="border-b border-outline-variant text-xs font-bold uppercase text-on-surface-variant">
                   <th className="pb-3">Product Name</th>
                   <th className="pb-3">SKU Code</th>
                   <th className="pb-3">Available Stock</th>
@@ -49,19 +49,19 @@ export function AdminInventoryPage() {
                   <th className="pb-3 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-outline-variant">
                 {items.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50">
-                    <td className="py-3 font-bold text-[#0b1c30]">{item.productTitle}</td>
-                    <td className="py-3 font-mono text-xs text-[#3525cd]">{item.sku}</td>
+                  <tr key={item.id} className="hover:bg-surface-container-low">
+                    <td className="py-3 font-bold text-on-surface">{item.productTitle}</td>
+                    <td className="py-3 font-mono text-xs text-primary">{item.sku}</td>
                     <td className="py-3 font-bold">{item.quantity} units</td>
-                    <td className="py-3 text-[#464555]">{item.reservedQuantity} units</td>
+                    <td className="py-3 text-on-surface-variant">{item.reservedQuantity} units</td>
                     <td className="py-3">
                       <span
                         className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
                           item.quantity <= item.reorderPoint
-                            ? 'bg-amber-100 text-amber-700'
-                            : 'bg-emerald-100 text-emerald-700'
+                            ? 'bg-secondary-fixed text-secondary'
+                            : 'bg-tertiary-fixed text-tertiary'
                         }`}
                       >
                         {item.quantity <= item.reorderPoint ? 'Low Stock Alert' : 'In Stock'}
@@ -70,7 +70,7 @@ export function AdminInventoryPage() {
                     <td className="py-3 text-right">
                       <button
                         onClick={() => handleStockUpdate(item.sku, item.quantity)}
-                        className="px-3 py-1 bg-[#3525cd] text-white text-xs font-bold rounded-lg hover:bg-[#2c1eb3]"
+                        className="px-3 py-1 bg-primary text-on-primary text-xs font-bold rounded-lg hover:bg-primary-container"
                       >
                         Adjust Stock
                       </button>

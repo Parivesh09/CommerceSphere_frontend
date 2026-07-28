@@ -26,8 +26,8 @@ export function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-[#0b1c30]">Customer CRM & User Roles</h1>
-        <p className="text-sm text-[#464555] mt-1">Manage enterprise customer accounts, access levels, and moderation roles.</p>
+        <h1 className="text-3xl font-bold text-on-surface">Customer CRM & User Roles</h1>
+        <p className="text-sm text-on-surface-variant mt-1">Manage enterprise customer accounts, access levels, and moderation roles.</p>
       </div>
 
       <div className="glass-card rounded-3xl p-6 space-y-4">
@@ -37,7 +37,7 @@ export function AdminUsersPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-slate-200 text-xs font-bold uppercase text-slate-400">
+                <tr className="border-b border-outline-variant text-xs font-bold uppercase text-on-surface-variant">
                   <th className="pb-3">Customer Name</th>
                   <th className="pb-3">Email Address</th>
                   <th className="pb-3">Joined Date</th>
@@ -45,14 +45,14 @@ export function AdminUsersPage() {
                   <th className="pb-3 text-right">Access Role</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-outline-variant">
                 {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-slate-50">
-                    <td className="py-3 font-bold text-[#0b1c30]">{u.name}</td>
-                    <td className="py-3 text-[#464555]">{u.email}</td>
-                    <td className="py-3 text-[#464555]">{new Date(u.createdAt).toLocaleDateString()}</td>
+                  <tr key={u.id} className="hover:bg-surface-container-low">
+                    <td className="py-3 font-bold text-on-surface">{u.name}</td>
+                    <td className="py-3 text-on-surface-variant">{u.email}</td>
+                    <td className="py-3 text-on-surface-variant">{new Date(u.createdAt).toLocaleDateString()}</td>
                     <td className="py-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#3525cd]/10 text-[#3525cd]">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary-fixed text-primary">
                         {u.role.toUpperCase()}
                       </span>
                     </td>
@@ -60,7 +60,7 @@ export function AdminUsersPage() {
                       <select
                         value={u.role}
                         onChange={(e) => handleRoleChange(u.id, e.target.value as User['role'])}
-                        className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-[#0b1c30] focus:outline-none focus:ring-2 focus:ring-[#3525cd]"
+                        className="px-3 py-1 bg-surface-container-lowest border border-outline-variant rounded-lg text-xs font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
                       >
                         <option value="customer">CUSTOMER</option>
                         <option value="moderator">MODERATOR</option>

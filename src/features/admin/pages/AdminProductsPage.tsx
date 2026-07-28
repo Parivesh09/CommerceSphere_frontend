@@ -58,27 +58,27 @@ export function AdminProductsPage() {
                   <th className="pb-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-outline-variant">
                 {products.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50">
-                    <td className="py-3 font-bold text-[#0b1c30]">{p.title}</td>
-                    <td className="py-3 font-semibold text-[#3525cd]">${p.price.toLocaleString()}</td>
+                  <tr key={p.id} className="hover:bg-surface-container-low">
+                    <td className="py-3 font-bold text-on-surface">{p.title}</td>
+                    <td className="py-3 font-semibold text-primary">${p.price.toLocaleString()}</td>
                     <td className="py-3 font-medium">{p.inventoryQuantity} units</td>
                     <td className="py-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary-fixed text-primary">
                         {p.status || 'Active'}
                       </span>
                     </td>
                     <td className="py-3 text-right space-x-2">
                       <button
                         onClick={() => navigate(`/admin/products/${p.id}/edit`)}
-                        className="px-3 py-1 bg-slate-100 text-[#0b1c30] text-xs font-semibold rounded-lg hover:bg-slate-200"
+                        className="px-3 py-1 bg-surface-container-low text-on-surface text-xs font-semibold rounded-lg hover:bg-surface-container"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(p.id)}
-                        className="px-3 py-1 bg-rose-50 text-rose-600 text-xs font-semibold rounded-lg hover:bg-rose-100"
+                        className="px-3 py-1 bg-error-container text-error text-xs font-semibold rounded-lg hover:bg-error-container"
                       >
                         Delete
                       </button>

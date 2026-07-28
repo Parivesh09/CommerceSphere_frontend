@@ -115,166 +115,154 @@ export function SearchResultsPage() {
 
   if (!query) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <SearchBar autoFocus />
-        <Box sx={{ mt: 4, textAlign: 'center' }}>
-          <Typography variant="h5" color="text.secondary">
-            Enter a search query to find products
-          </Typography>
-        </Box>
-      </Container>
+      <div className="min-h-screen bg-background text-on-surface">
+        <div className="max-w-6xl mx-auto px-margin-mobile md:px-margin-desktop py-xl">
+          <SearchBar autoFocus />
+          <div className="text-center mt-lg">
+            <p className="font-headline-md text-headline-md text-on-surface-variant">
+              Enter a search query to find products
+            </p>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Search Bar */}
-      <Box sx={{ mb: 4 }}>
-        <SearchBar />
-      </Box>
+    <div className="min-h-screen bg-background text-on-surface">
+      <div className="max-w-6xl mx-auto px-margin-mobile md:px-margin-desktop py-xl">
+        {/* Search Bar */}
+        <div className="mb-gutter">
+          <SearchBar />
+        </div>
 
-      {/* Results Header */}
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-        <Typography variant="h5">
-          {isLoading ? 'Searching...' : `Results for "${query}"`}
-          {data && (
-            <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 2 }}>
-              ({data.total} products)
-            </Typography>
-          )}
-        </Typography>
+        {/* Results Header */}
+        <div className="flex justify-between items-center flex-wrap gap-sm mb-gutter">
+          <p className="font-headline-md text-headline-md text-on-surface">
+            {isLoading ? 'Searching...' : `Results for "${query}"`}
+            {data && (
+              <span className="font-body-sm text-body-sm text-on-surface-variant ml-sm">
+                ({data.total} products)
+              </span>
+            )}
+          </p>
 
-        {/* Sort Dropdown */}
-        <FormControl size="small" sx={{ minWidth: 200 }}>
-          <InputLabel>Sort By</InputLabel>
-          <Select
-            value={`${filters.sortBy}-${filters.sortOrder}`}
-            label="Sort By"
-            onChange={(e) => handleSortChange(e.target.value)}
-          >
-            <MenuItem value="relevance-desc">Relevance</MenuItem>
-            {SORT_OPTIONS.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
+          {/* Sort Dropdown */}
+          <FormControl size="small" sx={{ minWidth: 200, '& .MuiInputLabel-root': { color: 'var(--color-on-surface-variant)', fontFamily: 'inherit', fontWeight: 600, fontSize: '12px' }, '& .MuiOutlinedInput-root': { borderRadius: '12px', backgroundColor: 'var(--color-surface)', '& fieldset': { borderColor: 'var(--color-outline-variant)' }, '&:hover fieldset': { borderColor: 'var(--color-primary)' }, '&.Mui-focused fieldset': { borderColor: 'var(--color-primary)' } }, '& .MuiSelect-select': { color: 'var(--color-on-surface)', fontFamily: 'inherit', fontSize: '14px' }, '& .MuiSvgIcon-root': { color: 'var(--color-on-surface-variant)' } }}>
+            <InputLabel sx={{ color: 'var(--color-on-surface-variant)', fontFamily: 'inherit', fontSize: '12px', fontWeight: 600 }}>Sort By</InputLabel>
+            <Select
+              value={`${filters.sortBy}-${filters.sortOrder}`}
+              label="Sort By"
+              onChange={(e) => handleSortChange(e.target.value)}
+            >
+              <MenuItem value="relevance-desc">Relevance</MenuItem>
+              {SORT_OPTIONS.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
 
-      <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
-        {/* Filters Sidebar */}
-        <Box sx={{ width: { xs: '100%', md: '25%' } }}>
-          <Paper sx={{ p: 2, position: 'sticky', top: 80 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <FilterIcon /> Filters
-              </Typography>
-              {hasActiveFilters && (
-                <Button size="small" startIcon={<ClearIcon />} onClick={handleClearFilters}>
-                  Clear
-                </Button>
-              )}
-            </Box>
+        <div className="flex gap-gutter flex-col md:flex-row">
+          {/* Filters Sidebar */}
+          <div className="w-full md:w-1/4">
+            <Paper sx={{ p: '24px', position: 'sticky', top: 80, backgroundColor: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--color-outline-variant)', boxShadow: 'none' }}>
+              <div className="flex justify-between items-center mb-gutter">
+                <p className="font-headline-md text-headline-md text-on-surface flex items-center gap-sm">
+                  <span className="material-symbols-outlined text-[20px]">filter_list</span> Filters
+                </p>
+                {hasActiveFilters && (
+                  <button onClick={handleClearFilters} className="font-label-md text-label-md text-primary flex items-center gap-xs">
+                    <span className="material-symbols-outlined text-[16px]">close</span> Clear
+                  </button>
+                )}
+              </div>
 
-            {/* Price Range Filter */}
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" gutterBottom>
-                Price Range
-              </Typography>
-              <Slider
-                value={priceRange}
-                onChange={handlePriceRangeChange}
-                onChangeCommitted={handlePriceRangeCommit}
-                valueLabelDisplay="auto"
-                min={0}
-                max={1000}
-                step={10}
-                valueLabelFormat={(value) => `$${value}`}
-              />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                <Typography variant="caption">${priceRange[0]}</Typography>
-                <Typography variant="caption">${priceRange[1]}</Typography>
-              </Box>
-            </Box>
+              {/* Price Range Filter */}
+              <div className="mb-gutter">
+                <p className="font-label-md text-label-md text-on-surface-variant mb-sm">Price Range</p>
+                <Slider
+                  value={priceRange}
+                  onChange={handlePriceRangeChange}
+                  onChangeCommitted={handlePriceRangeCommit}
+                  valueLabelDisplay="auto"
+                  min={0}
+                  max={1000}
+                  step={10}
+                  valueLabelFormat={(value) => `$${value}`}
+                  sx={{ color: 'var(--color-primary)', '& .MuiSlider-thumb': { backgroundColor: 'var(--color-primary)' }, '& .MuiSlider-track': { backgroundColor: 'var(--color-primary)' }, '& .MuiSlider-rail': { backgroundColor: 'var(--color-outline-variant)' }, '& .MuiSlider-valueLabel': { backgroundColor: 'var(--color-primary)', fontFamily: 'inherit', fontSize: '12px' } }}
+                />
+                <div className="flex justify-between mt-sm">
+                  <span className="font-body-sm text-body-sm text-on-surface-variant">${priceRange[0]}</span>
+                  <span className="font-body-sm text-body-sm text-on-surface-variant">${priceRange[1]}</span>
+                </div>
+              </div>
 
-            {/* Rating Filter */}
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" gutterBottom>
-                Minimum Rating
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                {[5, 4, 3, 2, 1].map((rating) => (
-                  <Chip
-                    key={rating}
-                    label={`${rating}+ Stars`}
-                    onClick={() => handleRatingChange(rating)}
-                    color={filters.minRating === rating ? 'primary' : 'default'}
-                    variant={filters.minRating === rating ? 'filled' : 'outlined'}
-                    sx={{ justifyContent: 'flex-start' }}
-                  />
-                ))}
-              </Box>
-            </Box>
-          </Paper>
-        </Box>
+              {/* Rating Filter */}
+              <div className="mb-gutter">
+                <p className="font-label-md text-label-md text-on-surface-variant mb-sm">Minimum Rating</p>
+                <div className="flex flex-col gap-sm">
+                  {[5, 4, 3, 2, 1].map((rating) => (
+                    <Chip
+                      key={rating}
+                      label={`${rating}+ Stars`}
+                      onClick={() => handleRatingChange(rating)}
+                      color={filters.minRating === rating ? 'primary' : 'default'}
+                      variant={filters.minRating === rating ? 'filled' : 'outlined'}
+                      sx={{ justifyContent: 'flex-start', fontFamily: 'inherit', fontWeight: 600, fontSize: '12px', backgroundColor: filters.minRating === rating ? 'var(--color-primary)' : 'transparent', color: filters.minRating === rating ? 'var(--color-on-primary)' : 'var(--color-on-surface)', borderColor: 'var(--color-outline-variant)', borderRadius: '12px', '&:hover': { backgroundColor: filters.minRating === rating ? 'var(--color-primary)' : 'var(--color-surface)' } }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </Paper>
+          </div>
 
-        {/* Results Grid */}
-        <Box sx={{ flex: 1 }}>
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              Failed to load search results. Please try again.
-            </Alert>
-          )}
+          {/* Results Grid */}
+          <div className="flex-1">
+            {error && (
+              <div className="glass-card rounded-2xl p-md mb-gutter font-body-sm text-body-sm" style={{ color: 'var(--color-error, #dc2626)', backgroundColor: 'rgba(220, 38, 38, 0.08)' }}>
+                <span className="material-symbols-outlined text-[16px] mr-sm">error</span> Failed to load search results. Please try again.
+              </div>
+            )}
 
-          {isLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-              <CircularProgress />
-            </Box>
-          ) : data && data.data.length > 0 ? (
-            <>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: {
-                    xs: '1fr',
-                    sm: 'repeat(2, 1fr)',
-                    md: 'repeat(3, 1fr)',
-                  },
-                  gap: 2,
-                }}
-              >
-                {data.data.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </Box>
+            {isLoading ? (
+              <div className="flex justify-center py-xl">
+                <CircularProgress sx={{ color: 'var(--color-primary)' }} />
+              </div>
+            ) : data && data.data.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-gutter">
+                  {data.data.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
 
-              {/* Pagination */}
-              {data.hasMore && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                  <Button
-                    variant="outlined"
-                    onClick={() => setPage((p) => p + 1)}
-                    disabled={isFetching}
-                  >
-                    {isFetching ? 'Loading...' : 'Load More'}
-                  </Button>
-                </Box>
-              )}
-            </>
-          ) : (
-            <Box sx={{ textAlign: 'center', py: 8 }}>
-              <Typography variant="h6" color="text.secondary" gutterBottom>
-                No products found
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Try adjusting your search or filters
-              </Typography>
-            </Box>
-          )}
-        </Box>
-      </Box>
-    </Container>
+                {/* Pagination */}
+                {data.hasMore && (
+                  <div className="flex justify-center mt-gutter">
+                    <button
+                      onClick={() => setPage((p) => p + 1)}
+                      disabled={isFetching}
+                      className="px-6 py-3 bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:brightness-90 disabled:opacity-50 transition-all"
+                    >
+                      {isFetching ? 'Loading...' : 'Load More'}
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-xl glass-card rounded-2xl p-lg">
+                <span className="material-symbols-outlined text-[48px] text-on-surface-variant">search_off</span>
+                <p className="font-headline-md text-headline-md text-on-surface mt-sm">No products found</p>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">Try adjusting your search or filters</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -289,29 +277,25 @@ interface ProductCardProps {
 function ProductCard({ product }: ProductCardProps) {
   return (
     <Paper
+      className="glass-card"
       sx={{
-        p: 2,
+        p: '16px',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
         cursor: 'pointer',
         transition: 'transform 0.2s, box-shadow 0.2s',
+        borderRadius: '16px',
+        backgroundColor: 'var(--color-surface)',
+        border: '1px solid var(--color-outline-variant)',
+        boxShadow: 'none',
         '&:hover': {
           transform: 'translateY(-4px)',
-          boxShadow: 4,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
         },
       }}
     >
-      <Box
-        sx={{
-          width: '100%',
-          paddingTop: '100%',
-          position: 'relative',
-          mb: 2,
-          backgroundColor: 'grey.100',
-          borderRadius: 1,
-        }}
-      >
+      <div className="relative w-full mb-sm" style={{ paddingTop: '100%', backgroundColor: 'var(--color-surface-variant)', borderRadius: '8px' }}>
         {product.images?.[0] && (
           <img
             src={product.images[0].url}
@@ -323,21 +307,21 @@ function ProductCard({ product }: ProductCardProps) {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              borderRadius: 4,
+              borderRadius: 8,
             }}
           />
         )}
-      </Box>
-      <Typography variant="subtitle1" noWrap gutterBottom>
+      </div>
+      <p className="font-body-sm text-body-sm text-on-surface font-bold truncate mb-sm">
         {product.name}
-      </Typography>
-      <Typography variant="h6" color="primary">
+      </p>
+      <p className="font-headline-md text-headline-md text-primary">
         ${product.price.toFixed(2)}
-      </Typography>
+      </p>
       {product.rating && (
-        <Typography variant="caption" color="text.secondary">
-          ⭐ {product.rating} ({product.reviewCount} reviews)
-        </Typography>
+        <p className="font-body-sm text-body-sm text-on-surface-variant">
+          <span className="material-symbols-outlined text-[14px] align-text-bottom">star</span> {product.rating} ({product.reviewCount} reviews)
+        </p>
       )}
     </Paper>
   );

@@ -60,10 +60,10 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] pt-28 pb-16">
-      <main className="max-w-7xl mx-auto px-6 md:px-10">
-        <h1 className="text-3xl font-bold text-[#0b1c30] mb-2">Order History</h1>
-        <p className="text-sm text-[#464555] mb-8">View past purchases, track active shipments, and download corporate invoices.</p>
+    <div className="min-h-screen bg-background text-on-surface pt-28 pb-16">
+      <main className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+        <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2">Order History</h1>
+        <p className="font-body-sm text-body-sm text-on-surface-variant mb-8">View past purchases, track active shipments, and download corporate invoices.</p>
 
         {/* Status Tabs */}
         <div className="flex gap-3 overflow-x-auto pb-4 mb-6">
@@ -71,10 +71,10 @@ export default function OrdersPage() {
             <button
               key={tab}
               onClick={() => setSelectedStatus(tab)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+              className={`px-4 py-2 rounded-xl font-label-md text-label-md transition-colors ${
                 selectedStatus === tab
-                  ? 'bg-[#3525cd] text-white'
-                  : 'glass-card text-[#464555] hover:bg-white'
+                  ? 'bg-primary text-on-primary'
+                  : 'glass-card text-on-surface-variant hover:bg-surface'
               }`}
             >
               {tab}
@@ -94,32 +94,32 @@ export default function OrdersPage() {
             {ordersList.map((order) => (
               <div
                 key={order.id}
-                className="glass-card rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition-all"
+                className="glass-card rounded-2xl p-md flex flex-col md:flex-row md:items-center justify-between gap-gutter hover:shadow-md transition-all"
               >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-3">
-                    <span className="font-bold text-lg text-[#0b1c30]">{order.id}</span>
-                    <span className={`px-3 py-0.5 rounded-full text-xs font-bold ${getStatusBadge(order.status)}`}>
+                <div className="gap-sm flex flex-col">
+                  <div className="flex items-center gap-sm">
+                    <span className="font-headline-md text-headline-md text-on-surface">{order.id}</span>
+                    <span className={`px-3 py-0.5 rounded-full font-label-md text-label-md ${getStatusBadge(order.status)}`}>
                       {order.status}
                     </span>
                   </div>
-                  <p className="text-xs text-[#464555]">
+                  <p className="font-body-sm text-body-sm text-on-surface-variant">
                     Placed on {new Date(order.createdAt).toLocaleDateString()} • {order.itemsCount} item(s)
                   </p>
                 </div>
 
-                <div className="flex items-center gap-6 justify-between md:justify-end">
-                  <span className="text-xl font-bold text-[#3525cd]">${order.totalAmount.toLocaleString()}</span>
-                  <div className="flex gap-2">
+                <div className="flex items-center gap-md justify-between md:justify-end">
+                  <span className="font-headline-md text-headline-md text-primary">${order.totalAmount.toLocaleString()}</span>
+                  <div className="flex gap-sm">
                     <button
                       onClick={() => navigate(`/orders/${order.id}`)}
-                      className="px-4 py-2 bg-[#0b1c30] text-white text-xs font-semibold rounded-xl hover:bg-[#3525cd] transition-colors"
+                      className="px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:brightness-90 transition-colors"
                     >
                       Track Shipment
                     </button>
                     <button
                       onClick={() => navigate(`/orders/${order.id}/invoice`)}
-                      className="px-3 py-2 glass-card text-[#0b1c30] text-xs font-semibold rounded-xl hover:bg-white transition-colors"
+                      className="px-3 py-2 glass-card text-on-surface font-label-md text-label-md rounded-xl hover:bg-surface transition-colors"
                       title="Invoice"
                     >
                       Invoice

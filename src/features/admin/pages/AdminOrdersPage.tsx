@@ -26,8 +26,8 @@ export function AdminOrdersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-[#0b1c30]">Order Orchestration</h1>
-        <p className="text-sm text-[#464555] mt-1">Manage order fulfillment, saga state transitions, and logistics workflow.</p>
+        <h1 className="text-3xl font-bold text-on-surface">Order Orchestration</h1>
+        <p className="text-sm text-on-surface-variant mt-1">Manage order fulfillment, saga state transitions, and logistics workflow.</p>
       </div>
 
       <div className="glass-card rounded-3xl p-6 space-y-4">
@@ -37,7 +37,7 @@ export function AdminOrdersPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-slate-200 text-xs font-bold uppercase text-slate-400">
+                <tr className="border-b border-outline-variant text-xs font-bold uppercase text-on-surface-variant">
                   <th className="pb-3">Order ID</th>
                   <th className="pb-3">Customer ID</th>
                   <th className="pb-3">Amount</th>
@@ -45,14 +45,14 @@ export function AdminOrdersPage() {
                   <th className="pb-3 text-right">Update Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-outline-variant">
                 {orders.map((o) => (
-                  <tr key={o.id} className="hover:bg-slate-50">
-                    <td className="py-3 font-bold text-[#3525cd]">{o.id}</td>
-                    <td className="py-3 font-medium text-[#0b1c30]">{o.userId}</td>
+                  <tr key={o.id} className="hover:bg-surface-container-low">
+                    <td className="py-3 font-bold text-primary">{o.id}</td>
+                    <td className="py-3 font-medium text-on-surface">{o.userId}</td>
                     <td className="py-3 font-bold">${o.totalAmount.toLocaleString()}</td>
                     <td className="py-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#3525cd]/10 text-[#3525cd]">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary-fixed text-primary">
                         {o.status}
                       </span>
                     </td>
@@ -60,7 +60,7 @@ export function AdminOrdersPage() {
                       <select
                         value={o.status}
                         onChange={(e) => handleStatusChange(o.id, e.target.value as OrderStatus)}
-                        className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-[#0b1c30] focus:outline-none focus:ring-2 focus:ring-[#3525cd]"
+                        className="px-3 py-1 bg-surface-container-lowest border border-outline-variant rounded-lg text-xs font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
                       >
                         <option value="PROCESSING">PROCESSING</option>
                         <option value="SHIPPED">SHIPPED</option>

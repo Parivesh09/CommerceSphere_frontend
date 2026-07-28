@@ -46,73 +46,73 @@ export function AdminProductEditorPage() {
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[#0b1c30]">
+          <h1 className="text-3xl font-bold text-on-surface">
             {isEditing ? 'Edit Enterprise Product' : 'Create New Product'}
           </h1>
-          <p className="text-sm text-[#464555] mt-1">Configure title, pricing specs, categories, and inventory allocation.</p>
+          <p className="text-sm text-on-surface-variant mt-1">Configure title, pricing specs, categories, and inventory allocation.</p>
         </div>
         <button
           onClick={() => navigate(ROUTES.ADMIN_PRODUCTS)}
-          className="px-4 py-2 glass-card text-[#0b1c30] text-xs font-bold rounded-xl"
+          className="px-4 py-2 glass-card text-on-surface text-xs font-bold rounded-xl"
         >
           Cancel
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="glass-card rounded-3xl p-8 space-y-6">
+      <form onSubmit={handleSubmit} className="glass-card rounded-3xl p-lg space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="sm:col-span-2">
-            <label className="text-xs font-semibold text-[#464555] block mb-1">Product Title</label>
+            <label className="text-xs font-semibold text-on-surface-variant block mb-1">Product Title</label>
             <input
               type="text"
               required
               placeholder="e.g. Matrix Point 2.0 Terminal"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#3525cd]"
+              className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="text-xs font-semibold text-[#464555] block mb-1">Product Description</label>
+            <label className="text-xs font-semibold text-on-surface-variant block mb-1">Product Description</label>
             <textarea
               rows={3}
               required
               placeholder="Enterprise specification description..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#3525cd]"
+              className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-[#464555] block mb-1">Price ($ USD)</label>
+            <label className="text-xs font-semibold text-on-surface-variant block mb-1">Price ($ USD)</label>
             <input
               type="number"
               required
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-              className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#3525cd]"
+              className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-[#464555] block mb-1">Initial Stock Allocation</label>
+            <label className="text-xs font-semibold text-on-surface-variant block mb-1">Initial Stock Allocation</label>
             <input
               type="number"
               required
               value={formData.inventoryQuantity}
               onChange={(e) => setFormData({ ...formData, inventoryQuantity: Number(e.target.value) })}
-              className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#3525cd]"
+              className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-[#464555] block mb-1">Category</label>
+            <label className="text-xs font-semibold text-on-surface-variant block mb-1">Category</label>
             <select
               value={formData.categoryId}
               onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#3525cd]"
+              className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="terminals">Terminals & POS</option>
               <option value="logistics">Logistics & RFID</option>
@@ -123,22 +123,22 @@ export function AdminProductEditorPage() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-[#464555] block mb-1">Image URL</label>
+            <label className="text-xs font-semibold text-on-surface-variant block mb-1">Image URL</label>
             <input
               type="url"
               required
               value={formData.imageUrl}
               onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#3525cd]"
+              className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
         </div>
 
-        <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">
+        <div className="pt-4 border-t border-outline-variant flex justify-end gap-3">
           <button
             type="submit"
             disabled={isLoading}
-            className="px-6 py-3 bg-[#3525cd] text-white text-sm font-bold rounded-xl shadow-lg hover:bg-[#2c1eb3] transition-all disabled:opacity-50"
+            className="px-6 py-3 bg-primary text-on-primary text-sm font-bold rounded-xl shadow-lg hover:bg-primary-container transition-all disabled:opacity-50"
           >
             {isLoading ? 'Saving Product...' : isEditing ? 'Save Product Changes' : 'Publish Product'}
           </button>

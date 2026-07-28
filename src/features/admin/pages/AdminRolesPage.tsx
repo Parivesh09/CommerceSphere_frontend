@@ -17,10 +17,10 @@ export function AdminRolesPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-[#0b1c30]">Roles & Permissions Matrix</h1>
-          <p className="text-sm text-[#464555] mt-1">Configure role-based access control (RBAC) and fine-grained API scopes.</p>
+          <h1 className="text-3xl font-bold text-on-surface">Roles & Permissions Matrix</h1>
+          <p className="text-sm text-on-surface-variant mt-1">Configure role-based access control (RBAC) and fine-grained API scopes.</p>
         </div>
-        <button onClick={() => toast.success('New role form open')} className="px-4 py-2 bg-[#3525cd] text-white text-xs font-bold rounded-xl shadow">
+        <button onClick={() => toast.success('New role form open')} className="px-4 py-2 bg-primary text-on-primary text-xs font-bold rounded-xl shadow">
           + Create Custom Role
         </button>
       </div>
@@ -33,21 +33,21 @@ export function AdminRolesPage() {
             <div key={role.id} className="glass-card rounded-3xl p-6 space-y-4 flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-center">
-                  <h3 className="font-bold text-lg text-[#0b1c30]">{role.name}</h3>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#3525cd]/10 text-[#3525cd]">
+                  <h3 className="font-bold text-lg text-on-surface">{role.name}</h3>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary-fixed text-primary">
                     {role.userCount} users
                   </span>
                 </div>
-                <p className="text-xs text-[#464555] mt-2">{role.description}</p>
-                <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap gap-1.5">
+                <p className="text-xs text-on-surface-variant mt-2">{role.description}</p>
+                <div className="mt-4 pt-4 border-t border-outline-variant flex flex-wrap gap-1.5">
                   {role.permissions.map((perm, idx) => (
-                    <span key={idx} className="px-2 py-0.5 bg-slate-100 text-[#0b1c30] text-[10px] font-mono rounded-md">
+                    <span key={idx} className="px-2 py-0.5 bg-surface-container-low text-on-surface text-[10px] font-mono rounded-md">
                       {perm}
                     </span>
                   ))}
                 </div>
               </div>
-              <button onClick={() => toast.success(`Editing ${role.name}`)} className="w-full py-2 bg-slate-100 text-[#0b1c30] text-xs font-semibold rounded-xl hover:bg-slate-200">
+              <button onClick={() => toast.success(`Editing ${role.name}`)} className="w-full py-2 bg-surface-container-low text-on-surface text-xs font-semibold rounded-xl hover:bg-surface-container">
                 Configure Permissions
               </button>
             </div>

@@ -131,28 +131,28 @@ export default function ProfilePage() {
             )}
 
             {activeTab === 'security' && (
-              <div className="glass-card rounded-3xl p-8 space-y-6">
-                <h2 className="text-xl font-bold text-[#0b1c30] pb-3 border-b border-slate-200">Security Credentials</h2>
-                <div className="space-y-4 max-w-md">
+              <div className="glass-card rounded-2xl p-lg gap-gutter flex flex-col">
+                <h2 className="font-headline-md text-headline-md text-on-surface pb-3 border-b border-outline-variant">Security Credentials</h2>
+                <div className="gap-gutter flex flex-col max-w-md">
                   <div>
-                    <label className="text-xs font-semibold text-[#464555] block mb-1">Current Password</label>
+                    <label className="font-label-md text-label-md text-on-surface-variant block mb-1">Current Password</label>
                     <input
                       type="password"
                       placeholder="••••••••"
-                      className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#3525cd]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-surface border border-outline-variant font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-[#464555] block mb-1">New Password</label>
+                    <label className="font-label-md text-label-md text-on-surface-variant block mb-1">New Password</label>
                     <input
                       type="password"
                       placeholder="••••••••"
-                      className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#3525cd]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-surface border border-outline-variant font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <button
                     onClick={() => toast.success('Password updated!')}
-                    className="px-6 py-2.5 bg-[#0b1c30] text-white text-xs font-bold rounded-xl hover:bg-[#3525cd]"
+                    className="px-6 py-2.5 bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:brightness-90"
                   >
                     Update Password
                   </button>
@@ -161,17 +161,17 @@ export default function ProfilePage() {
             )}
 
             {activeTab === 'addresses' && (
-              <div className="glass-card rounded-3xl p-8 space-y-6">
-                <div className="flex justify-between items-center pb-3 border-b border-slate-200">
-                  <h2 className="text-xl font-bold text-[#0b1c30]">Saved Corporate Addresses</h2>
-                  <button onClick={() => toast.success('Address modal open')} className="px-4 py-2 bg-[#3525cd] text-white text-xs font-bold rounded-xl">
+              <div className="glass-card rounded-2xl p-lg gap-gutter flex flex-col">
+                <div className="flex justify-between items-center pb-3 border-b border-outline-variant">
+                  <h2 className="font-headline-md text-headline-md text-on-surface">Saved Corporate Addresses</h2>
+                  <button onClick={() => toast.success('Address modal open')} className="px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-xl">
                     + Add New Address
                   </button>
                 </div>
-                <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2">
-                  <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">Primary Warehouse</span>
-                  <p className="font-bold text-sm text-[#0b1c30]">100 Enterprise Way, Suite 400</p>
-                  <p className="text-xs text-[#464555]">San Francisco, CA 94105, United States</p>
+                <div className="p-md rounded-2xl bg-surface border border-outline-variant gap-sm flex flex-col">
+                  <span className="font-label-md text-label-md text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">Primary Warehouse</span>
+                  <p className="font-body-sm text-body-sm font-bold text-on-surface">100 Enterprise Way, Suite 400</p>
+                  <p className="font-body-sm text-body-sm text-on-surface-variant">San Francisco, CA 94105, United States</p>
                 </div>
               </div>
             )}

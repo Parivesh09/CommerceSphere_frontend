@@ -24,31 +24,31 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="page-bg flex items-center justify-center p-6">
-      <div className="max-w-md w-full surface-card rounded-3xl p-8 md:p-10 space-y-6 shadow-xl">
+    <div className="page-bg flex items-center justify-center min-h-screen py-20 px-4">
+      <div className="max-w-md w-full glass-card rounded-xl p-8 space-y-6">
         <div className="text-center space-y-2">
-          <span className="font-extrabold text-2xl tracking-tight text-slate-900 dark:text-slate-100">CommerceSphere</span>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Enterprise Sign In</h1>
-          <p className="text-xs text-muted">Access your corporate dashboard & catalog.</p>
+          <span className="font-extrabold text-2xl tracking-tight text-[var(--color-on-surface)]">CommerceSphere</span>
+          <h1 className="text-xl font-bold text-[var(--color-on-surface)]">Enterprise Sign In</h1>
+          <p className="text-xs text-[var(--color-on-surface-variant)]">Access your corporate dashboard & catalog.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-xs font-semibold text-muted block mb-1">Corporate Email</label>
+            <label className="text-xs font-semibold text-[var(--color-on-surface-variant)] block mb-1">Corporate Email</label>
             <input
               type="email"
               required
               placeholder="admin@commercesphere.io"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="input-field"
+              className="w-full px-4 py-3 rounded-xl border border-[var(--color-outline-variant)] bg-surface text-[var(--color-on-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
             />
           </div>
 
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label className="text-xs font-semibold text-muted">Password</label>
-              <a href="#" className="text-xs text-[#3525cd] font-semibold hover:underline">Forgot?</a>
+              <label className="text-xs font-semibold text-[var(--color-on-surface-variant)]">Password</label>
+              <a href="#" className="text-xs text-[var(--color-primary)] font-semibold hover:underline">Forgot?</a>
             </div>
             <input
               type="password"
@@ -56,22 +56,22 @@ export default function LoginPage() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="input-field"
+              className="w-full px-4 py-3 rounded-xl border border-[var(--color-outline-variant)] bg-surface text-[var(--color-on-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full button-primary disabled:opacity-50"
+            className="w-full bg-primary text-on-primary rounded-xl text-sm font-medium py-3 px-4 hover:shadow-lg active:scale-95 transition-all disabled:opacity-50"
           >
             {isLoading ? 'Authenticating...' : 'Sign In'}
           </button>
         </form>
 
-        <div className="text-center text-xs text-muted">
+        <div className="text-center text-xs text-[var(--color-on-surface-variant)]">
           Don't have an enterprise account?{' '}
-          <Link to={ROUTES.REGISTER} className="text-[#3525cd] font-bold hover:underline">
+          <Link to={ROUTES.REGISTER} className="text-[var(--color-primary)] font-bold hover:underline">
             Register Company
           </Link>
         </div>
