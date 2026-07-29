@@ -11,17 +11,35 @@ export const recommendationApi = baseApi.injectEndpoints({
       providesTags: [{ type: 'Products', id: 'RECOMMENDED' }],
     }),
 
-    getRelatedProducts: builder.query<ApiResponse<Product[]>, { productId: string; limit?: number }>({
+    getSimilarProducts: builder.query<ApiResponse<Product[]>, { productId: string; limit?: number }>({
       query: ({ productId, limit = 4 }) => ({
-        url: `/recommendations/related/${productId}`,
+        url: `/recommendations/similar/${productId}`,
         params: { limit },
       }),
-      providesTags: (_result, _error, { productId }) => [{ type: 'Products', id: `related-${productId}` }],
+      providesTags: (_result, _error, { productId }) => [{ type: 'Products', id: `similar-${productId}` }],
+    }),
+
+    getTrendingRecommendations: builder.query<ApiResponse<Product[]>, { limit?: number }>({
+      query: (params) => ({
+        url: '/recommendations/trending',
+        params,
+      }),
+      providesTags: [{ type: 'Products', id: 'TRENDING' }],
+    }),
+
+    trackProductView: builder.mutation<void, { productId: string; userId?: string }>({
+      query: (body) => ({
+        url: '/recommendations/track-view',
+        method: 'POST',
+        body,
+      }),
     }),
   }),
 });
 
 export const {
   useGetPersonalizedRecommendationsQuery,
-  useGetRelatedProductsQuery,
+  useGetSimilarProductsQuery,
+  useGetTrendingRecommendationsQuery,
+  useTrackProductViewMutation,
 } = recommendationApi;

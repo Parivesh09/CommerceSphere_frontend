@@ -18,7 +18,7 @@ export const searchApi = baseApi.injectEndpoints({
       query: ({ query, page = 1, pageSize = 20, ...filters }) => ({
         url: '/search',
         params: {
-          q: query,
+          query,
           page,
           pageSize,
           ...filters,
@@ -39,8 +39,8 @@ export const searchApi = baseApi.injectEndpoints({
      */
     getSearchSuggestions: builder.query<SearchSuggestion[], string>({
       query: (query) => ({
-        url: '/search/suggestions',
-        params: { q: query },
+        url: '/search/autocomplete',
+        params: { query },
       }),
       providesTags: [{ type: API_TAGS.SEARCH, id: 'SUGGESTIONS' }],
     }),

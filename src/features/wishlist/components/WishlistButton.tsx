@@ -1,14 +1,9 @@
-/**
- * WishlistButton component
- * 
- * Displays a heart icon button that toggles wishlist status
- * Shows filled heart if product is in wishlist, outline otherwise
- * 
- * Validates: Requirements 17.1, 17.2, 17.3
- */
-
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useWishlist } from '../hooks';
+import { ROUTES } from '../../../constants';
+import toast from 'react-hot-toast';
 
 export interface WishlistButtonProps {
   productId: string;
@@ -21,6 +16,8 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({
   size = 'md',
   className = '',
 }) => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const [isLoading, setIsLoading] = useState(false);
   const inWishlist = isInWishlist(productId);
@@ -40,6 +37,12 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!isAuthenticated) {
+      toast.error('Please login to add items to your wishlist');
+      navigate(ROUTES.LOGIN);
+      return;
+    }
 
     setIsLoading(true);
     try {
@@ -73,7 +76,6 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({
       title={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
     >
       {inWishlist ? (
-
         <svg
           className={`${iconSizeClasses[size]} text-red-500`}
           fill="currentColor"
@@ -86,7 +88,6 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({
           />
         </svg>
       ) : (
-
         <svg
           className={`${iconSizeClasses[size]} text-gray-600`}
           fill="none"

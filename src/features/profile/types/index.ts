@@ -7,7 +7,7 @@ export interface UserProfile {
   id: string;
   email: string;
   name: string;
-  role: 'customer' | 'admin' | 'moderator';
+  role: 'customer' | 'seller' | 'admin' | 'moderator';
   avatar?: string;
   phone?: string;
   addresses: UserAddress[];

@@ -1,106 +1,48 @@
-import { useCallback, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
+import { useCallback } from 'react';
 import {
   useGetWishlistQuery,
   useAddToWishlistMutation,
   useRemoveFromWishlistMutation,
-  useSyncWishlistMutation,
 } from '../api';
-import {
-  addToGuestWishlist,
-  removeFromGuestWishlist,
-  clearGuestWishlist,
-} from '../slice';
 
-/**
- * Custom hook for managing wishlist operations
- * 
- * Handles both authenticated and guest wishlist operations
- * Automatically syncs guest wishlist on authentication
- * 
- * Validates: Requirements 17.1, 17.2, 17.3, 17.4, 17.5
- */
 export const useWishlist = () => {
-  const dispatch = useAppDispatch();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
-  const { guestWishlist } = useAppSelector((state) => state.wishlist);
-
-
   const {
     data: wishlist,
     isLoading,
     error,
-  } = useGetWishlistQuery(undefined, {
-    skip: !isAuthenticated,
-  });
+  } = useGetWishlistQuery(undefined);
 
   const [addToWishlistMutation] = useAddToWishlistMutation();
   const [removeFromWishlistMutation] = useRemoveFromWishlistMutation();
-  const [syncWishlistMutation] = useSyncWishlistMutation();
-
-
-  useEffect(() => {
-    if (isAuthenticated && guestWishlist.length > 0) {
-      syncWishlistMutation({ productIds: guestWishlist })
-        .unwrap()
-        .then(() => {
-
-          dispatch(clearGuestWishlist());
-        })
-        .catch((error) => {
-          console.error('Failed to sync wishlist:', error);
-        });
-    }
-  }, [isAuthenticated, guestWishlist, syncWishlistMutation, dispatch]);
-
 
   const addToWishlist = useCallback(
     async (productId: string) => {
-      if (isAuthenticated) {
-        return addToWishlistMutation({ productId }).unwrap();
-      } else {
-        dispatch(addToGuestWishlist(productId));
-        return Promise.resolve();
-      }
+      return addToWishlistMutation({ productId }).unwrap();
     },
-    [isAuthenticated, addToWishlistMutation, dispatch]
+    [addToWishlistMutation]
   );
-
 
   const removeFromWishlist = useCallback(
     async (productId: string) => {
-      if (isAuthenticated) {
-        return removeFromWishlistMutation({ productId }).unwrap();
-      } else {
-        dispatch(removeFromGuestWishlist(productId));
-        return Promise.resolve();
-      }
+      return removeFromWishlistMutation({ productId }).unwrap();
     },
-    [isAuthenticated, removeFromWishlistMutation, dispatch]
+    [removeFromWishlistMutation]
   );
-
 
   const isInWishlist = useCallback(
     (productId: string): boolean => {
-      if (isAuthenticated) {
-        return wishlist?.items.some((item) => item.productId === productId) ?? false;
-      } else {
-        return guestWishlist.includes(productId);
-      }
+      return wishlist?.items?.some((item) => item.productId === productId) ?? false;
     },
-    [isAuthenticated, wishlist, guestWishlist]
+    [wishlist]
   );
 
-
-  const wishlistItems = isAuthenticated ? wishlist?.items ?? [] : [];
-  const wishlistCount = isAuthenticated
-    ? wishlist?.items.length ?? 0
-    : guestWishlist.length;
+  const wishlistItems = wishlist?.items ?? [];
+  const wishlistCount = wishlist?.items?.length ?? 0;
 
   return {
     wishlistItems,
     wishlistCount,
-    isLoading: isAuthenticated ? isLoading : false,
+    isLoading,
     error,
     addToWishlist,
     removeFromWishlist,

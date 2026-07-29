@@ -28,9 +28,9 @@ export const profileApi = baseApi.injectEndpoints({
 
     changePassword: builder.mutation<void, PasswordChangeData>({
       query: (data) => ({
-        url: '/auth/password-reset',
-        method: 'POST',
-        body: { token: '', newPassword: data.newPassword },
+        url: '/auth/me/password',
+        method: 'PUT',
+        body: data,
       }),
     }),
 
@@ -74,8 +74,8 @@ export const profileApi = baseApi.injectEndpoints({
         body: data,
       }),
       invalidatesTags: (_result, _error, { id }) => [
-        { type: 'Profile' as const, id },
-        { type: 'Profile' as const, id: 'ADDRESSES' },
+        { type: API_TAGS.PROFILE, id },
+        { type: API_TAGS.PROFILE, id: 'ADDRESSES' },
       ],
     }),
 

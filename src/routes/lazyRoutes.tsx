@@ -140,6 +140,35 @@ export const LazyAdminRolesPage = withSuspense(
   lazy(() => import('@/features/admin/pages/AdminRolesPage').then(m => ({ default: m.AdminRolesPage })))
 );
 
+// Seller Pages
+export const LazySellerDashboard = withSuspense(
+  lazy(() => import('@/features/seller/pages/SellerDashboardPage'))
+);
+
+export const LazySellerProductsPage = withSuspense(
+  lazy(() => import('@/features/seller/pages/SellerProductsPage'))
+);
+
+export const LazySellerProductEditorPage = withSuspense(
+  lazy(() => import('@/features/seller/pages/SellerProductEditorPage'))
+);
+
+export const LazySellerOrdersPage = withSuspense(
+  lazy(() => import('@/features/seller/pages/SellerOrdersPage'))
+);
+
+export const LazySellerInventoryPage = withSuspense(
+  lazy(() => import('@/features/seller/pages/SellerInventoryPage'))
+);
+
+export const LazySellerAnalyticsPage = withSuspense(
+  lazy(() => import('@/features/seller/pages/SellerAnalyticsPage'))
+);
+
+export const LazySellerReviewsPage = withSuspense(
+  lazy(() => import('@/features/seller/pages/SellerReviewsPage'))
+);
+
 // Specialty & Informational Pages
 export const LazyEnterpriseLandingPage = withSuspense(
   lazy(() => import('@/features/enterprise/pages/EnterpriseLandingPage').then(m => ({ default: m.EnterpriseLandingPage })))

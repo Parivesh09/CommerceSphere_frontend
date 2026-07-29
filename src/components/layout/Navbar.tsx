@@ -80,13 +80,33 @@ export default function Navbar() {
               )}
             </button>
             {isAuthenticated ? (
-              <button
-                className="p-2.5 hover:bg-[var(--color-surface-container-low)] transition-colors duration-200 rounded-full"
-                onClick={() => navigate(ROUTES.PROFILE)}
-                aria-label="View profile"
-              >
-                <span className="material-symbols-outlined text-[var(--color-on-surface-variant)]">person</span>
-              </button>
+              <>
+                {user?.role === 'seller' && (
+                  <button
+                    className="p-2.5 hover:bg-[var(--color-surface-container-low)] transition-colors duration-200 rounded-full"
+                    onClick={() => navigate(ROUTES.SELLER)}
+                    aria-label="Seller dashboard"
+                  >
+                    <span className="material-symbols-outlined text-[var(--color-on-surface-variant)]">store</span>
+                  </button>
+                )}
+                {user?.role === 'admin' && (
+                  <button
+                    className="p-2.5 hover:bg-[var(--color-surface-container-low)] transition-colors duration-200 rounded-full"
+                    onClick={() => navigate(ROUTES.ADMIN)}
+                    aria-label="Admin panel"
+                  >
+                    <span className="material-symbols-outlined text-[var(--color-on-surface-variant)]">admin_panel_settings</span>
+                  </button>
+                )}
+                <button
+                  className="p-2.5 hover:bg-[var(--color-surface-container-low)] transition-colors duration-200 rounded-full"
+                  onClick={() => navigate(ROUTES.PROFILE)}
+                  aria-label="View profile"
+                >
+                  <span className="material-symbols-outlined text-[var(--color-on-surface-variant)]">person</span>
+                </button>
+              </>
             ) : (
               <button
                 className="px-6 py-2.5 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[var(--color-primary)]/20 transition-all active:scale-95"

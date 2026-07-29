@@ -3,7 +3,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'customer' | 'admin' | 'moderator';
+  role: 'customer' | 'seller' | 'admin' | 'moderator';
   createdAt: string;
   updatedAt: string;
 }
@@ -135,6 +135,7 @@ export interface RegisterFormData {
   email: string;
   password: string;
   name: string;
+  role?: 'customer' | 'seller';
 }
 
 export interface CheckoutFormData {

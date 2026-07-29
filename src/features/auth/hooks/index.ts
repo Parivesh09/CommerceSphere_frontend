@@ -21,7 +21,9 @@ export const useAuth = () => {
     isAuthenticated: auth.isAuthenticated,
     isLoading: auth.isLoading,
     isAdmin: auth.user?.role === 'admin',
+    isSeller: auth.user?.role === 'seller',
     isCustomer: auth.user?.role === 'customer',
+    isModerator: auth.user?.role === 'moderator',
   };
 };
 
@@ -63,7 +65,7 @@ export const useLogout = () => {
  * 
  * Validates: Requirements 10.5
  */
-export const useRequireRole = (requiredRole: 'admin' | 'customer' | 'moderator') => {
+export const useRequireRole = (requiredRole: 'admin' | 'customer' | 'seller' | 'moderator') => {
   const { user, isAuthenticated } = useAuth();
   
   const hasRole = isAuthenticated && user?.role === requiredRole;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetProductQuery, useGetProductReviewsQuery } from '../../../services/api/productApi';
-import { useGetRelatedProductsQuery } from '../../../services/api/recommendationApi';
+import { useGetSimilarProductsQuery } from '../../../services/api/recommendationApi';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { addToCart } from '../../../store/slices/cartSlice';
 import { toggleWishlistItem } from '../../../features/wishlist/slice';
@@ -19,7 +19,7 @@ export default function ProductDetailPage() {
   const productId = id || 'prod-1';
   const { data: productData, isLoading } = useGetProductQuery(productId);
   const { data: reviewsData } = useGetProductReviewsQuery({ productId });
-  const { data: relatedData } = useGetRelatedProductsQuery({ productId, limit: 4 });
+  const { data: relatedData } = useGetSimilarProductsQuery({ productId, limit: 4 });
 
   const fallbackProduct = {
     id: productId,

@@ -13,6 +13,7 @@ import { ROUTES } from './constants';
 
 import MainLayout from './layouts/MainLayout';
 import AdminLayout from './layouts/AdminLayout';
+import SellerLayout from './layouts/SellerLayout';
 
 import {
   LazyHomePage,
@@ -44,6 +45,13 @@ import {
   LazyEnterpriseLandingPage,
   LazyApiPortalPage,
   LazySupportCenterPage,
+  LazySellerDashboard,
+  LazySellerProductsPage,
+  LazySellerProductEditorPage,
+  LazySellerOrdersPage,
+  LazySellerInventoryPage,
+  LazySellerAnalyticsPage,
+  LazySellerReviewsPage,
   LazyNotFoundPage,
   LazyMaintenancePage,
   prefetchLikelyRoutes,
@@ -158,7 +166,9 @@ function AppRoutes() {
               path={ROUTES.WISHLIST}
               element={
                 <ErrorBoundary level="route" fallback={RouteErrorFallback}>
-                  <LazyWishlistPage />
+                  <ProtectedRoute>
+                    <LazyWishlistPage />
+                  </ProtectedRoute>
                 </ErrorBoundary>
               }
             />
@@ -349,6 +359,27 @@ function AppRoutes() {
                 </ErrorBoundary>
               }
             />
+          </Route>
+
+          {/* Seller Routes */}
+          <Route
+            path={ROUTES.SELLER}
+            element={
+              <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                <ProtectedRoute requireSeller>
+                  <SellerLayout />
+                </ProtectedRoute>
+              </ErrorBoundary>
+            }
+          >
+            <Route index element={<LazySellerDashboard />} />
+            <Route path={ROUTES.SELLER_PRODUCTS} element={<LazySellerProductsPage />} />
+            <Route path={ROUTES.SELLER_PRODUCT_NEW} element={<LazySellerProductEditorPage />} />
+            <Route path={ROUTES.SELLER_PRODUCT_EDIT} element={<LazySellerProductEditorPage />} />
+            <Route path={ROUTES.SELLER_ORDERS} element={<LazySellerOrdersPage />} />
+            <Route path={ROUTES.SELLER_INVENTORY} element={<LazySellerInventoryPage />} />
+            <Route path={ROUTES.SELLER_ANALYTICS} element={<LazySellerAnalyticsPage />} />
+            <Route path={ROUTES.SELLER_REVIEWS} element={<LazySellerReviewsPage />} />
           </Route>
 
           {/* Catch-all 404 */}

@@ -22,7 +22,7 @@ export const WishlistPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] mx-auto px-margin-mobile md:px-10 py-20">
+      <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] mx-auto px-4 md:px-10 py-20">
         <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-on-surface)] mb-8">
           My Wishlist
         </h1>
@@ -67,7 +67,7 @@ export const WishlistPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] mx-auto px-margin-mobile md:px-10 py-20">
+    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] mx-auto px-4 md:px-10 py-20">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-on-surface)]">
           My Wishlist
@@ -110,13 +110,13 @@ export const WishlistPage: React.FC = () => {
                 )}
 
                 {/* Wishlist Button */}
-                <div className="absolute right-sm top-sm">
+                <div className="absolute right-2 top-sm">
                   <WishlistButton productId={product.id} size="md" />
                 </div>
 
                 {/* Discount Badge */}
                 {hasDiscount && (
-                  <div className="absolute left-sm top-sm rounded-full bg-red-500 px-2 py-1 text-xs font-semibold text-[var(--color-on-primary)]">
+                  <div className="absolute left-2 top-sm rounded-full bg-red-500 px-2 py-1 text-xs font-semibold text-[var(--color-on-primary)]">
                     -{discountPercentage}%
                   </div>
                 )}
