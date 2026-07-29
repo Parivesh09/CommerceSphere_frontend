@@ -1,7 +1,6 @@
 @import "tailwindcss";
-@config "../../tailwind.config.js";
 
-:root {
+@theme {
   --color-primary: #3525cd;
   --color-on-primary: #ffffff;
   --color-primary-container: #4f46e5;
@@ -51,6 +50,8 @@
   --color-surface-tint: #4d44e3;
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 .dark {
   --color-primary: #c3c0ff;
   --color-on-primary: #1a0992;
@@ -99,12 +100,6 @@
   --color-outline: #8f909a;
   --color-outline-variant: #45464f;
   --color-surface-tint: #c3c0ff;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
 body {

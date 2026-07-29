@@ -7,10 +7,10 @@ export default function AdminDashboard() {
   const { data: analyticsData } = useGetAnalyticsOverviewQuery({});
 
   const stats = [
-    { label: 'Total Revenue', value: '$128,450.00', change: '+14.2%', icon: 'payments', color: 'text-primary' },
+    { label: 'Total Revenue', value: '$128,450.00', change: '+14.2%', icon: 'payments', color: 'text-[var(--color-primary)]' },
     { label: 'Saga Transactions', value: '99.98% Success', change: '+0.4%', icon: 'sync', color: 'text-tertiary' },
     { label: 'Total Orders', value: '1,420', change: '+8.1%', icon: 'shopping_bag', color: 'text-secondary' },
-    { label: 'Low Stock SKU Alerts', value: '3 Items', change: 'Action Needed', icon: 'warning', color: 'text-on-surface-variant' },
+    { label: 'Low Stock SKU Alerts', value: '3 Items', change: 'Action Needed', icon: 'warning', color: 'text-[var(--color-on-surface-variant)]' },
   ];
 
   const recentTransactions = analyticsData?.data?.recentSales || [
@@ -24,8 +24,8 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface">Enterprise Admin Dashboard</h1>
-          <p className="text-sm text-on-surface-variant mt-1">Real-time overview of orders, saga orchestrations, and revenue.</p>
+          <h1 className="text-3xl font-bold text-[var(--color-on-surface)]">Enterprise Admin Dashboard</h1>
+          <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Real-time overview of orders, saga orchestrations, and revenue.</p>
         </div>
         <div className="flex gap-3">
           <button
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
           </button>
           <button
             onClick={() => navigate(ROUTES.ADMIN_INVENTORY)}
-            className="px-4 py-2 glass-card text-on-surface text-xs font-bold rounded-xl hover:bg-surface-container-lowest transition-colors"
+            className="px-4 py-2 glass-card text-[var(--color-on-surface)] text-xs font-bold rounded-xl hover:bg-surface-container-lowest transition-colors"
           >
             Inventory Matrix
           </button>
@@ -44,21 +44,21 @@ export default function AdminDashboard() {
       </div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, idx) => (
-          <div key={idx} className="glass-card rounded-2xl p-md space-y-3">
+          <div key={idx} className="glass-card rounded-2xl p-6 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">{stat.label}</span>
+              <span className="text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider">{stat.label}</span>
               <span className={`material-symbols-outlined text-[24px] ${stat.color}`}>{stat.icon}</span>
             </div>
-            <p className="text-2xl font-bold text-on-surface">{stat.value}</p>
+            <p className="text-2xl font-bold text-[var(--color-on-surface)]">{stat.value}</p>
             <p className="text-xs font-semibold text-tertiary">{stat.change} vs last month</p>
           </div>
         ))}
       </div>
 
       {/* Quick Navigation Links Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {[
           { label: 'Order Orchestration', route: ROUTES.ADMIN_ORDERS, icon: 'inventory' },
           { label: 'Inventory Management', route: ROUTES.ADMIN_INVENTORY, icon: 'warehouse' },
@@ -72,21 +72,21 @@ export default function AdminDashboard() {
           <button
             key={idx}
             onClick={() => navigate(item.route)}
-            className="glass-card p-md rounded-xl text-left hover:border-primary hover:shadow-md transition-all flex items-center gap-3"
+            className="glass-card p-6 rounded-xl text-left hover:border-primary hover:shadow-md transition-all flex items-center gap-3"
           >
-            <span className="material-symbols-outlined text-primary text-[24px]">{item.icon}</span>
-            <span className="font-bold text-xs text-on-surface">{item.label}</span>
+            <span className="material-symbols-outlined text-[var(--color-primary)] text-[24px]">{item.icon}</span>
+            <span className="font-bold text-xs text-[var(--color-on-surface)]">{item.label}</span>
           </button>
         ))}
       </div>
 
       {/* Recent Activity Table */}
-      <div className="glass-card rounded-3xl p-lg space-y-4">
-        <h2 className="font-bold text-lg text-on-surface pb-3 border-b border-outline-variant">Recent Transactions & Saga States</h2>
+      <div className="glass-card rounded-3xl p-8 space-y-4">
+        <h2 className="font-bold text-lg text-[var(--color-on-surface)] pb-3 border-b border-[var(--color-outline-variant)]">Recent Transactions & Saga States</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-outline-variant text-xs font-bold uppercase text-on-surface-variant">
+              <tr className="border-b border-[var(--color-outline-variant)] text-xs font-bold uppercase text-[var(--color-on-surface-variant)]">
                 <th className="pb-3">Order ID</th>
                 <th className="pb-3">Customer</th>
                 <th className="pb-3">Amount</th>
@@ -97,15 +97,15 @@ export default function AdminDashboard() {
             <tbody className="divide-y divide-outline-variant">
               {recentTransactions.map((tx) => (
                 <tr key={tx.id} className="hover:bg-surface-container-low cursor-pointer" onClick={() => navigate(`${ROUTES.ADMIN_ORDERS}/${tx.id}`)}>
-                  <td className="py-3 font-bold text-primary">{tx.id}</td>
-                  <td className="py-3 font-medium text-on-surface">{tx.customerName}</td>
+                  <td className="py-3 font-bold text-[var(--color-primary)]">{tx.id}</td>
+                  <td className="py-3 font-medium text-[var(--color-on-surface)]">{tx.customerName}</td>
                   <td className="py-3 font-bold">${tx.amount.toLocaleString()}</td>
                   <td className="py-3">
-                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary-fixed text-primary">
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary-fixed text-[var(--color-primary)]">
                       {tx.status}
                     </span>
                   </td>
-                  <td className="py-3 text-right text-xs text-on-surface-variant">{tx.date}</td>
+                  <td className="py-3 text-right text-xs text-[var(--color-on-surface-variant)]">{tx.date}</td>
                 </tr>
               ))}
             </tbody>

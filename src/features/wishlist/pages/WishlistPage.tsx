@@ -22,15 +22,15 @@ export const WishlistPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background text-on-surface mx-auto px-margin-mobile md:px-margin-desktop py-xl">
-        <h1 className="font-headline-lg text-headline-lg text-on-surface mb-8">
+      <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] mx-auto px-margin-mobile md:px-10 py-20">
+        <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-on-surface)] mb-8">
           My Wishlist
         </h1>
-        <div className="grid grid-cols-1 gap-gutter sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, index) => (
             <Card key={index} padding="none">
               <Skeleton className="aspect-square w-full" />
-              <div className="p-md">
+              <div className="p-6">
                 <Skeleton className="mb-2 h-4 w-3/4" />
                 <Skeleton className="mb-2 h-6 w-1/2" />
                 <Skeleton className="h-10 w-full" />
@@ -44,13 +44,13 @@ export const WishlistPage: React.FC = () => {
 
   if (wishlistCount === 0) {
     return (
-      <div className="min-h-screen bg-background text-on-surface flex items-center justify-center p-md text-center">
-        <div className="max-w-md w-full glass-card rounded-2xl p-lg gap-gutter flex flex-col items-center">
-          <span className="material-symbols-outlined text-[48px] text-on-surface-variant">favorite</span>
-          <h2 className="font-headline-md text-headline-md text-on-surface">
+      <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] flex items-center justify-center p-6 text-center">
+        <div className="max-w-md w-full glass-card rounded-2xl p-8 gap-6 flex flex-col items-center">
+          <span className="material-symbols-outlined text-[48px] text-[var(--color-on-surface-variant)]">favorite</span>
+          <h2 className="text-xl font-bold text-[var(--color-on-surface)]">
             Your wishlist is empty
           </h2>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">
+          <p className="text-sm text-[var(--color-on-surface-variant)]">
             Start adding products you love to your wishlist
           </p>
           <Button
@@ -67,17 +67,17 @@ export const WishlistPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-on-surface mx-auto px-margin-mobile md:px-margin-desktop py-xl">
+    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] mx-auto px-margin-mobile md:px-10 py-20">
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="font-headline-lg text-headline-lg text-on-surface">
+        <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-on-surface)]">
           My Wishlist
         </h1>
-        <p className="font-body-sm text-body-sm text-on-surface-variant">
+        <p className="text-sm text-[var(--color-on-surface-variant)]">
           {wishlistCount} {wishlistCount === 1 ? 'item' : 'items'}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-gutter sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {wishlistItems.map((item) => {
           const product = item.product;
           const primaryImage = product.images?.find((img) => img.order === 0) || product.images?.[0];
@@ -95,7 +95,7 @@ export const WishlistPage: React.FC = () => {
               onClick={() => navigate(ROUTES.PRODUCT_DETAIL.replace(':id', product.id))}
             >
               {/* Product Image */}
-              <div className="relative aspect-square overflow-hidden bg-surface-variant">
+              <div className="relative aspect-square overflow-hidden bg-[var(--color-surface-variant)]">
                 {primaryImage ? (
                   <img
                     src={primaryImage.url}
@@ -104,7 +104,7 @@ export const WishlistPage: React.FC = () => {
                     loading="lazy"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-on-surface-variant font-body-sm text-body-sm">
+                  <div className="flex h-full w-full items-center justify-center text-[var(--color-on-surface-variant)] text-sm">
                     <span className="material-symbols-outlined text-[36px]">image</span>
                   </div>
                 )}
@@ -116,7 +116,7 @@ export const WishlistPage: React.FC = () => {
 
                 {/* Discount Badge */}
                 {hasDiscount && (
-                  <div className="absolute left-sm top-sm rounded-full bg-red-500 px-2 py-1 font-label-md text-label-md text-on-primary">
+                  <div className="absolute left-sm top-sm rounded-full bg-red-500 px-2 py-1 text-xs font-semibold text-[var(--color-on-primary)]">
                     -{discountPercentage}%
                   </div>
                 )}
@@ -124,7 +124,7 @@ export const WishlistPage: React.FC = () => {
                 {/* Out of Stock Badge */}
                 {product.stock === 0 && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                    <span className="rounded-xl bg-surface px-4 py-2 font-body-sm text-body-sm font-bold text-on-surface">
+                    <span className="rounded-xl bg-[var(--color-surface)] px-4 py-2 text-sm font-bold text-[var(--color-on-surface)]">
                       Out of Stock
                     </span>
                   </div>
@@ -132,19 +132,19 @@ export const WishlistPage: React.FC = () => {
               </div>
 
               {/* Product Info */}
-              <div className="p-md gap-sm flex flex-col">
+              <div className="p-6 gap-3 flex flex-col">
                 {/* Category */}
-                <p className="font-label-md text-label-md uppercase tracking-wide text-on-surface-variant">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-on-surface-variant)]">
                   {product.category}
                 </p>
 
                 {/* Product Name */}
-                <h3 className="line-clamp-2 font-body-sm text-body-sm font-bold text-on-surface">
+                <h3 className="line-clamp-2 text-sm font-bold text-[var(--color-on-surface)]">
                   {product.name}
                 </h3>
 
                 {/* Rating */}
-                <div className="flex items-center gap-sm">
+                <div className="flex items-center gap-3">
                   <div className="flex items-center">
                     {Array.from({ length: 5 }).map((_, index) => (
                       <svg
@@ -152,7 +152,7 @@ export const WishlistPage: React.FC = () => {
                         className={`h-4 w-4 ${
                           index < Math.floor(product.rating)
                             ? 'text-yellow-400'
-                            : 'text-on-surface-variant'
+                            : 'text-[var(--color-on-surface-variant)]'
                         }`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
@@ -161,18 +161,18 @@ export const WishlistPage: React.FC = () => {
                       </svg>
                     ))}
                   </div>
-                  <span className="font-body-sm text-body-sm text-on-surface-variant">
+                  <span className="text-sm text-[var(--color-on-surface-variant)]">
                     ({product.reviewCount})
                   </span>
                 </div>
 
                 {/* Price */}
-                <div className="flex items-center gap-sm">
-                  <span className="font-headline-md text-headline-md text-on-surface">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl font-bold text-[var(--color-on-surface)]">
                     ${product.price.toFixed(2)}
                   </span>
                   {hasDiscount && (
-                    <span className="font-body-sm text-body-sm text-on-surface-variant line-through">
+                    <span className="text-sm text-[var(--color-on-surface-variant)] line-through">
                       ${product.compareAtPrice!.toFixed(2)}
                     </span>
                   )}

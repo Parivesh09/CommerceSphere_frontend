@@ -115,11 +115,11 @@ export function SearchResultsPage() {
 
   if (!query) {
     return (
-      <div className="min-h-screen bg-background text-on-surface">
-        <div className="max-w-6xl mx-auto px-margin-mobile md:px-margin-desktop py-xl">
+      <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)]">
+        <div className="max-w-6xl mx-auto px-4 md:px-10 py-20">
           <SearchBar autoFocus />
-          <div className="text-center mt-lg">
-            <p className="font-headline-md text-headline-md text-on-surface-variant">
+          <div className="text-center mt-12">
+            <p className="text-xl font-bold text-[var(--color-on-surface-variant)]">
               Enter a search query to find products
             </p>
           </div>
@@ -129,19 +129,19 @@ export function SearchResultsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-on-surface">
-      <div className="max-w-6xl mx-auto px-margin-mobile md:px-margin-desktop py-xl">
+    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)]">
+      <div className="max-w-6xl mx-auto px-4 md:px-10 py-20">
         {/* Search Bar */}
-        <div className="mb-gutter">
+        <div className="mb-6">
           <SearchBar />
         </div>
 
         {/* Results Header */}
-        <div className="flex justify-between items-center flex-wrap gap-sm mb-gutter">
-          <p className="font-headline-md text-headline-md text-on-surface">
+        <div className="flex justify-between items-center flex-wrap gap-3 mb-6">
+          <p className="text-xl font-bold text-[var(--color-on-surface)]">
             {isLoading ? 'Searching...' : `Results for "${query}"`}
             {data && (
-              <span className="font-body-sm text-body-sm text-on-surface-variant ml-sm">
+              <span className="text-sm text-[var(--color-on-surface-variant)] ml-3">
                 ({data.total} products)
               </span>
             )}
@@ -165,24 +165,24 @@ export function SearchResultsPage() {
           </FormControl>
         </div>
 
-        <div className="flex gap-gutter flex-col md:flex-row">
+        <div className="flex gap-6 flex-col md:flex-row">
           {/* Filters Sidebar */}
           <div className="w-full md:w-1/4">
             <Paper sx={{ p: '24px', position: 'sticky', top: 80, backgroundColor: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--color-outline-variant)', boxShadow: 'none' }}>
-              <div className="flex justify-between items-center mb-gutter">
-                <p className="font-headline-md text-headline-md text-on-surface flex items-center gap-sm">
+              <div className="flex justify-between items-center mb-6">
+                <p className="text-xl font-bold text-[var(--color-on-surface)] flex items-center gap-3">
                   <span className="material-symbols-outlined text-[20px]">filter_list</span> Filters
                 </p>
                 {hasActiveFilters && (
-                  <button onClick={handleClearFilters} className="font-label-md text-label-md text-primary flex items-center gap-xs">
+                  <button onClick={handleClearFilters} className="text-xs font-semibold text-[var(--color-primary)] flex items-center gap-xs">
                     <span className="material-symbols-outlined text-[16px]">close</span> Clear
                   </button>
                 )}
               </div>
 
               {/* Price Range Filter */}
-              <div className="mb-gutter">
-                <p className="font-label-md text-label-md text-on-surface-variant mb-sm">Price Range</p>
+              <div className="mb-6">
+                <p className="text-xs font-semibold text-[var(--color-on-surface-variant)] mb-3">Price Range</p>
                 <Slider
                   value={priceRange}
                   onChange={handlePriceRangeChange}
@@ -194,16 +194,16 @@ export function SearchResultsPage() {
                   valueLabelFormat={(value) => `$${value}`}
                   sx={{ color: 'var(--color-primary)', '& .MuiSlider-thumb': { backgroundColor: 'var(--color-primary)' }, '& .MuiSlider-track': { backgroundColor: 'var(--color-primary)' }, '& .MuiSlider-rail': { backgroundColor: 'var(--color-outline-variant)' }, '& .MuiSlider-valueLabel': { backgroundColor: 'var(--color-primary)', fontFamily: 'inherit', fontSize: '12px' } }}
                 />
-                <div className="flex justify-between mt-sm">
-                  <span className="font-body-sm text-body-sm text-on-surface-variant">${priceRange[0]}</span>
-                  <span className="font-body-sm text-body-sm text-on-surface-variant">${priceRange[1]}</span>
+                <div className="flex justify-between mt-3">
+                  <span className="text-sm text-[var(--color-on-surface-variant)]">${priceRange[0]}</span>
+                  <span className="text-sm text-[var(--color-on-surface-variant)]">${priceRange[1]}</span>
                 </div>
               </div>
 
               {/* Rating Filter */}
-              <div className="mb-gutter">
-                <p className="font-label-md text-label-md text-on-surface-variant mb-sm">Minimum Rating</p>
-                <div className="flex flex-col gap-sm">
+              <div className="mb-6">
+                <p className="text-xs font-semibold text-[var(--color-on-surface-variant)] mb-3">Minimum Rating</p>
+                <div className="flex flex-col gap-3">
                   {[5, 4, 3, 2, 1].map((rating) => (
                     <Chip
                       key={rating}
@@ -222,18 +222,18 @@ export function SearchResultsPage() {
           {/* Results Grid */}
           <div className="flex-1">
             {error && (
-              <div className="glass-card rounded-2xl p-md mb-gutter font-body-sm text-body-sm" style={{ color: 'var(--color-error, #dc2626)', backgroundColor: 'rgba(220, 38, 38, 0.08)' }}>
-                <span className="material-symbols-outlined text-[16px] mr-sm">error</span> Failed to load search results. Please try again.
+              <div className="glass-card rounded-2xl p-6 mb-6 text-sm" style={{ color: 'var(--color-error, #dc2626)', backgroundColor: 'rgba(220, 38, 38, 0.08)' }}>
+                <span className="material-symbols-outlined text-[16px] mr-3">error</span> Failed to load search results. Please try again.
               </div>
             )}
 
             {isLoading ? (
-              <div className="flex justify-center py-xl">
+              <div className="flex justify-center py-20">
                 <CircularProgress sx={{ color: 'var(--color-primary)' }} />
               </div>
             ) : data && data.data.length > 0 ? (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-gutter">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {data.data.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
@@ -241,11 +241,11 @@ export function SearchResultsPage() {
 
                 {/* Pagination */}
                 {data.hasMore && (
-                  <div className="flex justify-center mt-gutter">
+                  <div className="flex justify-center mt-6">
                     <button
                       onClick={() => setPage((p) => p + 1)}
                       disabled={isFetching}
-                      className="px-6 py-3 bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:brightness-90 disabled:opacity-50 transition-all"
+                      className="px-6 py-3 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl hover:brightness-90 disabled:opacity-50 transition-all"
                     >
                       {isFetching ? 'Loading...' : 'Load More'}
                     </button>
@@ -253,10 +253,10 @@ export function SearchResultsPage() {
                 )}
               </>
             ) : (
-              <div className="text-center py-xl glass-card rounded-2xl p-lg">
-                <span className="material-symbols-outlined text-[48px] text-on-surface-variant">search_off</span>
-                <p className="font-headline-md text-headline-md text-on-surface mt-sm">No products found</p>
-                <p className="font-body-sm text-body-sm text-on-surface-variant">Try adjusting your search or filters</p>
+              <div className="text-center py-20 glass-card rounded-2xl p-8">
+                <span className="material-symbols-outlined text-[48px] text-[var(--color-on-surface-variant)]">search_off</span>
+                <p className="text-xl font-bold text-[var(--color-on-surface)] mt-3">No products found</p>
+                <p className="text-sm text-[var(--color-on-surface-variant)]">Try adjusting your search or filters</p>
               </div>
             )}
           </div>
@@ -295,7 +295,7 @@ function ProductCard({ product }: ProductCardProps) {
         },
       }}
     >
-      <div className="relative w-full mb-sm" style={{ paddingTop: '100%', backgroundColor: 'var(--color-surface-variant)', borderRadius: '8px' }}>
+      <div className="relative w-full mb-3" style={{ paddingTop: '100%', backgroundColor: 'var(--color-surface-variant)', borderRadius: '8px' }}>
         {product.images?.[0] && (
           <img
             src={product.images[0].url}
@@ -312,14 +312,14 @@ function ProductCard({ product }: ProductCardProps) {
           />
         )}
       </div>
-      <p className="font-body-sm text-body-sm text-on-surface font-bold truncate mb-sm">
+      <p className="text-sm text-[var(--color-on-surface)] font-bold truncate mb-3">
         {product.name}
       </p>
-      <p className="font-headline-md text-headline-md text-primary">
+      <p className="text-xl font-bold text-[var(--color-primary)]">
         ${product.price.toFixed(2)}
       </p>
       {product.rating && (
-        <p className="font-body-sm text-body-sm text-on-surface-variant">
+        <p className="text-sm text-[var(--color-on-surface-variant)]">
           <span className="material-symbols-outlined text-[14px] align-text-bottom">star</span> {product.rating} ({product.reviewCount} reviews)
         </p>
       )}

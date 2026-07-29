@@ -40,51 +40,50 @@ export default function Footer() {
 
   return (
     <footer
-      className="w-full mt-xl border-t border-outline-variant bg-surface-container-lowest py-lg"
+      className="w-full mt-12 border-t border-[var(--color-outline-variant)] bg-[var(--color-surface-container-lowest)] py-12"
       role="contentinfo"
       aria-label="Site footer"
     >
-      <div className="max-w-7xl mx-auto px-margin-desktop">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-gutter mb-xl">
+      <div className="max-w-7xl mx-auto px-4 md:px-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-12">
           <div className="col-span-2">
-            <span className="font-headline-md text-headline-md font-bold text-on-surface">CommerceSphere</span>
-            <p className="mt-md text-body-sm text-on-surface-variant pr-md max-w-xs">
+            <span className="text-xl font-bold text-[var(--color-on-surface)]">CommerceSphere</span>
+            <p className="mt-4 text-sm text-[var(--color-on-surface-variant)] pr-4 max-w-xs leading-relaxed">
               The comprehensive ecosystem for modern retail operations. Scaling with you from first sale to global domination.
             </p>
           </div>
           {sections.map((section) => (
             <div key={section.title}>
-              <h4 className="font-label-md text-label-md text-on-surface uppercase mb-sm">{section.title}</h4>
-              <ul className="space-y-2">
+              <h4 className="text-xs font-semibold text-[var(--color-on-surface)] uppercase tracking-wider mb-4">{section.title}</h4>
+              <ul className="space-y-2.5">
                 {section.links.map((link) => (
                   <li key={link.label}>
-                    <a
-                      className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary hover:underline decoration-primary underline-offset-4 transition-all cursor-pointer"
+                    <span
+                      className="text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 transition-all cursor-pointer"
                       onClick={() => { if (link.path !== '#') navigate(link.path); }}
-                      onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && link.path !== '#') { e.preventDefault(); navigate(link.path); } }}
                       role="button"
                       tabIndex={0}
-                      aria-label={link.label}
+                      onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && link.path !== '#') { e.preventDefault(); navigate(link.path); } }}
                     >
                       {link.label}
-                    </a>
+                    </span>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-        <div className="flex flex-col md:flex-row justify-between items-center pt-md border-t border-outline-variant/30 gap-md">
-          <p className="font-body-sm text-body-sm text-on-surface-variant opacity-60">
+        <div className="flex flex-col md:flex-row justify-between items-center pt-6 border-t border-[var(--color-outline-variant)]/30 gap-4">
+          <p className="text-sm text-[var(--color-on-surface-variant)] opacity-60">
             &copy; {new Date().getFullYear()} CommerceSphere Enterprise. All rights reserved.
           </p>
-          <div className="flex gap-md">
-            <a className="text-on-surface-variant hover:text-primary transition-colors" href="#" aria-label="Language">
+          <div className="flex gap-4">
+            <span className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors cursor-pointer" aria-label="Language">
               <span className="material-symbols-outlined">language</span>
-            </a>
-            <a className="text-on-surface-variant hover:text-primary transition-colors" href="#" aria-label="Share">
+            </span>
+            <span className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors cursor-pointer" aria-label="Share">
               <span className="material-symbols-outlined">share</span>
-            </a>
+            </span>
           </div>
         </div>
       </div>
