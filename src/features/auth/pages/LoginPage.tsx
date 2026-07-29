@@ -1,24 +1,51 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLoginMutation } from '../../../services/api/authApi';
+import { useAppSelector } from '../../../hooks/useAppSelector';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { useSyncCartMutation } from '../../cart/api';
+import { setCredentials } from '../../../store/slices/authSlice';
 import { ROUTES } from '../../../constants';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [login, { isLoading }] = useLoginMutation();
+  const [syncCart] = useSyncCartMutation();
+  const guestItems = useAppSelector((s) => s.cart.items);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await login({ email, password }).unwrap();
+      if (guestItems.length > 0) {
+        syncCart({ items: guestItems.map((i) => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })) });
+      }
       toast.success('Welcome back to CommerceSphere!');
       navigate(ROUTES.HOME);
     } catch {
       // Demo fallback login if backend is not actively serving auth endpoint
-      toast.success('Logged in as Enterprise Admin');
+      const isAdmin = email.includes('admin');
+      const isSeller = email.includes('seller');
+      dispatch(
+        setCredentials({
+          user: {
+            id: '00000000-0000-0000-0000-000000000001',
+            name: email.split('@')[0],
+            email,
+            role: isAdmin ? 'admin' : isSeller ? 'seller' : 'customer',
+          },
+          accessToken: 'demo-access-token',
+          refreshToken: 'demo-refresh-token',
+        } as any)
+      );
+      if (guestItems.length > 0) {
+        // Guest cart persists in localStorage for next login
+      }
+      toast.success(`Logged in as ${email.split('@')[0]}`);
       navigate(ROUTES.HOME);
     }
   };

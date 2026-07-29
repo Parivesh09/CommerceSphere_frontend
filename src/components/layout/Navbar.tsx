@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { setCartDrawerOpen } from '../../store/slices/uiSlice';
+import { logout } from '../../store/slices/authSlice';
 import { ROUTES } from '../../constants';
 
 const navLinks = [
@@ -19,8 +20,26 @@ export default function Navbar() {
   const { itemCount } = useAppSelector((s) => s.cart);
   const { isAuthenticated, user } = useAppSelector((s) => s.auth);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setUserMenuOpen(false);
+    navigate(ROUTES.HOME);
+  };
 
   return (
     <>
@@ -80,33 +99,67 @@ export default function Navbar() {
               )}
             </button>
             {isAuthenticated ? (
-              <>
-                {user?.role === 'seller' && (
-                  <button
-                    className="p-2.5 hover:bg-[var(--color-surface-container-low)] transition-colors duration-200 rounded-full"
-                    onClick={() => navigate(ROUTES.SELLER)}
-                    aria-label="Seller dashboard"
-                  >
-                    <span className="material-symbols-outlined text-[var(--color-on-surface-variant)]">store</span>
-                  </button>
-                )}
-                {user?.role === 'admin' && (
-                  <button
-                    className="p-2.5 hover:bg-[var(--color-surface-container-low)] transition-colors duration-200 rounded-full"
-                    onClick={() => navigate(ROUTES.ADMIN)}
-                    aria-label="Admin panel"
-                  >
-                    <span className="material-symbols-outlined text-[var(--color-on-surface-variant)]">admin_panel_settings</span>
-                  </button>
-                )}
+              <div className="relative" ref={userMenuRef}>
                 <button
-                  className="p-2.5 hover:bg-[var(--color-surface-container-low)] transition-colors duration-200 rounded-full"
-                  onClick={() => navigate(ROUTES.PROFILE)}
-                  aria-label="View profile"
+                  className="flex items-center gap-2 p-2 hover:bg-[var(--color-surface-container-low)] transition-colors duration-200 rounded-xl"
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  aria-label="User menu"
                 >
                   <span className="material-symbols-outlined text-[var(--color-on-surface-variant)]">person</span>
+                  <span className="hidden md:inline text-sm text-[var(--color-on-surface-variant)] max-w-[100px] truncate">
+                    {user?.name || user?.email || 'User'}
+                  </span>
+                  <span className="material-symbols-outlined text-[16px] text-[var(--color-on-surface-variant)]">
+                    {userMenuOpen ? 'expand_less' : 'expand_more'}
+                  </span>
                 </button>
-              </>
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-[var(--color-surface-container-lowest)] rounded-xl shadow-xl border border-[var(--color-outline-variant)]/30 py-2 z-50">
+                    <div className="px-4 py-2 border-b border-[var(--color-outline-variant)]/20">
+                      <p className="text-sm font-semibold text-[var(--color-on-surface)] truncate">
+                        {user?.name || 'User'}
+                      </p>
+                      <p className="text-xs text-[var(--color-on-surface-variant)] truncate">
+                        {user?.email}
+                      </p>
+                    </div>
+                    <button
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)] transition-colors"
+                      onClick={() => { navigate(ROUTES.PROFILE); setUserMenuOpen(false); }}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">person</span>
+                      My Profile
+                    </button>
+                    {user?.role === 'seller' && (
+                      <button
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)] transition-colors"
+                        onClick={() => { navigate(ROUTES.SELLER); setUserMenuOpen(false); }}
+                      >
+                        <span className="material-symbols-outlined text-[18px]">store</span>
+                        Seller Dashboard
+                      </button>
+                    )}
+                    {user?.role === 'admin' && (
+                      <button
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)] transition-colors"
+                        onClick={() => { navigate(ROUTES.ADMIN); setUserMenuOpen(false); }}
+                      >
+                        <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+                        Admin Panel
+                      </button>
+                    )}
+                    <div className="border-t border-[var(--color-outline-variant)]/20 mt-1 pt-1">
+                      <button
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-[var(--color-surface-container-high)] transition-colors"
+                        onClick={handleLogout}
+                      >
+                        <span className="material-symbols-outlined text-[18px]">logout</span>
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <button
                 className="px-6 py-2.5 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[var(--color-primary)]/20 transition-all active:scale-95"
@@ -164,6 +217,45 @@ export default function Navbar() {
                   {link.label}
                 </span>
               ))}
+              {isAuthenticated && (
+                <>
+                  <div className="border-t border-[var(--color-outline-variant)]/20 my-2" />
+                  <span
+                    className="px-3 py-3 rounded-lg text-sm cursor-pointer text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)] transition-all flex items-center gap-3"
+                    onClick={() => { navigate(ROUTES.PROFILE); setMobileOpen(false); }}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(ROUTES.PROFILE); setMobileOpen(false); } }}
+                  >
+                    <span className="material-symbols-outlined text-[18px]">person</span>
+                    My Profile
+                  </span>
+                  {user?.role === 'seller' && (
+                    <span
+                      className="px-3 py-3 rounded-lg text-sm cursor-pointer text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)] transition-all flex items-center gap-3"
+                      onClick={() => { navigate(ROUTES.SELLER); setMobileOpen(false); }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(ROUTES.SELLER); setMobileOpen(false); } }}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">store</span>
+                      Seller Dashboard
+                    </span>
+                  )}
+                  {user?.role === 'admin' && (
+                    <span
+                      className="px-3 py-3 rounded-lg text-sm cursor-pointer text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)] transition-all flex items-center gap-3"
+                      onClick={() => { navigate(ROUTES.ADMIN); setMobileOpen(false); }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(ROUTES.ADMIN); setMobileOpen(false); } }}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+                      Admin Panel
+                    </span>
+                  )}
+                </>
+              )}
             </div>
             {!isAuthenticated && (
               <div className="mt-8 pt-8 border-t border-[var(--color-outline-variant)]/30">

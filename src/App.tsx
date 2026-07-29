@@ -6,7 +6,7 @@ import { AnimatePresence } from 'framer-motion';
 import { store } from './store';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { WebSocketProvider } from './services/websocket';
-import { WebSocketStatus, SkipNavigation } from './components/ui';
+import { SkipNavigation } from './components/ui';
 import { NetworkStatusIndicator } from './components/NetworkStatusIndicator';
 import { ErrorBoundary, RootErrorFallback, RouteErrorFallback } from './components/error';
 import { ROUTES } from './constants';
@@ -386,7 +386,6 @@ function AppRoutes() {
           <Route path="*" element={<LazyNotFoundPage />} />
         </Routes>
       </AnimatePresence>
-      <WebSocketStatus />
     </>
   );
 }

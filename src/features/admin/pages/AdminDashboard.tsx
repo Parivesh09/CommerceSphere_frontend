@@ -1,10 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { useGetAnalyticsOverviewQuery } from '../../../services/api/adminApi';
 import { ROUTES } from '../../../constants';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { data: analyticsData } = useGetAnalyticsOverviewQuery({});
 
   const stats = [
     { label: 'Total Revenue', value: '$128,450.00', change: '+14.2%', icon: 'payments', color: 'text-[var(--color-primary)]' },
@@ -13,7 +11,7 @@ export default function AdminDashboard() {
     { label: 'Low Stock SKU Alerts', value: '3 Items', change: 'Action Needed', icon: 'warning', color: 'text-[var(--color-on-surface-variant)]' },
   ];
 
-  const recentTransactions = analyticsData?.data?.recentSales || [
+  const recentTransactions = [
     { id: 'ORD-892415', customerName: 'Acme Corp', amount: 1299.00, status: 'PROCESSING', date: 'Just now' },
     { id: 'ORD-762109', customerName: 'Stark Logistics', amount: 849.00, status: 'SHIPPED', date: '2 hours ago' },
     { id: 'ORD-431890', customerName: 'Wayne Tech', amount: 4500.00, status: 'DELIVERED', date: '5 hours ago' },
