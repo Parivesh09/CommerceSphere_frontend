@@ -11,10 +11,10 @@ export default function HomePage() {
   const { data: productsData, isLoading } = useGetProductsQuery({ pageSize: 4 });
 
   const sampleProducts = [
-    { id: 'prod-1', title: 'Matrix Point 2.0 Terminal', category: 'Terminals', price: 1299.00, description: 'The benchmark for enterprise transactions with instant settlement.', image: 'https://images.unsplash.com/photo-1556742049-0a67daf64f42?auto=format&fit=crop&w=600&q=80' },
+    { id: 'prod-1', title: 'Matrix Point 2.0 Terminal', category: 'Terminals', price: 1299.00, description: 'Enterprise transactions with instant settlement.', image: 'https://images.unsplash.com/photo-1556742049-0a67daf64f42?auto=format&fit=crop&w=600&q=80' },
     { id: 'prod-2', title: 'Quantum Scan Pro', category: 'Logistics', price: 849.00, description: 'Sub-millisecond inventory scanning and optical tag tracking.', image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80' },
-    { id: 'prod-3', title: 'CommerceSphere Founder Kit', category: 'Bundles', price: 4500.00, description: 'Complete retail foundation package with hardware & IoT hubs.', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80' },
-    { id: 'prod-4', title: 'Core Tablet Gen 3', category: 'Management', price: 1199.00, description: 'Mobile management device with ultra-thin bezel & biometric security.', image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=600&q=80' },
+    { id: 'prod-3', title: 'CommerceSphere Founder Kit', category: 'Bundles', price: 4500.00, description: 'Complete retail foundation package with hardware and IoT hubs.', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80' },
+    { id: 'prod-4', title: 'Core Tablet Gen 3', category: 'Management', price: 1199.00, description: 'Mobile management with ultra-thin bezel and biometric security.', image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=600&q=80' },
   ];
 
   const productsList = (productsData?.data && productsData.data.length > 0)
@@ -40,147 +40,144 @@ export default function HomePage() {
   };
 
   return (
-    <>
-      <section className="relative pt-20 overflow-hidden min-h-[921px] flex items-center">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent z-10"></div>
+    <div className="overflow-hidden">
+      {/* Hero Section */}
+      <section className="relative min-h-[90vh] flex items-center">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-background)] via-[var(--color-background)]/60 to-transparent z-10" />
           <div
-            className="bg-cover bg-center w-full h-full transform scale-105"
-            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1556742049-0a67daf64f42?auto=format&fit=crop&w=1920&q=80')` }}
-          ></div>
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1556742049-0a67daf64f42?auto=format&fit=crop&w=1920&q=80')" }}
+          />
         </div>
-        <div className="relative z-20 max-w-7xl mx-auto px-margin-desktop w-full">
-          <div className="max-w-2xl space-y-md">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary-container/10 border border-primary/20 text-primary-container font-label-md uppercase tracking-widest">
+        <div className="relative z-20 max-w-7xl mx-auto px-4 md:px-10 w-full">
+          <div className="max-w-2xl space-y-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-xs font-semibold uppercase tracking-widest">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]" />
               Enterprise Collection 2026
             </div>
-            <h1 className="font-display-lg text-display-lg md:text-[64px] leading-none text-on-surface">
-              New Season.<br />
-              <span className="text-primary">Redefined Utility.</span>
+            <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.05] tracking-tight text-[var(--color-on-surface)]">
+              New Season.
+              <br />
+              <span className="text-[var(--color-primary)]">Redefined Utility.</span>
             </h1>
-            <p className="font-body-lg text-body-lg text-on-surface-variant max-w-lg">
+            <p className="text-lg md:text-xl text-[var(--color-on-surface-variant)] max-w-lg leading-relaxed">
               Experience the next generation of commerce. Built for performance, designed for the world's most demanding retail ecosystems.
             </p>
-            <div className="flex gap-sm pt-4">
+            <div className="flex gap-4 pt-4">
               <button
                 onClick={() => navigate(ROUTES.PRODUCTS)}
-                className="px-xl py-4 bg-primary text-on-primary rounded-xl font-body-md hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
+                className="px-8 py-4 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-xl font-semibold text-base hover:shadow-lg hover:shadow-[var(--color-primary)]/25 transition-all active:scale-[0.97]"
               >
                 Shop Collection
               </button>
               <button
                 onClick={() => navigate(ROUTES.ENTERPRISE)}
-                className="px-md py-4 glass-card rounded-xl font-body-md text-on-surface hover:bg-white transition-all active:scale-95 flex items-center gap-2"
+                className="px-8 py-4 rounded-xl font-semibold text-base border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-low)] transition-all active:scale-[0.97] flex items-center gap-2"
               >
-                View Lookbook <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                View Lookbook
+                <span className="material-symbols-outlined text-xl">arrow_forward</span>
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-xl max-w-7xl mx-auto px-margin-desktop">
-        <div className="flex justify-between items-end mb-lg">
+      {/* Curated Categories */}
+      <section className="py-20 max-w-7xl mx-auto px-4 md:px-10">
+        <div className="flex justify-between items-end mb-10">
           <div>
-            <h2 className="font-headline-lg text-headline-lg text-on-surface">Curated Categories</h2>
-            <p className="font-body-md text-on-surface-variant">Precision engineered for every enterprise need.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-on-surface)]">Curated Categories</h2>
+            <p className="text-base text-[var(--color-on-surface-variant)] mt-2">Precision engineered for every enterprise need.</p>
           </div>
           <button
             onClick={() => navigate(ROUTES.PRODUCTS)}
-            className="text-primary font-body-md flex items-center gap-1 hover:underline underline-offset-4"
+            className="text-[var(--color-primary)] font-semibold text-sm flex items-center gap-1 hover:underline underline-offset-4 shrink-0"
           >
-            Browse All <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+            Browse All <span className="material-symbols-outlined text-lg">open_in_new</span>
           </button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter h-[600px]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-[500px]">
           <div className="md:col-span-8 relative rounded-2xl overflow-hidden group cursor-pointer">
             <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-              style={{ backgroundImage: `url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80')` }}
-            ></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-on-surface/80 via-on-surface/20 to-transparent"></div>
-            <div
-              className="absolute bottom-0 p-lg w-full cursor-pointer"
-              onClick={() => navigate(ROUTES.PRODUCTS)}
-            >
-              <h3 className="font-headline-md text-headline-md text-white">Smart Infrastructure</h3>
-              <p className="text-white/80 font-body-sm mt-2">Connected systems for the modern warehouse.</p>
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80')" }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute bottom-0 p-8 md:p-10 w-full" onClick={() => navigate(ROUTES.PRODUCTS)}>
+              <h3 className="text-2xl md:text-3xl font-bold text-white">Smart Infrastructure</h3>
+              <p className="text-white/70 text-base mt-2">Connected systems for the modern warehouse.</p>
             </div>
           </div>
-          <div className="md:col-span-4 flex flex-col gap-gutter">
-            <div className="h-1/2 relative rounded-2xl overflow-hidden group cursor-pointer">
+          <div className="md:col-span-4 flex flex-col gap-6">
+            <div className="flex-1 relative rounded-2xl overflow-hidden group cursor-pointer">
               <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                style={{ backgroundImage: `url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80')` }}
-              ></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-on-surface/80 via-on-surface/20 to-transparent"></div>
-              <div
-                className="absolute bottom-0 p-md cursor-pointer"
-                onClick={() => navigate(ROUTES.PRODUCTS)}
-              >
-                <h3 className="font-body-lg font-bold text-white">Audio & Peripherals</h3>
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                style={{ backgroundImage: "url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80')" }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 p-6" onClick={() => navigate(ROUTES.PRODUCTS)}>
+                <h3 className="text-xl font-bold text-white">Audio and Peripherals</h3>
               </div>
             </div>
-            <div className="h-1/2 relative rounded-2xl overflow-hidden group cursor-pointer">
+            <div className="flex-1 relative rounded-2xl overflow-hidden group cursor-pointer">
               <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                style={{ backgroundImage: `url('https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=600&q=80')` }}
-              ></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-on-surface/80 via-on-surface/20 to-transparent"></div>
-              <div
-                className="absolute bottom-0 p-md cursor-pointer"
-                onClick={() => navigate(ROUTES.PRODUCTS)}
-              >
-                <h3 className="font-body-lg font-bold text-white">Store Experience</h3>
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                style={{ backgroundImage: "url('https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=600&q=80')" }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 p-6" onClick={() => navigate(ROUTES.PRODUCTS)}>
+                <h3 className="text-xl font-bold text-white">Store Experience</h3>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-xl bg-surface-container-low">
-        <div className="max-w-7xl mx-auto px-margin-desktop">
-          <div className="text-center mb-xl">
-            <h2 className="font-headline-lg text-headline-lg text-on-surface">Trending Now</h2>
-            <div className="h-1 w-20 bg-primary mx-auto mt-4 rounded-full"></div>
+      {/* Trending Now */}
+      <section className="py-20 bg-[var(--color-surface-container-low)]">
+        <div className="max-w-7xl mx-auto px-4 md:px-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-on-surface)]">Trending Now</h2>
+            <div className="h-1 w-20 bg-[var(--color-primary)] mx-auto mt-4 rounded-full" />
           </div>
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-96 glass-card rounded-2xl animate-pulse" />
+                <div key={i} className="h-96 rounded-2xl bg-[var(--color-surface-container)] animate-pulse" />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {productsList.map((product) => (
-                <div key={product.id} className="glass-card rounded-2xl overflow-hidden flex flex-col p-4">
-                  <div className="relative aspect-square rounded-xl overflow-hidden mb-4">
+                <div key={product.id} className="glass-card rounded-2xl overflow-hidden flex flex-col p-4 hover:shadow-lg transition-shadow">
+                  <div className="relative aspect-square rounded-xl overflow-hidden mb-4 bg-[var(--color-surface-container-low)]">
                     <div
                       className="bg-cover bg-center w-full h-full transition-transform duration-500 hover:scale-105 cursor-pointer"
                       style={{ backgroundImage: `url('${product.image}')` }}
                       onClick={() => navigate(`/products/${product.id}`)}
-                    ></div>
-                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm p-2 rounded-full cursor-pointer hover:bg-primary hover:text-white transition-colors">
-                      <span className="material-symbols-outlined text-[20px]">favorite</span>
+                    />
+                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm p-2 rounded-full cursor-pointer hover:bg-[var(--color-primary)] hover:text-white transition-colors">
+                      <span className="material-symbols-outlined text-xl">favorite</span>
                     </div>
                   </div>
-                  <div className="flex-grow">
-                    <span className="font-label-md text-primary uppercase">{product.category}</span>
+                  <div className="flex-1">
+                    <span className="text-xs font-semibold text-[var(--color-primary)] uppercase tracking-wider">{product.category}</span>
                     <h3
-                      className="font-body-md font-bold text-on-surface mt-1 cursor-pointer hover:text-primary"
+                      className="text-base font-bold text-[var(--color-on-surface)] mt-1 cursor-pointer hover:text-[var(--color-primary)] transition-colors"
                       onClick={() => navigate(`/products/${product.id}`)}
                     >
                       {product.title}
                     </h3>
-                    <p className="font-body-sm text-on-surface-variant mt-1 line-clamp-1">{product.description}</p>
+                    <p className="text-sm text-[var(--color-on-surface-variant)] mt-1 line-clamp-2">{product.description}</p>
                   </div>
-                  <div className="flex justify-between items-center mt-4 pt-4 border-t border-outline-variant/30">
-                    <span className="font-headline-md text-headline-md text-on-surface">${product.price.toLocaleString()}</span>
+                  <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--color-outline-variant)]/30">
+                    <span className="text-xl font-bold text-[var(--color-on-surface)]">${product.price.toLocaleString()}</span>
                     <button
                       onClick={() => handleAddToCart(product)}
-                      className="bg-on-surface text-surface px-4 py-2 rounded-lg font-body-sm hover:bg-primary transition-colors active:scale-95"
+                      className="bg-[var(--color-on-surface)] text-[var(--color-surface)] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[var(--color-primary)] transition-colors active:scale-95"
                     >
-                      Add
+                      Add to Cart
                     </button>
                   </div>
                 </div>
@@ -190,53 +187,51 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-xl max-w-7xl mx-auto px-margin-desktop">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-xl">
-          <div className="flex flex-col items-start gap-4">
-            <div className="p-4 bg-primary-container/10 rounded-2xl text-primary">
-              <span className="material-symbols-outlined text-[32px]">speed</span>
+      {/* Features */}
+      <section className="py-20 max-w-7xl mx-auto px-4 md:px-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          {[
+            { icon: 'speed', title: 'Fast delivery', desc: 'Global logistics infrastructure ensuring 24-hour fulfillment to major enterprise hubs worldwide.' },
+            { icon: 'support_agent', title: '24/7 Support', desc: 'Dedicated success managers available around the clock to ensure your operations never stop.' },
+            { icon: 'eco', title: 'Sustainable', desc: 'Carbon-neutral manufacturing and fully biodegradable enterprise-grade packaging as standard.' },
+          ].map((feature) => (
+            <div key={feature.title} className="flex flex-col items-start gap-4">
+              <div className="p-4 bg-[var(--color-primary)]/10 rounded-2xl text-[var(--color-primary)]">
+                <span className="material-symbols-outlined text-3xl">{feature.icon}</span>
+              </div>
+              <h3 className="text-xl font-bold text-[var(--color-on-surface)]">{feature.title}</h3>
+              <p className="text-base text-[var(--color-on-surface-variant)] leading-relaxed">{feature.desc}</p>
             </div>
-            <h3 className="font-headline-md text-headline-md text-on-surface">Fast delivery</h3>
-            <p className="font-body-md text-on-surface-variant">Global logistics infrastructure ensuring 24-hour fulfillment to major enterprise hubs worldwide.</p>
-          </div>
-          <div className="flex flex-col items-start gap-4">
-            <div className="p-4 bg-primary-container/10 rounded-2xl text-primary">
-              <span className="material-symbols-outlined text-[32px]">support_agent</span>
-            </div>
-            <h3 className="font-headline-md text-headline-md text-on-surface">24/7 Support</h3>
-            <p className="font-body-md text-on-surface-variant">Dedicated success managers available around the clock to ensure your operations never stop.</p>
-          </div>
-          <div className="flex flex-col items-start gap-4">
-            <div className="p-4 bg-primary-container/10 rounded-2xl text-primary">
-              <span className="material-symbols-outlined text-[32px]">eco</span>
-            </div>
-            <h3 className="font-headline-md text-headline-md text-on-surface">Sustainable</h3>
-            <p className="font-body-md text-on-surface-variant">Carbon-neutral manufacturing and fully biodegradable enterprise-grade packaging as standard.</p>
-          </div>
+          ))}
         </div>
       </section>
 
-      <section className="py-xl bg-primary relative overflow-hidden">
+      {/* Newsletter */}
+      <section className="py-20 bg-[var(--color-primary)] relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute -top-20 -left-20 w-96 h-96 bg-secondary-container rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute -top-20 -left-20 w-96 h-96 bg-[var(--color-secondary-container)] rounded-full blur-3xl" />
+          <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-white rounded-full blur-3xl" />
         </div>
-        <div className="max-w-3xl mx-auto px-margin-desktop text-center relative z-10">
-          <h2 className="font-display-lg text-display-lg text-on-primary">Join the Inner Circle</h2>
-          <p className="font-body-lg text-on-primary-container mt-4 mb-lg opacity-80">Be the first to access exclusive enterprise releases and global market insights.</p>
-          <form className="flex flex-col md:flex-row gap-4" onSubmit={(e) => e.preventDefault()}>
+        <div className="max-w-3xl mx-auto px-4 md:px-10 text-center relative z-10">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-[var(--color-on-primary)] leading-tight">Join the Inner Circle</h2>
+          <p className="text-lg text-[var(--color-on-primary-container)] mt-4 mb-8 opacity-80">
+            Be the first to access exclusive enterprise releases and global market insights.
+          </p>
+          <form className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto" onSubmit={(e) => e.preventDefault()}>
             <input
-              className="flex-grow px-6 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 backdrop-blur-sm transition-all"
+              className="flex-1 px-6 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 backdrop-blur-sm transition-all text-base"
               placeholder="Enterprise Email"
               type="email"
             />
-            <button className="px-xl py-4 bg-white text-primary font-bold rounded-xl hover:bg-surface-bright transition-all active:scale-95 shadow-xl" type="submit">
+            <button className="px-10 py-4 bg-white text-[var(--color-primary)] font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-95 shadow-xl text-base" type="submit">
               Subscribe
             </button>
           </form>
-          <p className="mt-4 font-label-md text-on-primary-container/60">By subscribing, you agree to our Privacy Policy and Terms of Service.</p>
+          <p className="mt-4 text-xs text-[var(--color-on-primary-container)]/60">
+            By subscribing, you agree to our Privacy Policy and Terms of Service.
+          </p>
         </div>
       </section>
-    </>
+    </div>
   );
 }

@@ -1,10 +1,12 @@
-import { useGetOrdersQuery, useUpdateOrderStatusMutation } from '../../../services/api/orderApi';
+import { useGetOrdersQuery, useUpdateOrderStatusMutation, useShipOrderMutation, useDeliverOrderMutation } from '../../../services/api/orderApi';
 import type { OrderStatus } from '../../../types';
 import toast from 'react-hot-toast';
 
 export function AdminOrdersPage() {
   const { data: responseData, isLoading } = useGetOrdersQuery({});
   const [updateStatus] = useUpdateOrderStatusMutation();
+  const [shipOrder] = useShipOrderMutation();
+  const [deliverOrder] = useDeliverOrderMutation();
 
   const sampleOrders = [
     { id: 'ORD-892415', userId: 'usr-101', totalAmount: 1299.00, status: 'PROCESSING' as OrderStatus, createdAt: '2026-07-26' },
@@ -16,7 +18,13 @@ export function AdminOrdersPage() {
 
   const handleStatusChange = async (id: string, status: OrderStatus) => {
     try {
-      await updateStatus({ id, status }).unwrap();
+      if (status === 'SHIPPED') {
+        await shipOrder({ id }).unwrap();
+      } else if (status === 'DELIVERED') {
+        await deliverOrder({ id }).unwrap();
+      } else {
+        await updateStatus({ id, status }).unwrap();
+      }
       toast.success(`Order ${id} status updated to ${status}`);
     } catch {
       toast.success(`Order ${id} status updated to ${status}`);
@@ -52,7 +60,12 @@ export function AdminOrdersPage() {
                     <td className="py-3 font-medium text-on-surface">{o.userId}</td>
                     <td className="py-3 font-bold">${o.totalAmount.toLocaleString()}</td>
                     <td className="py-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary-fixed text-primary">
+                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                        o.status === 'DELIVERED' ? 'bg-tertiary-container/20 text-tertiary' :
+                        o.status === 'SHIPPED' ? 'bg-primary-fixed text-primary' :
+                        o.status === 'CANCELLED' ? 'bg-error-container/20 text-error' :
+                        'bg-primary-fixed text-primary'
+                      }`}>
                         {o.status}
                       </span>
                     </td>

@@ -75,17 +75,12 @@ export const authApi = baseApi.injectEndpoints({
       providesTags: [{ type: 'Profile', id: 'USER' }],
     }),
 
-    updateProfile: builder.mutation<ApiResponse<User>, Partial<User>>({
-      query: (profileData) => ({
-        url: '/auth/profile',
-        method: 'PUT',
-        body: profileData,
+    refreshToken: builder.mutation<{ accessToken: string }, { refreshToken: string }>({
+      query: (data) => ({
+        url: '/auth/refresh',
+        method: 'POST',
+        body: data,
       }),
-      transformResponse: (response: { user: User }): ApiResponse<User> => ({
-        data: response.user,
-        success: true,
-      }),
-      invalidatesTags: [{ type: 'Profile', id: 'USER' }],
     }),
 
     logoutUser: builder.mutation<void, void>({
@@ -109,6 +104,6 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useGetCurrentUserQuery,
-  useUpdateProfileMutation,
   useLogoutUserMutation,
+  useRefreshTokenMutation,
 } = authApi;

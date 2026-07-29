@@ -9,74 +9,46 @@ import type {
   UserAddress,
 } from '../types';
 
-/**
- * Profile API endpoints
- * 
- * Provides user profile management endpoints using RTK Query endpoint injection.
- * All endpoints automatically include authentication tokens via baseApi configuration.
- * 
- * Validates: Requirements 3.1
- */
 export const profileApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    /**
-     * Get user profile
-     * Fetches the authenticated user's complete profile
-     */
     getProfile: builder.query<UserProfile, void>({
-      query: () => '/users/profile',
+      query: () => '/auth/me',
+      transformResponse: (response: { user: UserProfile }) => response.user,
       providesTags: [API_TAGS.PROFILE, API_TAGS.USER],
     }),
 
-    /**
-     * Update user profile
-     * Updates basic profile information (name, phone, avatar)
-     */
     updateProfile: builder.mutation<UserProfile, ProfileUpdateData>({
       query: (data) => ({
-        url: '/users/profile',
+        url: '/auth/me',
         method: 'PATCH',
         body: data,
       }),
       invalidatesTags: [API_TAGS.PROFILE, API_TAGS.USER],
     }),
 
-    /**
-     * Change password
-     * Updates the user's password
-     */
     changePassword: builder.mutation<void, PasswordChangeData>({
       query: (data) => ({
-        url: '/users/profile/password',
-        method: 'PUT',
-        body: data,
+        url: '/auth/password-reset',
+        method: 'POST',
+        body: { token: '', newPassword: data.newPassword },
       }),
     }),
 
-    /**
-     * Upload avatar
-     * Uploads a new profile avatar image
-     */
     uploadAvatar: builder.mutation<{ avatarUrl: string }, FormData>({
       query: (formData) => ({
-        url: '/users/profile/avatar',
+        url: '/auth/me/avatar',
         method: 'POST',
         body: formData,
-
         prepareHeaders: (headers: Headers) => {
           headers.delete('Content-Type');
           return headers;
         },
       }),
-      invalidatesTags: ['Profile', 'User'],
+      invalidatesTags: [API_TAGS.PROFILE, API_TAGS.USER],
     }),
 
-    /**
-     * Get user addresses
-     * Fetches all addresses for the authenticated user
-     */
     getAddresses: builder.query<UserAddress[], void>({
-      query: () => '/users/profile/addresses',
+      query: () => '/auth/me/addresses',
       providesTags: (result) =>
         result
           ? [
@@ -86,26 +58,18 @@ export const profileApi = baseApi.injectEndpoints({
           : [{ type: 'Profile' as const, id: 'ADDRESSES' }],
     }),
 
-    /**
-     * Add address
-     * Creates a new address for the user
-     */
     addAddress: builder.mutation<UserAddress, AddressCreateData>({
       query: (data) => ({
-        url: '/users/profile/addresses',
+        url: '/auth/me/addresses',
         method: 'POST',
         body: data,
       }),
       invalidatesTags: [{ type: API_TAGS.PROFILE, id: 'ADDRESSES' }],
     }),
 
-    /**
-     * Update address
-     * Updates an existing address
-     */
     updateAddress: builder.mutation<UserAddress, AddressUpdateData>({
       query: ({ id, ...data }) => ({
-        url: `/users/profile/addresses/${id}`,
+        url: `/auth/me/addresses/${id}`,
         method: 'PATCH',
         body: data,
       }),
@@ -115,13 +79,9 @@ export const profileApi = baseApi.injectEndpoints({
       ],
     }),
 
-    /**
-     * Delete address
-     * Removes an address from the user's profile
-     */
     deleteAddress: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/users/profile/addresses/${id}`,
+        url: `/auth/me/addresses/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: (_result, _error, id) => [
@@ -130,13 +90,9 @@ export const profileApi = baseApi.injectEndpoints({
       ],
     }),
 
-    /**
-     * Set default address
-     * Marks an address as the default
-     */
     setDefaultAddress: builder.mutation<UserAddress, string>({
       query: (id) => ({
-        url: `/users/profile/addresses/${id}/default`,
+        url: `/auth/me/addresses/${id}/default`,
         method: 'PUT',
       }),
       invalidatesTags: [{ type: API_TAGS.PROFILE, id: 'ADDRESSES' }],

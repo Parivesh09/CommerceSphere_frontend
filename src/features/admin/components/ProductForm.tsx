@@ -105,12 +105,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     if (!file) return;
 
     try {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const result = await uploadProductImage(formData).unwrap();
+      const extension = file.name.split('.').pop() || 'jpg';
+      const result = await uploadProductImage({ productId: 'temp', fileExtension: extension }).unwrap();
+      const uploadUrl = result.url;
+      await fetch(uploadUrl, { method: 'PUT', body: file });
       appendImage({
-        url: result.url,
+        url: uploadUrl.split('?')[0],
         alt: file.name,
         order: imageFields.length,
       });

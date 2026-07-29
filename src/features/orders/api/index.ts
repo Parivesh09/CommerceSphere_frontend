@@ -1,15 +1,6 @@
 import { baseApi } from '../../../services/api/baseApi';
 import type { Order, PaginatedResponse } from '../../../types';
 
-/**
- * Orders API endpoints
- * 
- * Provides endpoints for fetching and managing orders.
- * Integrated with WebSocket for real-time updates.
- * 
- * Validates: Requirements 18.1, 18.2, 18.3, 18.4, 18.5
- */
-
 export interface OrderFilters {
   status?: string;
   startDate?: string;
@@ -39,7 +30,7 @@ export const ordersApi = baseApi.injectEndpoints({
       providesTags: (_result, _error, id) => [{ type: 'Order', id }],
     }),
 
-    createOrder: builder.mutation<Order, Partial<Order>>({
+    createOrder: builder.mutation<Order, { items: Array<{ productId: string; quantity: number; variantId?: string; unitPrice: number }>; shippingAddress: { street: string; city: string; state: string; postalCode: string; country: string } }>({
       query: (order) => ({
         url: '/orders',
         method: 'POST',
@@ -60,12 +51,36 @@ export const ordersApi = baseApi.injectEndpoints({
       ],
     }),
 
-    cancelOrder: builder.mutation<Order, string>({
-      query: (id) => ({
+    cancelOrder: builder.mutation<Order, { id: string; reason?: string }>({
+      query: ({ id, reason }) => ({
         url: `/orders/${id}/cancel`,
         method: 'POST',
+        body: { userId: '', reason },
       }),
-      invalidatesTags: (_result, _error, id) => [
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Order', id },
+        { type: 'Orders', id: 'LIST' },
+      ],
+    }),
+
+    shipOrder: builder.mutation<Order, { id: string; trackingNumber?: string; carrier?: string }>({
+      query: ({ id, trackingNumber, carrier }) => ({
+        url: `/orders/${id}/ship`,
+        method: 'POST',
+        body: { trackingNumber, carrier },
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Order', id },
+        { type: 'Orders', id: 'LIST' },
+      ],
+    }),
+
+    deliverOrder: builder.mutation<Order, { id: string }>({
+      query: ({ id }) => ({
+        url: `/orders/${id}/deliver`,
+        method: 'POST',
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
         { type: 'Order', id },
         { type: 'Orders', id: 'LIST' },
       ],
@@ -79,4 +94,6 @@ export const {
   useCreateOrderMutation,
   useUpdateOrderStatusMutation,
   useCancelOrderMutation,
+  useShipOrderMutation,
+  useDeliverOrderMutation,
 } = ordersApi;

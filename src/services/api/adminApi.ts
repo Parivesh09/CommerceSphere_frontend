@@ -59,14 +59,38 @@ export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAnalyticsOverview: builder.query<ApiResponse<AdminAnalyticsMetrics>, { timeframe?: string }>({
       query: (params) => ({
-        url: '/admin/analytics/overview',
+        url: '/analytics/dashboard',
         params,
       }),
       providesTags: [{ type: 'Analytics', id: 'OVERVIEW' }],
     }),
 
+    getSalesAnalytics: builder.query<ApiResponse<unknown>, { startDate?: string; endDate?: string; interval?: string }>({
+      query: (params) => ({
+        url: '/analytics/sales',
+        params,
+      }),
+      providesTags: [{ type: 'Analytics', id: 'SALES' }],
+    }),
+
+    getTopProducts: builder.query<ApiResponse<unknown[]>, { startDate?: string; endDate?: string; limit?: number; sortBy?: string }>({
+      query: (params) => ({
+        url: '/analytics/products/top',
+        params,
+      }),
+      providesTags: [{ type: 'Analytics', id: 'TOP_PRODUCTS' }],
+    }),
+
+    getTopCustomers: builder.query<ApiResponse<unknown[]>, { limit?: number; sortBy?: string }>({
+      query: (params) => ({
+        url: '/analytics/customers/top',
+        params,
+      }),
+      providesTags: [{ type: 'Analytics', id: 'TOP_CUSTOMERS' }],
+    }),
+
     getInventoryList: builder.query<ApiResponse<InventoryItem[]>, void>({
-      query: () => '/admin/inventory',
+      query: () => '/inventory',
       providesTags: [{ type: 'Products', id: 'INVENTORY' }],
     }),
 
@@ -116,6 +140,9 @@ export const adminApi = baseApi.injectEndpoints({
 
 export const {
   useGetAnalyticsOverviewQuery,
+  useGetSalesAnalyticsQuery,
+  useGetTopProductsQuery,
+  useGetTopCustomersQuery,
   useGetInventoryListQuery,
   useUpdateStockLevelMutation,
   useGetVendorsQuery,
