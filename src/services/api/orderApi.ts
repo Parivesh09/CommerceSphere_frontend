@@ -24,18 +24,30 @@ export interface CreateOrderRequest {
   shippingAddress: Address;
 }
 
-export interface GetOrdersParams {
-  page?: number;
-  pageSize?: number;
-  status?: OrderStatus;
+interface OrderResponse {
+  order: Order;
+}
+
+interface OrdersListResponse {
+  orders: Order[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 export const orderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getOrders: builder.query<PaginatedResponse<Order>, GetOrdersParams>({
-      query: (params) => ({
+    getOrders: builder.query<PaginatedResponse<Order>, { userId?: string; status?: OrderStatus; page?: number; limit?: number }>({
+      query: ({ userId, ...params }) => ({
         url: '/orders',
-        params,
+        params: { userId, ...params },
+      }),
+      transformResponse: (response: OrdersListResponse, _meta, arg): PaginatedResponse<Order> => ({
+        data: response.orders,
+        total: response.total,
+        page: response.page || arg.page || 1,
+        pageSize: response.limit || arg.limit || 20,
+        totalPages: Math.ceil(response.total / (response.limit || arg.limit || 20)),
       }),
       providesTags: (result) =>
         result
@@ -46,9 +58,20 @@ export const orderApi = baseApi.injectEndpoints({
           : [{ type: 'Orders' as const, id: 'LIST' }],
     }),
 
-    getOrderById: builder.query<ApiResponse<Order>, string>({
-      query: (id) => `/orders/${id}`,
-      providesTags: (_result, _error, id) => [{ type: 'Order' as const, id }],
+    getOrderById: builder.query<ApiResponse<Order>, string | { id: string; userId?: string }>({
+      query: (arg) => {
+        const id = typeof arg === 'string' ? arg : arg.id;
+        const userId = typeof arg === 'string' ? undefined : arg.userId;
+        return {
+          url: `/orders/${id}`,
+          params: userId ? { userId } : undefined,
+        };
+      },
+      transformResponse: (response: OrderResponse): ApiResponse<Order> => ({
+        data: response.order,
+        success: true,
+      }),
+      providesTags: (_result, _error, arg) => [{ type: 'Order' as const, id: typeof arg === 'string' ? arg : arg.id }],
     }),
 
     createOrder: builder.mutation<ApiResponse<Order>, CreateOrderRequest>({
@@ -57,16 +80,20 @@ export const orderApi = baseApi.injectEndpoints({
         method: 'POST',
         body: orderData,
       }),
+      transformResponse: (response: OrderResponse): ApiResponse<Order> => ({
+        data: response.order,
+        success: true,
+      }),
       invalidatesTags: [
         { type: 'Orders' as const, id: 'LIST' },
         { type: 'Cart' as const, id: 'CURRENT' },
       ],
     }),
 
-    updateOrderStatus: builder.mutation<ApiResponse<Order>, { id: string; status: OrderStatus }>({
+    updateOrderStatus: builder.mutation<{ message: string }, { id: string; status: OrderStatus }>({
       query: ({ id, status }) => ({
         url: `/orders/${id}/status`,
-        method: 'PATCH',
+        method: 'PUT',
         body: { status },
       }),
       invalidatesTags: (_result, _error, { id }) => [
@@ -79,7 +106,11 @@ export const orderApi = baseApi.injectEndpoints({
       query: ({ id, reason }) => ({
         url: `/orders/${id}/cancel`,
         method: 'POST',
-        body: { userId: '', reason },
+        body: { reason },
+      }),
+      transformResponse: (response: OrderResponse): ApiResponse<Order> => ({
+        data: response.order,
+        success: true,
       }),
       invalidatesTags: (_result, _error, { id }) => [
         { type: 'Order' as const, id },
@@ -93,6 +124,10 @@ export const orderApi = baseApi.injectEndpoints({
         method: 'POST',
         body: { trackingNumber, carrier },
       }),
+      transformResponse: (response: OrderResponse): ApiResponse<Order> => ({
+        data: response.order,
+        success: true,
+      }),
       invalidatesTags: (_result, _error, { id }) => [
         { type: 'Order' as const, id },
         { type: 'Orders' as const, id: 'LIST' },
@@ -105,15 +140,14 @@ export const orderApi = baseApi.injectEndpoints({
         method: 'POST',
         body: { deliveredAt },
       }),
+      transformResponse: (response: OrderResponse): ApiResponse<Order> => ({
+        data: response.order,
+        success: true,
+      }),
       invalidatesTags: (_result, _error, { id }) => [
         { type: 'Order' as const, id },
         { type: 'Orders' as const, id: 'LIST' },
       ],
-    }),
-
-    trackOrder: builder.query<ApiResponse<TrackingInfo>, string>({
-      query: (idOrTracking) => `/orders/track/${idOrTracking}`,
-      providesTags: (_result, _error, id) => [{ type: 'Order' as const, id: `track-${id}` }],
     }),
   }),
 });
@@ -126,5 +160,4 @@ export const {
   useCancelOrderMutation,
   useShipOrderMutation,
   useDeliverOrderMutation,
-  useTrackOrderQuery,
 } = orderApi;

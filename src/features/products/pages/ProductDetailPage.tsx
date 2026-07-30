@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetProductQuery, useGetProductReviewsQuery } from '../../../services/api/productApi';
 import { useGetSimilarProductsQuery } from '../../../services/api/recommendationApi';
-import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { addToCart } from '../../../store/slices/cartSlice';
+import { useCart } from '../../cart/hooks';
 import { toggleWishlistItem } from '../../../features/wishlist/slice';
 import toast from 'react-hot-toast';
 import { ROUTES } from '../../../constants';
@@ -11,7 +10,7 @@ import { ROUTES } from '../../../constants';
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { addToCart } = useCart();
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'specs' | 'reviews' | 'shipping'>('specs');
@@ -42,15 +41,11 @@ export default function ProductDetailPage() {
   const mainImage = product.images?.[selectedImageIndex]?.url || fallbackProduct.images[0].url;
 
   const handleAddToCart = () => {
-    dispatch(
-      addToCart({
-        id: product.id,
-        productId: product.id,
-        quantity,
-        unitPrice: product.price,
-        product,
-      })
-    );
+    addToCart({
+      productId: product.id,
+      quantity,
+      unitPrice: product.price,
+    });
     toast.success(`${quantity} x ${product.title} added to cart!`);
   };
 

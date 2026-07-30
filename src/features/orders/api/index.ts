@@ -1,20 +1,30 @@
 import { baseApi } from '../../../services/api/baseApi';
-import type { Order, PaginatedResponse } from '../../../types';
+import type { Order, OrderStatus, ApiResponse, PaginatedResponse } from '../../../types';
 
-export interface OrderFilters {
-  status?: string;
-  startDate?: string;
-  endDate?: string;
-  page?: number;
-  pageSize?: number;
+interface OrderResponse {
+  order: Order;
+}
+
+interface OrdersListResponse {
+  orders: Order[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 export const ordersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getOrders: builder.query<PaginatedResponse<Order>, OrderFilters | void>({
-      query: (filters) => ({
+    getOrders: builder.query<PaginatedResponse<Order>, { userId?: string; status?: OrderStatus; page?: number; limit?: number }>({
+      query: ({ userId, ...params }) => ({
         url: '/orders',
-        params: filters || {},
+        params: { userId, ...params },
+      }),
+      transformResponse: (response: OrdersListResponse, _meta, arg): PaginatedResponse<Order> => ({
+        data: response.orders,
+        total: response.total,
+        page: response.page || arg.page || 1,
+        pageSize: response.limit || arg.limit || 20,
+        totalPages: Math.ceil(response.total / (response.limit || arg.limit || 20)),
       }),
       providesTags: (result) =>
         result
@@ -25,24 +35,39 @@ export const ordersApi = baseApi.injectEndpoints({
           : [{ type: 'Orders', id: 'LIST' }],
     }),
 
-    getOrderById: builder.query<Order, string>({
-      query: (id) => `/orders/${id}`,
-      providesTags: (_result, _error, id) => [{ type: 'Order', id }],
+    getOrderById: builder.query<ApiResponse<Order>, string | { id: string; userId?: string }>({
+      query: (arg) => {
+        const id = typeof arg === 'string' ? arg : arg.id;
+        const userId = typeof arg === 'string' ? undefined : arg.userId;
+        return {
+          url: `/orders/${id}`,
+          params: userId ? { userId } : undefined,
+        };
+      },
+      transformResponse: (response: OrderResponse): ApiResponse<Order> => ({
+        data: response.order,
+        success: true,
+      }),
+      providesTags: (_result, _error, arg) => [{ type: 'Order', id: typeof arg === 'string' ? arg : arg.id }],
     }),
 
-    createOrder: builder.mutation<Order, { items: Array<{ productId: string; quantity: number; variantId?: string; unitPrice: number }>; shippingAddress: { street: string; city: string; state: string; postalCode: string; country: string } }>({
+    createOrder: builder.mutation<ApiResponse<Order>, { userId?: string; items: Array<{ productId: string; quantity: number; variantId?: string; unitPrice: number }>; shippingAddress: { street: string; city: string; state: string; postalCode: string; country: string } }>({
       query: (order) => ({
         url: '/orders',
         method: 'POST',
         body: order,
       }),
+      transformResponse: (response: OrderResponse): ApiResponse<Order> => ({
+        data: response.order,
+        success: true,
+      }),
       invalidatesTags: [{ type: 'Orders', id: 'LIST' }],
     }),
 
-    updateOrderStatus: builder.mutation<Order, { id: string; status: string }>({
+    updateOrderStatus: builder.mutation<{ message: string }, { id: string; status: OrderStatus }>({
       query: ({ id, status }) => ({
         url: `/orders/${id}/status`,
-        method: 'PATCH',
+        method: 'PUT',
         body: { status },
       }),
       invalidatesTags: (_result, _error, { id }) => [
@@ -51,11 +76,15 @@ export const ordersApi = baseApi.injectEndpoints({
       ],
     }),
 
-    cancelOrder: builder.mutation<Order, { id: string; reason?: string }>({
+    cancelOrder: builder.mutation<ApiResponse<Order>, { id: string; reason?: string }>({
       query: ({ id, reason }) => ({
         url: `/orders/${id}/cancel`,
         method: 'POST',
-        body: { userId: '', reason },
+        body: { reason },
+      }),
+      transformResponse: (response: OrderResponse): ApiResponse<Order> => ({
+        data: response.order,
+        success: true,
       }),
       invalidatesTags: (_result, _error, { id }) => [
         { type: 'Order', id },
@@ -63,22 +92,31 @@ export const ordersApi = baseApi.injectEndpoints({
       ],
     }),
 
-    shipOrder: builder.mutation<Order, { id: string; trackingNumber?: string; carrier?: string }>({
+    shipOrder: builder.mutation<ApiResponse<Order>, { id: string; trackingNumber?: string; carrier?: string }>({
       query: ({ id, trackingNumber, carrier }) => ({
         url: `/orders/${id}/ship`,
         method: 'POST',
         body: { trackingNumber, carrier },
       }),
+      transformResponse: (response: OrderResponse): ApiResponse<Order> => ({
+        data: response.order,
+        success: true,
+      }),
       invalidatesTags: (_result, _error, { id }) => [
         { type: 'Order', id },
         { type: 'Orders', id: 'LIST' },
       ],
     }),
 
-    deliverOrder: builder.mutation<Order, { id: string }>({
-      query: ({ id }) => ({
+    deliverOrder: builder.mutation<ApiResponse<Order>, { id: string; deliveredAt?: string }>({
+      query: ({ id, deliveredAt }) => ({
         url: `/orders/${id}/deliver`,
         method: 'POST',
+        body: { deliveredAt },
+      }),
+      transformResponse: (response: OrderResponse): ApiResponse<Order> => ({
+        data: response.order,
+        success: true,
       }),
       invalidatesTags: (_result, _error, { id }) => [
         { type: 'Order', id },

@@ -1,15 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../../hooks/useAppSelector';
-import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { updateQuantity, removeFromCart, clearCart } from '../../../store/slices/cartSlice';
+import { useCart } from '../hooks';
 import { ROUTES } from '../../../constants';
 import toast from 'react-hot-toast';
 
 export default function CartPage() {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const { items, subtotal, tax, shipping, total } = useAppSelector((state) => state.cart);
+  const { cart, updateQuantity, removeItem, clearCart: clearCartAction } = useCart();
+  const { items, subtotal, tax, shipping, total } = cart;
   const [promoCode, setPromoCode] = useState('');
   const [discount, setDiscount] = useState(0);
 
@@ -72,7 +70,7 @@ export default function CartPage() {
                 <div className="flex items-center justify-between">
                   <h2 className="font-bold text-lg text-[var(--color-on-surface)]">Order Items ({items.length})</h2>
                   <button
-                    onClick={() => dispatch(clearCart())}
+                    onClick={() => clearCartAction()}
                     className="text-xs text-[var(--color-error)] font-semibold hover:underline"
                   >
                     Clear Cart
@@ -102,14 +100,14 @@ export default function CartPage() {
                         {/* Quantity Controls */}
                         <div className="flex items-center border border-[var(--color-outline-variant)] rounded-xl glass-card">
                           <button
-                            onClick={() => dispatch(updateQuantity({ id: item.id, quantity: Math.max(1, item.quantity - 1) }))}
+                            onClick={() => updateQuantity(item.productId, item.variantId, Math.max(1, item.quantity - 1))}
                             className="w-8 h-8 flex items-center justify-center font-bold hover:bg-[var(--color-surface-container-high)] rounded-l-xl text-sm text-[var(--color-on-surface)]"
                           >
                             -
                           </button>
                           <span className="w-8 text-center text-xs font-bold text-[var(--color-on-surface)]">{item.quantity}</span>
                           <button
-                            onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity + 1 }))}
+                            onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
                             className="w-8 h-8 flex items-center justify-center font-bold hover:bg-[var(--color-surface-container-high)] rounded-r-xl text-sm text-[var(--color-on-surface)]"
                           >
                             +
@@ -121,7 +119,7 @@ export default function CartPage() {
                         </span>
 
                         <button
-                          onClick={() => dispatch(removeFromCart(item.id))}
+                          onClick={() => removeItem(item.productId, item.variantId)}
                           className="p-1.5 text-[var(--color-outline)] hover:text-[var(--color-error)] transition-colors"
                           title="Remove item"
                         >

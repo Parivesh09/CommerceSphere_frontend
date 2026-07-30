@@ -20,7 +20,7 @@ import toast from 'react-hot-toast';
 export function useCart() {
   const dispatch = useAppDispatch();
   const cart = useAppSelector((state) => state.cart);
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   const { data: serverCart } = useGetCartQuery(undefined, {
     skip: !isAuthenticated,
@@ -52,7 +52,7 @@ export function useCart() {
           productId: request.productId,
           variantId: request.variantId,
           quantity: request.quantity,
-          unitPrice: 0,
+          unitPrice: request.unitPrice,
         })
       );
       toast.success('Added to cart');
@@ -104,6 +104,7 @@ export function useCart() {
             productId: item.productId,
             variantId: item.variantId,
             quantity: item.quantity,
+            unitPrice: item.unitPrice,
           })),
         }).unwrap();
         toast.success('Cart synced');

@@ -1,13 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants';
 import { useGetProductsQuery } from '../../../services/api/productApi';
-import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { addToCart } from '../../../store/slices/cartSlice';
+import { useCart } from '../../cart/hooks';
 import toast from 'react-hot-toast';
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { addToCart } = useCart();
   const { data: productsData, isLoading } = useGetProductsQuery({ pageSize: 4 });
 
   const sampleProducts = [
@@ -26,16 +25,11 @@ export default function HomePage() {
     : sampleProducts;
 
   const handleAddToCart = (product: typeof sampleProducts[0]) => {
-    dispatch(addToCart({
-      id: product.id, productId: product.id, quantity: 1, unitPrice: product.price,
-      product: {
-        id: product.id, title: product.title, description: product.description,
-        price: product.price, categoryId: 'cat-1', inventoryQuantity: 50,
-        status: 'active' as const,
-        images: [{ id: 'img-1', productId: product.id, url: product.image, displayOrder: 0, createdAt: '' }],
-        createdAt: '', updatedAt: '',
-      },
-    }));
+    addToCart({
+      productId: product.id,
+      quantity: 1,
+      unitPrice: product.price,
+    });
     toast.success(`${product.title} added to cart!`);
   };
 

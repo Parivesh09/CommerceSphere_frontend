@@ -60,11 +60,14 @@ export interface CartItem {
 }
 
 export interface Cart {
+  id?: string;
+  userId?: string;
   items: CartItem[];
   subtotal: number;
   tax: number;
   shipping: number;
   total: number;
+  updatedAt?: string;
 }
 
 

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGetProductsQuery } from '../../../services/api/productApi';
-import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { addToCart } from '../../../store/slices/cartSlice';
+import { useCart } from '../../cart/hooks';
 import { toggleWishlistItem } from '../../../features/wishlist/slice';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import toast from 'react-hot-toast';
@@ -11,7 +10,7 @@ import { ROUTES } from '../../../constants';
 export default function ProductListPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const dispatch = useAppDispatch();
+  const { addToCart } = useCart();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
 
   const [selectedCategory, setSelectedCategory] = useState<string>(searchParams.get('category') || 'all');
@@ -97,26 +96,11 @@ export default function ProductListPage() {
   const totalPages = responseData?.totalPages || 1;
 
   const handleAddToCart = (product: typeof sampleProducts[0]) => {
-    dispatch(
-      addToCart({
-        id: product.id,
-        productId: product.id,
-        quantity: 1,
-        unitPrice: product.price,
-        product: {
-          id: product.id,
-          title: product.title,
-          description: product.description,
-          price: product.price,
-          categoryId: product.categoryId,
-          inventoryQuantity: product.inventoryQuantity,
-          status: 'active',
-          images: product.images,
-          createdAt: '',
-          updatedAt: '',
-        },
-      })
-    );
+    addToCart({
+      productId: product.id,
+      quantity: 1,
+      unitPrice: product.price,
+    });
     toast.success(`${product.title} added to cart!`);
   };
 

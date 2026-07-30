@@ -20,11 +20,16 @@ import { calculateRetryDelay, shouldRetry } from './retryConfig';
 const baseQueryWithoutRetry = fetchBaseQuery({
   baseUrl: API_BASE_URL,
   prepareHeaders: (headers, { getState }) => {
-
-    const token = (getState() as RootState).auth.accessToken;
+    const state = getState() as RootState;
+    const token = state.auth.accessToken;
+    const userId = state.auth.user?.id;
 
     if (token) {
       headers.set('authorization', `Bearer ${token}`);
+    }
+
+    if (userId) {
+      headers.set('x-user-id', userId);
     }
 
     headers.set('Content-Type', 'application/json');

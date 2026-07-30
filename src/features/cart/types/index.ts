@@ -24,6 +24,7 @@ export interface AddToCartRequest {
   productId: string;
   variantId?: string | undefined;
   quantity: number;
+  unitPrice: number;
 }
 
 export interface UpdateCartItemRequest {

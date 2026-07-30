@@ -47,16 +47,16 @@ export const cartApi = baseApi.injectEndpoints({
 
             if (existingItem) {
               existingItem.quantity += item.quantity;
+              existingItem.unitPrice = item.unitPrice;
             } else {
               draft.items.push({
                 id: `temp-${Date.now()}`,
                 productId: item.productId,
                 variantId: item.variantId,
                 quantity: item.quantity,
-                unitPrice: 0, // Will be updated from server response
+                unitPrice: item.unitPrice,
               });
             }
-
 
             draft.subtotal = draft.items.reduce(
               (sum, i) => sum + i.unitPrice * i.quantity,
