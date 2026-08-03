@@ -19,7 +19,7 @@ export function AdminUsersPage() {
       await updateRole({ userId, role }).unwrap();
       toast.success(`User role updated to ${role}`);
     } catch {
-      toast.success(`User role updated to ${role}`);
+      toast.error(`Failed to update role for ${userId}. Please try again.`);
     }
   };
 
@@ -32,7 +32,7 @@ export function AdminUsersPage() {
 
       <div className="glass-card rounded-3xl p-6 space-y-4">
         {isLoading ? (
-          <div className="p-8 text-center text-sm text-slate-400">Loading user database...</div>
+          <div className="p-8 text-center text-sm text-on-surface-variant">Loading user database...</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
@@ -60,6 +60,7 @@ export function AdminUsersPage() {
                       <select
                         value={u.role}
                         onChange={(e) => handleRoleChange(u.id, e.target.value as User['role'])}
+                        aria-label={`Update access role for ${u.name}`}
                         className="px-3 py-1 bg-surface-container-lowest border border-outline-variant rounded-lg text-xs font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
                       >
                         <option value="customer">CUSTOMER</option>

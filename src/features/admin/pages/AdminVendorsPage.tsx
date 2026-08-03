@@ -19,7 +19,7 @@ export function AdminVendorsPage() {
       await updateStatus({ id, status }).unwrap();
       toast.success(`Vendor status updated to ${status}`);
     } catch {
-      toast.success(`Vendor status updated to ${status}`);
+      toast.error(`Failed to update vendor status. Please try again.`);
     }
   };
 
@@ -37,7 +37,7 @@ export function AdminVendorsPage() {
 
       <div className="glass-card rounded-3xl p-6 space-y-4">
         {isLoading ? (
-          <div className="p-8 text-center text-sm text-slate-400">Loading vendors...</div>
+          <div className="p-8 text-center text-sm text-on-surface-variant">Loading vendors...</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
@@ -67,7 +67,8 @@ export function AdminVendorsPage() {
                       <select
                         value={v.status}
                         onChange={(e) => handleStatusChange(v.id, e.target.value as Vendor['status'])}
-                        className="px-3 py-1 bg-surface-container-lowest border border-outline-variant rounded-lg text-xs font-semibold text-on-surface"
+                        aria-label={`Update status for vendor ${v.companyName}`}
+                        className="px-3 py-1 bg-surface-container-lowest border border-outline-variant rounded-lg text-xs font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
                       >
                         <option value="active">ACTIVE</option>
                         <option value="pending">PENDING</option>

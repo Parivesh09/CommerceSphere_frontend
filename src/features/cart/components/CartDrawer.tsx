@@ -86,7 +86,7 @@ export default function CartDrawer() {
               </Typography>
             )}
           </Box>
-          <IconButton onClick={closeCartDrawer} size="small">
+          <IconButton onClick={closeCartDrawer} size="small" aria-label="Close cart drawer">
             <Close />
           </IconButton>
         </Box>
@@ -146,7 +146,7 @@ export default function CartDrawer() {
                     {/* Product Details */}
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                       <Typography variant="body2" noWrap>
-                        Product {item.productId}
+                        {item.product?.title || `Product ${item.productId}`}
                       </Typography>
                       {item.variantId && (
                         <Typography variant="caption" color="text.secondary">
@@ -163,15 +163,17 @@ export default function CartDrawer() {
                           size="small"
                           onClick={() => handleDecrement(item.productId, item.variantId, item.quantity)}
                           disabled={item.quantity <= 1}
+                          aria-label={`Decrease quantity of ${item.product?.title || 'item'}`}
                         >
                           <Remove fontSize="small" />
                         </IconButton>
-                        <Typography variant="body2" sx={{ minWidth: 20, textAlign: 'center' }}>
+                        <Typography variant="body2" sx={{ minWidth: 20, textAlign: 'center' }} aria-live="polite">
                           {item.quantity}
                         </Typography>
                         <IconButton
                           size="small"
                           onClick={() => handleIncrement(item.productId, item.variantId, item.quantity)}
+                          aria-label={`Increase quantity of ${item.product?.title || 'item'}`}
                         >
                           <Add fontSize="small" />
                         </IconButton>
@@ -180,6 +182,7 @@ export default function CartDrawer() {
                           color="error"
                           onClick={() => handleRemove(item.productId, item.variantId)}
                           sx={{ ml: 'auto' }}
+                          aria-label={`Remove ${item.product?.title || 'item'} from cart`}
                         >
                           <Delete fontSize="small" />
                         </IconButton>

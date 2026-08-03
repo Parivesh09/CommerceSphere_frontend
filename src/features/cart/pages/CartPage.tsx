@@ -15,11 +15,20 @@ export default function CartPage() {
   const progressPercent = Math.min(100, (subtotal / freeShippingThreshold) * 100);
 
   const handleApplyPromo = () => {
-    if (promoCode.trim().toUpperCase() === 'ENTERPRISE20') {
+    const code = promoCode.trim().toUpperCase();
+    if (!code) {
+      toast.error('Please enter a promo code.');
+      return;
+    }
+    if (items.length === 0) {
+      toast.error('Add items to your cart before applying a promo code.');
+      return;
+    }
+    if (code === 'ENTERPRISE20') {
       setDiscount(subtotal * 0.2);
       toast.success('20% Enterprise Promo Code Applied!');
-    } else if (promoCode.trim()) {
-      toast.error('Invalid promo code');
+    } else {
+      toast.error(`"${code}" is not a valid promo code.`);
     }
   };
 
@@ -100,6 +109,7 @@ export default function CartPage() {
                         {/* Quantity Controls */}
                         <div className="flex items-center border border-[var(--color-outline-variant)] rounded-xl glass-card">
                           <button
+                            aria-label={`Decrease quantity of ${item.product?.title || 'item'}`}
                             onClick={() => updateQuantity(item.productId, item.variantId, Math.max(1, item.quantity - 1))}
                             className="w-8 h-8 flex items-center justify-center font-bold hover:bg-[var(--color-surface-container-high)] rounded-l-xl text-sm text-[var(--color-on-surface)]"
                           >
@@ -107,6 +117,7 @@ export default function CartPage() {
                           </button>
                           <span className="w-8 text-center text-xs font-bold text-[var(--color-on-surface)]">{item.quantity}</span>
                           <button
+                            aria-label={`Increase quantity of ${item.product?.title || 'item'}`}
                             onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
                             className="w-8 h-8 flex items-center justify-center font-bold hover:bg-[var(--color-surface-container-high)] rounded-r-xl text-sm text-[var(--color-on-surface)]"
                           >
@@ -119,6 +130,7 @@ export default function CartPage() {
                         </span>
 
                         <button
+                          aria-label={`Remove ${item.product?.title || 'item'} from cart`}
                           onClick={() => removeItem(item.productId, item.variantId)}
                           className="p-1.5 text-[var(--color-outline)] hover:text-[var(--color-error)] transition-colors"
                           title="Remove item"

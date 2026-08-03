@@ -8,7 +8,7 @@ export function AdminRolesPage() {
   const mockRoles: Role[] = [
     { id: 'r-1', name: 'Super Admin', description: 'Full system access including RBAC, Saga triggers, and billing.', permissions: ['all'], userCount: 3 },
     { id: 'r-2', name: 'Store Manager', description: 'Manage products, inventory, and order orchestration.', permissions: ['products:write', 'orders:read', 'inventory:write'], userCount: 12 },
-    { id: 'r-[#3525cd]', name: 'Support Agent', description: 'View customer tickets, order statuses, and tracking info.', permissions: ['orders:read', 'customers:read'], userCount: 25 },
+    { id: 'r-3', name: 'Support Agent', description: 'View customer tickets, order statuses, and tracking info.', permissions: ['orders:read', 'customers:read'], userCount: 25 },
   ];
 
   const roles = rolesResponse?.data || mockRoles;

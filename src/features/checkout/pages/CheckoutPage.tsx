@@ -104,20 +104,37 @@ export default function CheckoutPage() {
         },
       };
       const result = await createOrder(orderData).unwrap();
-      const orderId = result?.order?.id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+      const orderId = result?.data?.id;
+      if (!orderId) {
+        throw new Error('Order was created without a reference id.');
+      }
       dispatch(clearCart());
       toast.success('Order placed successfully!');
       navigate(`${ROUTES.CHECKOUT}/confirmation`, {
         state: { orderId, total: orderTotal, address: shipping },
       });
     } catch {
-      const mockId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
-      dispatch(clearCart());
-      toast.success('Order created successfully!');
-      navigate(`${ROUTES.CHECKOUT}/confirmation`, {
-        state: { orderId: mockId, total: orderTotal, address: shipping },
-      });
+      toast.error('Failed to place your order. Please review your details and try again.');
     }
+  };
+
+  const validateShipping = (): boolean => {
+    const requiredFields: Array<[keyof ShippingForm, string]> = [
+      ['firstName', 'first name'],
+      ['lastName', 'last name'],
+      ['street', 'street address'],
+      ['city', 'city'],
+      ['state', 'state'],
+      ['postalCode', 'postal code'],
+      ['phone', 'phone number'],
+    ];
+    for (const [key, label] of requiredFields) {
+      if (!shipping[key].trim()) {
+        toast.error(`Please provide your ${label}.`);
+        return false;
+      }
+    }
+    return true;
   };
 
   if (items.length === 0) {
@@ -147,6 +164,7 @@ export default function CheckoutPage() {
               <input
                 type="text"
                 placeholder="Jane"
+                required
                 value={shipping.firstName}
                 onChange={(e) => setShipping({ ...shipping, firstName: e.target.value })}
                 className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
@@ -157,6 +175,7 @@ export default function CheckoutPage() {
               <input
                 type="text"
                 placeholder="Doe"
+                required
                 value={shipping.lastName}
                 onChange={(e) => setShipping({ ...shipping, lastName: e.target.value })}
                 className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
@@ -168,7 +187,8 @@ export default function CheckoutPage() {
             <input
               type="text"
               placeholder="123 Enterprise Way"
-              value={shipping.street}
+              required
+                value={shipping.street}
               onChange={(e) => setShipping({ ...shipping, street: e.target.value })}
               className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
             />
@@ -179,6 +199,7 @@ export default function CheckoutPage() {
               <input
                 type="text"
                 placeholder="New York"
+                required
                 value={shipping.city}
                 onChange={(e) => setShipping({ ...shipping, city: e.target.value })}
                 className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
@@ -187,6 +208,7 @@ export default function CheckoutPage() {
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-on-surface-variant px-1">State / Province</label>
               <select
+                required
                 value={shipping.state}
                 onChange={(e) => setShipping({ ...shipping, state: e.target.value })}
                 className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface"
@@ -204,6 +226,7 @@ export default function CheckoutPage() {
               <input
                 type="text"
                 placeholder="10001"
+                required
                 value={shipping.postalCode}
                 onChange={(e) => setShipping({ ...shipping, postalCode: e.target.value })}
                 className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
@@ -215,7 +238,8 @@ export default function CheckoutPage() {
             <input
               type="tel"
               placeholder="+1 (555) 000-0000"
-              value={shipping.phone}
+              required
+                value={shipping.phone}
               onChange={(e) => setShipping({ ...shipping, phone: e.target.value })}
               className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
             />
@@ -270,7 +294,9 @@ export default function CheckoutPage() {
 
       <div className="flex justify-end pt-2">
         <button
-          onClick={() => setCurrentStep('payment')}
+          onClick={() => {
+            if (validateShipping()) setCurrentStep('payment');
+          }}
           className="bg-primary text-on-primary px-10 py-3.5 rounded-xl font-semibold flex items-center gap-2 hover:bg-primary-container transition-all active:scale-95 shadow-lg shadow-primary/20"
         >
           Continue to Payment

@@ -14,6 +14,18 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name.trim()) {
+      toast.error('Please enter your full name.');
+      return;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
+      toast.error('Please enter a valid email address.');
+      return;
+    }
+    if (password.length < 8) {
+      toast.error('Password must be at least 8 characters.');
+      return;
+    }
     try {
       await register({ name, email, password, role }).unwrap();
       toast.success(role === 'seller'
@@ -22,8 +34,13 @@ export default function RegisterPage() {
       );
       navigate(ROUTES.HOME);
     } catch {
-      toast.success('Account registered successfully!');
-      navigate(ROUTES.HOME);
+      if (import.meta.env.DEV) {
+        // Demo fallback (development only): simulate a successful registration.
+        toast.success('Account registered successfully!');
+        navigate(ROUTES.HOME);
+      } else {
+        toast.error('Registration failed. Please try again.');
+      }
     }
   };
 
@@ -36,39 +53,46 @@ export default function RegisterPage() {
           <p className="text-xs text-on-surface-variant">Register your account to get started.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div>
-            <label className="text-xs font-semibold text-on-surface-variant block mb-1">Full Name</label>
+            <label htmlFor="reg-name" className="text-xs font-semibold text-on-surface-variant block mb-1">Full Name</label>
             <input
+              id="reg-name"
               type="text"
               required
               placeholder="John Doe"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              aria-invalid={name.trim().length > 0 && name.trim().length < 2}
               className="w-full px-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-on-surface-variant block mb-1">Email</label>
+            <label htmlFor="reg-email" className="text-xs font-semibold text-on-surface-variant block mb-1">Email</label>
             <input
+              id="reg-email"
               type="email"
               required
               placeholder="john@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={email.length > 0 && !/^\S+@\S+\.\S+$/.test(email)}
               className="w-full px-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-on-surface-variant block mb-1">Password</label>
+            <label htmlFor="reg-password" className="text-xs font-semibold text-on-surface-variant block mb-1">Password</label>
             <input
+              id="reg-password"
               type="password"
               required
+              minLength={8}
               placeholder="Min 8 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              aria-invalid={password.length > 0 && password.length < 8}
               className="w-full px-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>

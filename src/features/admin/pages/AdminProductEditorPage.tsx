@@ -1,46 +1,83 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useCreateProductMutation, useGetProductQuery } from '../../../services/api/productApi';
+import { useCreateProductMutation, useGetProductQuery, useUpdateProductMutation } from '../../../services/api/productApi';
 import { ROUTES } from '../../../constants';
 import toast from 'react-hot-toast';
+
+const EMPTY_FORM = {
+  title: '',
+  description: '',
+  price: 0,
+  categoryId: 'terminals',
+  inventoryQuantity: 0,
+  imageUrl: '',
+};
 
 export function AdminProductEditorPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const isEditing = Boolean(id && id !== 'new');
 
-  const { data: existingProduct } = useGetProductQuery(id || '', { skip: !isEditing });
-  const [createProduct, { isLoading }] = useCreateProductMutation();
+  const { data: existingProduct, isLoading: isLoadingProduct } = useGetProductQuery(id || '', { skip: !isEditing });
+  const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
+  const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
 
-  const [formData, setFormData] = useState({
-    title: existingProduct?.title || '',
-    description: existingProduct?.description || '',
-    price: existingProduct?.price || 999,
-    categoryId: existingProduct?.categoryId || 'terminals',
-    inventoryQuantity: existingProduct?.inventoryQuantity || 50,
-    imageUrl: existingProduct?.images?.[0]?.url || 'https://images.unsplash.com/photo-1556742049-0a67daf64f42?auto=format&fit=crop&w=600&q=80',
-  });
+  const [formData, setFormData] = useState(EMPTY_FORM);
+  const [isFormSynced, setIsFormSynced] = useState(!isEditing);
+
+  if (isEditing && existingProduct && !isFormSynced) {
+    setFormData({
+      title: existingProduct.title || '',
+      description: existingProduct.description || '',
+      price: existingProduct.price ?? 0,
+      categoryId: existingProduct.categoryId || 'terminals',
+      inventoryQuantity: existingProduct.inventoryQuantity ?? 0,
+      imageUrl: existingProduct.images?.[0]?.url || '',
+    });
+    setIsFormSynced(true);
+  }
+
+  const isSaving = isCreating || isUpdating;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await createProduct({
-        title: formData.title,
-        description: formData.description,
-        price: Number(formData.price),
-        categoryId: formData.categoryId,
-        inventoryQuantity: Number(formData.inventoryQuantity),
-        images: [{ id: 'img-1', productId: 'temp', url: formData.imageUrl, displayOrder: 0, createdAt: '' }],
-        status: 'active',
-      }).unwrap();
+    if (!formData.title.trim() || formData.price <= 0) {
+      toast.error('Please provide a product title and a price greater than zero.');
+      return;
+    }
 
+    const payload = {
+      title: formData.title.trim(),
+      description: formData.description.trim(),
+      price: Number(formData.price),
+      categoryId: formData.categoryId,
+      inventoryQuantity: Number(formData.inventoryQuantity),
+      images: formData.imageUrl
+        ? [{ id: `img-${Date.now()}`, productId: id || 'temp', url: formData.imageUrl, displayOrder: 0, createdAt: '' }]
+        : [],
+      status: 'active' as const,
+    };
+
+    try {
+      if (isEditing && id) {
+        await updateProduct({ id, data: payload }).unwrap();
+      } else {
+        await createProduct(payload).unwrap();
+      }
       toast.success(isEditing ? 'Product updated successfully' : 'New product created in catalog');
       navigate(ROUTES.ADMIN_PRODUCTS);
     } catch {
-      toast.success(isEditing ? 'Product updated successfully' : 'New product created in catalog');
-      navigate(ROUTES.ADMIN_PRODUCTS);
+      toast.error(isEditing ? 'Failed to update product. Please try again.' : 'Failed to create product. Please try again.');
     }
   };
+
+  if (isEditing && isLoadingProduct) {
+    return (
+      <div className="flex justify-center items-center py-24">
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary border-t-transparent" role="status" aria-label="Loading product" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -137,10 +174,10 @@ export function AdminProductEditorPage() {
         <div className="pt-4 border-t border-[var(--color-outline-variant)] flex justify-end gap-3">
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isSaving}
             className="px-6 py-3 bg-primary text-on-primary text-sm font-bold rounded-xl shadow-lg hover:bg-primary-container transition-all disabled:opacity-50"
           >
-            {isLoading ? 'Saving Product...' : isEditing ? 'Save Product Changes' : 'Publish Product'}
+            {isSaving ? 'Saving Product...' : isEditing ? 'Save Product Changes' : 'Publish Product'}
           </button>
         </div>
       </form>

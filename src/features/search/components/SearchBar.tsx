@@ -231,7 +231,7 @@ function highlightText(text: string, query: string): string {
   if (!query.trim()) return text;
 
   const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-  return text.replace(regex, '<mark style="background-color: #fef08a; font-weight: 600;">$1</mark>');
+  return text.replace(regex, '<mark style="background-color: color-mix(in srgb, var(--color-warning) 30%, transparent); font-weight: 600;">$1</mark>');
 }
 
 function escapeRegex(str: string): string {

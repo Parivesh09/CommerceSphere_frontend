@@ -4,12 +4,14 @@ import { useGetProductQuery, useGetProductReviewsQuery } from '../../../services
 import { useGetSimilarProductsQuery } from '../../../services/api/recommendationApi';
 import { useCart } from '../../cart/hooks';
 import { toggleWishlistItem } from '../../../features/wishlist/slice';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import toast from 'react-hot-toast';
 import { ROUTES } from '../../../constants';
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
@@ -70,7 +72,7 @@ export default function ProductDetailPage() {
   if (isLoading) {
     return (
       <div className="page-bg pt-28 pb-16 flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#3525cd] border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }

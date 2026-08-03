@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGetOrderByIdQuery, useTrackOrderQuery, useCancelOrderMutation } from '../../../services/api/orderApi';
+import { useGetOrderByIdQuery, useCancelOrderMutation, buildTrackingTimeline } from '../../../services/api/orderApi';
 import { ROUTES } from '../../../constants';
 import toast from 'react-hot-toast';
-import type { OrderStatus } from '../../../types';
+import type { Order } from '../../../types';
+import type { TrackingStep } from '../../../services/api/orderApi';
 
 const statusColors: Record<string, string> = {
   CREATED: 'bg-surface-variant text-on-surface-variant',
@@ -22,20 +23,19 @@ export default function OrderDetailPage() {
   const [cancelReason, setCancelReason] = useState('');
   const [showCancelDialog, setShowCancelDialog] = useState(false);
 
-  const { data: orderResponse, isLoading } = useGetOrderByIdQuery(orderId);
-  const { data: trackResponse } = useTrackOrderQuery(orderId);
+  const { data: orderResponse, isLoading, isError } = useGetOrderByIdQuery(orderId);
   const [cancelOrder, { isLoading: isCancelling }] = useCancelOrderMutation();
 
-  const mockTimeline = [
-    { title: 'Order Placed', time: 'Jul 26, 10:30 AM', done: true, current: false },
-    { title: 'Payment Confirmed', time: 'Jul 26, 10:32 AM', done: true, current: false },
-    { title: 'Warehouse Processing', time: 'Jul 26, 02:15 PM', done: true, current: true },
-    { title: 'Shipped via FedEx Express', time: 'Estimated Jul 27', done: false, current: false },
-    { title: 'Out for Delivery', time: 'Estimated Jul 28', done: false, current: false },
+  const fallbackTimeline: TrackingStep[] = [
+    { title: 'Order Placed', description: 'Order received and confirmed', timestamp: '', completed: true, current: false },
+    { title: 'Payment Confirmed', description: 'Payment processed successfully', timestamp: '', completed: true, current: false },
+    { title: 'Warehouse Processing', description: 'Preparing your order for shipment', timestamp: '', completed: true, current: true },
+    { title: 'Order Shipped', description: 'In transit to your address', timestamp: '', completed: false, current: false },
+    { title: 'Order Delivered', description: 'Ready to receive', timestamp: '', completed: false, current: false },
   ];
 
-  const timeline = trackResponse?.data?.timeline || mockTimeline;
-  const order = orderResponse?.data;
+  const order = orderResponse?.data as Order | undefined;
+  const timeline = useMemo(() => (order ? buildTrackingTimeline(order) : fallbackTimeline), [order]);
   const orderStatus = order?.status || 'PROCESSING';
   const canCancel = !['SHIPPED', 'DELIVERED', 'CANCELLED'].includes(orderStatus);
 
@@ -43,9 +43,9 @@ export default function OrderDetailPage() {
     try {
       await cancelOrder({ id: orderId, reason: cancelReason }).unwrap();
       toast.success('Order cancelled successfully');
-      setShowCancelDialog(false);
     } catch {
-      toast.success('Order cancelled successfully');
+      toast.error('Failed to cancel order. Please try again.');
+    } finally {
       setShowCancelDialog(false);
     }
   };
@@ -54,6 +54,19 @@ export default function OrderDetailPage() {
     return (
       <div className="min-h-screen bg-background pt-28 flex justify-center items-center">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  if (isError && !order) {
+    return (
+      <div className="min-h-screen bg-background pt-28 flex flex-col items-center justify-center gap-4 px-4 text-center">
+        <span className="material-symbols-outlined text-6xl text-outline-variant">error</span>
+        <h1 className="text-2xl font-bold text-on-surface">Order not found</h1>
+        <p className="text-on-surface-variant max-w-md">We couldn't load this order. It may have been removed or you don't have access to it.</p>
+        <button onClick={() => navigate(ROUTES.ORDERS)} className="px-6 py-3 bg-primary text-on-primary font-semibold text-sm rounded-xl hover:brightness-90 transition-all">
+          Back to Orders
+        </button>
       </div>
     );
   }
@@ -130,20 +143,20 @@ export default function OrderDetailPage() {
               <div key={idx} className="flex items-start gap-4 relative z-10">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                    step.done
+                    step.completed
                       ? 'bg-primary text-on-primary'
                       : step.current
                       ? 'bg-amber-500 text-white ring-4 ring-amber-100'
                       : 'bg-surface-variant text-on-surface-variant'
                   }`}
                 >
-                  {step.done ? '\u2713' : idx + 1}
+                  {step.completed ? '\u2713' : idx + 1}
                 </div>
                 <div>
                   <h3 className={`text-sm font-bold ${step.current ? 'text-primary' : 'text-on-surface'}`}>
                     {step.title}
                   </h3>
-                  <p className="text-sm text-on-surface-variant">{step.time || step.description}</p>
+                  <p className="text-sm text-on-surface-variant">{step.timestamp || step.description}</p>
                 </div>
               </div>
             ))}

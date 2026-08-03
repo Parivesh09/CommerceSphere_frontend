@@ -1,9 +1,11 @@
 import { useGetOrdersQuery, useUpdateOrderStatusMutation, useShipOrderMutation, useDeliverOrderMutation } from '../../../services/api/orderApi';
 import type { OrderStatus } from '../../../types';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export function AdminOrdersPage() {
-  const { data: responseData, isLoading } = useGetOrdersQuery({});
+  const navigate = useNavigate();
+  const { data: responseData, isLoading, isError, refetch } = useGetOrdersQuery({});
   const [updateStatus] = useUpdateOrderStatusMutation();
   const [shipOrder] = useShipOrderMutation();
   const [deliverOrder] = useDeliverOrderMutation();
@@ -14,7 +16,9 @@ export function AdminOrdersPage() {
     { id: 'ORD-431890', userId: 'usr-103', totalAmount: 4500.00, status: 'DELIVERED' as OrderStatus, createdAt: '2026-07-10' },
   ];
 
-  const orders = responseData?.data || sampleOrders;
+  const orders = isError
+    ? import.meta.env.DEV ? sampleOrders : []
+    : (responseData?.data ?? []);
 
   const handleStatusChange = async (id: string, status: OrderStatus) => {
     try {
@@ -27,7 +31,7 @@ export function AdminOrdersPage() {
       }
       toast.success(`Order ${id} status updated to ${status}`);
     } catch {
-      toast.success(`Order ${id} status updated to ${status}`);
+      toast.error(`Failed to update order ${id}. Please try again.`);
     }
   };
 
@@ -40,7 +44,25 @@ export function AdminOrdersPage() {
 
       <div className="glass-card rounded-3xl p-6 space-y-4">
         {isLoading ? (
-          <div className="p-8 text-center text-sm text-slate-400">Loading orders...</div>
+          <div className="p-8 text-center text-sm text-on-surface-variant">Loading orders...</div>
+        ) : isError ? (
+          <div className="p-10 text-center space-y-4">
+            <p className="text-sm text-on-surface-variant">
+              {import.meta.env.DEV
+                ? 'The orders service is offline. Showing sample orders for development preview.'
+                : 'Could not load orders.'}
+            </p>
+            {!import.meta.env.DEV && (
+              <button
+                onClick={() => refetch()}
+                className="px-4 py-2 bg-primary text-on-primary rounded-xl text-xs font-semibold hover:brightness-90 transition-colors"
+              >
+                Retry
+              </button>
+            )}
+          </div>
+        ) : orders.length === 0 ? (
+          <div className="p-10 text-center text-sm text-on-surface-variant">No orders found.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
@@ -51,6 +73,7 @@ export function AdminOrdersPage() {
                   <th className="pb-3">Amount</th>
                   <th className="pb-3">Current Status</th>
                   <th className="pb-3 text-right">Update Status</th>
+                  <th className="pb-3 text-right">Details</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant">
@@ -73,6 +96,7 @@ export function AdminOrdersPage() {
                       <select
                         value={o.status}
                         onChange={(e) => handleStatusChange(o.id, e.target.value as OrderStatus)}
+                        aria-label={`Update status for order ${o.id}`}
                         className="px-3 py-1 bg-surface-container-lowest border border-outline-variant rounded-lg text-xs font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
                       >
                         <option value="PROCESSING">PROCESSING</option>
@@ -80,6 +104,14 @@ export function AdminOrdersPage() {
                         <option value="DELIVERED">DELIVERED</option>
                         <option value="CANCELLED">CANCELLED</option>
                       </select>
+                    </td>
+                    <td className="py-3 text-right">
+                      <button
+                        onClick={() => navigate(`/admin/orders/${o.id}`)}
+                        className="px-3 py-1.5 bg-primary text-on-primary rounded-lg text-xs font-semibold hover:brightness-90 transition-colors"
+                      >
+                        View
+                      </button>
                     </td>
                   </tr>
                 ))}

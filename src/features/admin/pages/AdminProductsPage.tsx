@@ -23,7 +23,7 @@ export function AdminProductsPage() {
         await deleteProduct(id).unwrap();
         toast.success('Product deleted successfully');
       } catch {
-        toast.success('Product removed from catalog');
+        toast.error('Failed to delete product. Please try again.');
       }
     }
   };
@@ -45,7 +45,7 @@ export function AdminProductsPage() {
 
       <div className="glass-card rounded-3xl p-6 space-y-4">
         {isLoading ? (
-          <div className="p-8 text-center text-sm text-slate-400">Loading catalog products...</div>
+          <div className="p-8 text-center text-sm text-on-surface-variant">Loading catalog products...</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">

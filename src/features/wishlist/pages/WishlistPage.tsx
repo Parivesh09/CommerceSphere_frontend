@@ -15,10 +15,19 @@ import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { Skeleton } from '../../../components/ui/Skeleton';
 import { ROUTES } from '../../../constants';
+import { useCart } from '../../cart/hooks';
+import toast from 'react-hot-toast';
 
 export const WishlistPage: React.FC = () => {
   const navigate = useNavigate();
   const { wishlistItems, isLoading, wishlistCount } = useWishlist();
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (product: { id: string; name: string; price: number; stock: number }) => {
+    if (product.stock === 0) return;
+    addToCart({ productId: product.id, quantity: 1, unitPrice: product.price });
+    toast.success(`${product.name} added to cart!`);
+  };
 
   if (isLoading) {
     return (
@@ -110,13 +119,13 @@ export const WishlistPage: React.FC = () => {
                 )}
 
                 {/* Wishlist Button */}
-                <div className="absolute right-2 top-sm">
+                <div className="absolute right-2 top-2">
                   <WishlistButton productId={product.id} size="md" />
                 </div>
 
                 {/* Discount Badge */}
                 {hasDiscount && (
-                  <div className="absolute left-2 top-sm rounded-full bg-red-500 px-2 py-1 text-xs font-semibold text-[var(--color-on-primary)]">
+                  <div className="absolute left-2 top-2 rounded-full bg-error px-2 py-1 text-xs font-semibold text-on-primary">
                     -{discountPercentage}%
                   </div>
                 )}
@@ -124,7 +133,7 @@ export const WishlistPage: React.FC = () => {
                 {/* Out of Stock Badge */}
                 {product.stock === 0 && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                    <span className="rounded-xl bg-[var(--color-surface)] px-4 py-2 text-sm font-bold text-[var(--color-on-surface)]">
+                    <span className="rounded-xl bg-surface px-4 py-2 text-sm font-bold text-on-surface">
                       Out of Stock
                     </span>
                   </div>
@@ -151,8 +160,8 @@ export const WishlistPage: React.FC = () => {
                         key={index}
                         className={`h-4 w-4 ${
                           index < Math.floor(product.rating)
-                            ? 'text-yellow-400'
-                            : 'text-[var(--color-on-surface-variant)]'
+                            ? 'text-warning'
+                            : 'text-on-surface-variant'
                         }`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
@@ -187,8 +196,7 @@ export const WishlistPage: React.FC = () => {
                   disabled={product.stock === 0}
                   onClick={(e) => {
                     e.stopPropagation();
-
-                    console.log('Add to cart:', product.id);
+                    handleAddToCart(product);
                   }}
                 >
                   {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}

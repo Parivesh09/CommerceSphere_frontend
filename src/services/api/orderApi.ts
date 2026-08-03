@@ -18,6 +18,41 @@ export interface TrackingInfo {
   timeline: TrackingStep[];
 }
 
+const TRACKING_STEPS: Array<{ key: OrderStatus; label: string }> = [
+  { key: 'PENDING_PAYMENT', label: 'Order Placed' },
+  { key: 'PAID', label: 'Payment Confirmed' },
+  { key: 'PROCESSING', label: 'Warehouse Processing' },
+  { key: 'SHIPPED', label: 'Order Shipped' },
+  { key: 'DELIVERED', label: 'Order Delivered' },
+];
+
+const STATUS_ORDER: OrderStatus[] = ['PENDING_PAYMENT', 'PAID', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
+
+export function buildTrackingTimeline(order: Order): TrackingStep[] {
+  if (order.status === 'CANCELLED') {
+    return [
+      {
+        title: 'Order Cancelled',
+        description: 'This order has been cancelled.',
+        timestamp: order.updatedAt || order.createdAt,
+        completed: true,
+        current: false,
+      },
+    ];
+  }
+
+  const currentIndex = STATUS_ORDER.indexOf(order.status);
+  if (currentIndex === -1) return [];
+
+  return TRACKING_STEPS.map((step, idx) => ({
+    title: step.label,
+    description: step.label,
+    timestamp: idx <= currentIndex ? new Date(order.updatedAt || order.createdAt).toISOString() : '',
+    completed: idx <= currentIndex,
+    current: idx === currentIndex,
+  }));
+}
+
 export interface CreateOrderRequest {
   userId?: string;
   items: Array<{ productId: string; quantity: number; variantId?: string; unitPrice: number }>;
