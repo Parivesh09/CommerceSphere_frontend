@@ -36,24 +36,26 @@ export default function HomePage() {
   return (
     <div className="overflow-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center">
+      <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+        {/* Aurora backdrop */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-background)] via-[var(--color-background)]/60 to-transparent z-10" />
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1556742049-0a67daf64f42?auto=format&fit=crop&w=1920&q=80')" }}
-          />
+          <div className="aurora-orb w-[42rem] h-[42rem] -top-40 -right-24 bg-[var(--color-primary)] opacity-40" />
+          <div className="aurora-orb w-[36rem] h-[36rem] -bottom-48 -left-24 bg-[var(--color-secondary)] opacity-30" />
+          <div className="aurora-orb w-[30rem] h-[30rem] top-1/3 left-1/2 -translate-x-1/2 bg-[var(--color-tertiary)] opacity-20" />
+          <div className="absolute inset-0 hero-grid" />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[var(--color-background)] to-transparent" />
         </div>
-        <div className="relative z-20 max-w-7xl mx-auto px-4 md:px-10 w-full">
+
+        <div className="relative z-20 max-w-7xl mx-auto px-4 md:px-10 w-full py-24">
           <div className="max-w-2xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-xs font-semibold uppercase tracking-widest">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]" />
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-[var(--color-primary)] text-xs font-semibold uppercase tracking-widest">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] shadow-glow" />
               Enterprise Collection 2026
             </div>
             <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.05] tracking-tight text-[var(--color-on-surface)]">
               New Season.
               <br />
-              <span className="text-[var(--color-primary)]">Redefined Utility.</span>
+              <span className="gradient-text">Redefined Utility.</span>
             </h1>
             <p className="text-lg md:text-xl text-[var(--color-on-surface-variant)] max-w-lg leading-relaxed">
               Experience the next generation of commerce. Built for performance, designed for the world's most demanding retail ecosystems.
@@ -61,13 +63,13 @@ export default function HomePage() {
             <div className="flex gap-4 pt-4">
               <button
                 onClick={() => navigate(ROUTES.PRODUCTS)}
-                className="px-8 py-4 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-xl font-semibold text-base hover:shadow-lg hover:shadow-[var(--color-primary)]/25 transition-all active:scale-[0.97]"
+                className="px-8 py-4 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-xl font-semibold text-base shadow-glow hover:brightness-110 transition-all active:scale-[0.97]"
               >
                 Shop Collection
               </button>
               <button
                 onClick={() => navigate(ROUTES.ENTERPRISE)}
-                className="px-8 py-4 rounded-xl font-semibold text-base border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-low)] transition-all active:scale-[0.97] flex items-center gap-2"
+                className="px-8 py-4 rounded-xl font-semibold text-base border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-low)] hover:border-[var(--color-primary)]/50 transition-all active:scale-[0.97] flex items-center gap-2"
               >
                 View Lookbook
                 <span className="material-symbols-outlined text-xl">arrow_forward</span>
@@ -92,34 +94,34 @@ export default function HomePage() {
           </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-[500px]">
-          <div className="md:col-span-8 relative rounded-2xl overflow-hidden group cursor-pointer">
+          <div className="md:col-span-8 relative rounded-2xl overflow-hidden group cursor-pointer border border-[var(--color-outline-variant)]/50">
             <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
               style={{ backgroundImage: "url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80')" }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
             <div className="absolute bottom-0 p-8 md:p-10 w-full" onClick={() => navigate(ROUTES.PRODUCTS)}>
               <h3 className="text-2xl md:text-3xl font-bold text-white">Smart Infrastructure</h3>
               <p className="text-white/70 text-base mt-2">Connected systems for the modern warehouse.</p>
             </div>
           </div>
           <div className="md:col-span-4 flex flex-col gap-6">
-            <div className="flex-1 relative rounded-2xl overflow-hidden group cursor-pointer">
+            <div className="flex-1 relative rounded-2xl overflow-hidden group cursor-pointer border border-[var(--color-outline-variant)]/50">
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                 style={{ backgroundImage: "url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80')" }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
               <div className="absolute bottom-0 p-6" onClick={() => navigate(ROUTES.PRODUCTS)}>
                 <h3 className="text-xl font-bold text-white">Audio and Peripherals</h3>
               </div>
             </div>
-            <div className="flex-1 relative rounded-2xl overflow-hidden group cursor-pointer">
+            <div className="flex-1 relative rounded-2xl overflow-hidden group cursor-pointer border border-[var(--color-outline-variant)]/50">
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                 style={{ backgroundImage: "url('https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=600&q=80')" }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
               <div className="absolute bottom-0 p-6" onClick={() => navigate(ROUTES.PRODUCTS)}>
                 <h3 className="text-xl font-bold text-white">Store Experience</h3>
               </div>
@@ -129,11 +131,11 @@ export default function HomePage() {
       </section>
 
       {/* Trending Now */}
-      <section className="py-20 bg-[var(--color-surface-container-low)]">
+      <section className="py-20 bg-[var(--color-surface-container-low)]/70 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 md:px-10">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-on-surface)]">Trending Now</h2>
-            <div className="h-1 w-20 bg-[var(--color-primary)] mx-auto mt-4 rounded-full" />
+            <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] mx-auto mt-4 rounded-full" />
           </div>
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -144,14 +146,14 @@ export default function HomePage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {productsList.map((product) => (
-                <div key={product.id} className="glass-card rounded-2xl overflow-hidden flex flex-col p-4 hover:shadow-lg transition-shadow">
+                <div key={product.id} className="glass-card rounded-2xl overflow-hidden flex flex-col p-4 hover:shadow-glow transition-shadow">
                   <div className="relative aspect-square rounded-xl overflow-hidden mb-4 bg-[var(--color-surface-container-low)]">
                     <div
                       className="bg-cover bg-center w-full h-full transition-transform duration-500 hover:scale-105 cursor-pointer"
                       style={{ backgroundImage: `url('${product.image}')` }}
                       onClick={() => navigate(`/products/${product.id}`)}
                     />
-                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm p-2 rounded-full cursor-pointer hover:bg-[var(--color-primary)] hover:text-white transition-colors">
+                    <div className="absolute top-3 right-3 bg-[var(--color-surface-container-lowest)]/90 backdrop-blur-sm p-2 rounded-full cursor-pointer hover:bg-[var(--color-primary)] hover:text-[var(--color-on-primary)] transition-colors">
                       <span className="material-symbols-outlined text-xl">favorite</span>
                     </div>
                   </div>
@@ -169,7 +171,7 @@ export default function HomePage() {
                     <span className="text-xl font-bold text-[var(--color-on-surface)]">${product.price.toLocaleString()}</span>
                     <button
                       onClick={() => handleAddToCart(product)}
-                      className="bg-[var(--color-on-surface)] text-[var(--color-surface)] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[var(--color-primary)] transition-colors active:scale-95"
+                      className="bg-[var(--color-primary)] text-[var(--color-on-primary)] px-4 py-2 rounded-lg text-sm font-semibold shadow-glow hover:brightness-110 transition-all active:scale-95"
                     >
                       Add to Cart
                     </button>
@@ -189,8 +191,8 @@ export default function HomePage() {
             { icon: 'support_agent', title: '24/7 Support', desc: 'Dedicated success managers available around the clock to ensure your operations never stop.' },
             { icon: 'eco', title: 'Sustainable', desc: 'Carbon-neutral manufacturing and fully biodegradable enterprise-grade packaging as standard.' },
           ].map((feature) => (
-            <div key={feature.title} className="flex flex-col items-start gap-4">
-              <div className="p-4 bg-[var(--color-primary)]/10 rounded-2xl text-[var(--color-primary)]">
+            <div key={feature.title} className="flex flex-col items-start gap-4 glass-card rounded-2xl p-8">
+              <div className="p-4 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] rounded-2xl text-white shadow-glow">
                 <span className="material-symbols-outlined text-3xl">{feature.icon}</span>
               </div>
               <h3 className="text-xl font-bold text-[var(--color-on-surface)]">{feature.title}</h3>
@@ -201,27 +203,28 @@ export default function HomePage() {
       </section>
 
       {/* Newsletter */}
-      <section className="py-20 bg-[var(--color-primary)] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute -top-20 -left-20 w-96 h-96 bg-[var(--color-secondary-container)] rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-white rounded-full blur-3xl" />
+      <section className="py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-tertiary)]" />
+        <div className="absolute inset-0 opacity-25 pointer-events-none">
+          <div className="aurora-orb w-96 h-96 -top-20 -left-20 bg-white" />
+          <div className="aurora-orb w-96 h-96 -bottom-20 -right-20 bg-black/40" />
         </div>
         <div className="max-w-3xl mx-auto px-4 md:px-10 text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-[var(--color-on-primary)] leading-tight">Join the Inner Circle</h2>
-          <p className="text-lg text-[var(--color-on-primary-container)] mt-4 mb-8 opacity-80">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight drop-shadow-sm">Join the Inner Circle</h2>
+          <p className="text-lg text-white/85 mt-4 mb-8">
             Be the first to access exclusive enterprise releases and global market insights.
           </p>
           <form className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto" onSubmit={(e) => e.preventDefault()}>
             <input
-              className="flex-1 px-6 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 backdrop-blur-sm transition-all text-base"
+              className="flex-1 px-6 py-4 rounded-xl bg-white/15 border border-white/25 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 backdrop-blur-sm transition-all text-base"
               placeholder="Enterprise Email"
               type="email"
             />
-            <button className="px-10 py-4 bg-white text-[var(--color-primary)] font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-95 shadow-xl text-base" type="submit">
+            <button className="px-10 py-4 bg-white text-[var(--color-primary)] font-bold rounded-xl hover:opacity-90 transition-all active:scale-95 shadow-xl text-base" type="submit">
               Subscribe
             </button>
           </form>
-          <p className="mt-4 text-xs text-[var(--color-on-primary-container)]/60">
+          <p className="mt-4 text-xs text-white/60">
             By subscribing, you agree to our Privacy Policy and Terms of Service.
           </p>
         </div>

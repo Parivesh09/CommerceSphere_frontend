@@ -8,7 +8,7 @@ const getInitialTheme = (): 'light' | 'dark' | 'system' => {
   if (stored === 'light' || stored === 'dark' || stored === 'system') {
     return stored;
   }
-  return 'system';
+  return 'dark';
 };
 
 const initialState: UIState = {

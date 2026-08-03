@@ -17,7 +17,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   style,
   ...props
 }) => {
-  const baseStyles = 'bg-gray-200 dark:bg-gray-700';
+  const baseStyles = 'bg-[var(--color-surface-container-high)]';
 
   const variantStyles = {
     text: 'rounded h-4',
@@ -76,7 +76,7 @@ SkeletonText.displayName = 'SkeletonText';
 
 export const SkeletonCard: React.FC<{ className?: string }> = ({ className }) => {
   return (
-    <div className={clsx('space-y-4 rounded-xl bg-white p-6 dark:bg-gray-800', className)}>
+    <div className={clsx('space-y-4 rounded-xl bg-[var(--color-surface)] p-6', className)}>
       <Skeleton variant="rectangular" height={200} className="rounded-lg" />
       <div className="space-y-2">
         <Skeleton variant="text" width="60%" />
@@ -120,7 +120,7 @@ SkeletonButton.displayName = 'SkeletonButton';
 
 export const SkeletonProductCard: React.FC<{ className?: string }> = ({ className }) => {
   return (
-    <div className={clsx('space-y-3 rounded-xl bg-white p-4 dark:bg-gray-800', className)}>
+    <div className={clsx('space-y-3 rounded-xl bg-[var(--color-surface)] p-4', className)}>
       <Skeleton variant="rectangular" height={240} className="rounded-lg" />
       <div className="space-y-2">
         <Skeleton variant="text" width="90%" />

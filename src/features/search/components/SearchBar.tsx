@@ -101,7 +101,7 @@ export function SearchBar({ placeholder = 'Search products...', autoFocus = fals
           autoFocus={autoFocus}
           slotProps={{
             input: {
-              startAdornment: <SearchIcon sx={{ color: 'text.secondary', mr: 1 }} />,
+              startAdornment: <SearchIcon sx={{ color: 'var(--color-on-surface-variant)', mr: 1 }} />,
               endAdornment: searchTerm && (
                 <IconButton size="small" onClick={handleClear} edge="end">
                   <ClearIcon />
@@ -111,7 +111,7 @@ export function SearchBar({ placeholder = 'Search products...', autoFocus = fals
           }}
           sx={{
             '& .MuiOutlinedInput-root': {
-              backgroundColor: 'background.paper',
+              backgroundColor: 'var(--color-surface)',
             },
           }}
         />
@@ -120,6 +120,7 @@ export function SearchBar({ placeholder = 'Search products...', autoFocus = fals
       {/* Recent Searches Dropdown */}
       {showRecentSearches && (
         <Paper
+          className="glass-card"
           elevation={3}
           sx={{
             position: 'absolute',
@@ -130,10 +131,11 @@ export function SearchBar({ placeholder = 'Search products...', autoFocus = fals
             maxHeight: 400,
             overflow: 'auto',
             zIndex: 1300,
+            backgroundColor: 'transparent',
           }}
         >
-          <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography variant="subtitle2" color="text.secondary">
+          <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: 1, borderColor: 'var(--color-outline-variant)' }}>
+            <Typography variant="subtitle2" color="var(--color-on-surface-variant)">
               Recent Searches
             </Typography>
             <Chip label="Clear All" size="small" onClick={clearAll} sx={{ cursor: 'pointer' }} />
@@ -150,7 +152,7 @@ export function SearchBar({ placeholder = 'Search products...', autoFocus = fals
                 }
               >
                 <ListItemButton onClick={() => handleRecentSearchClick(search.query)}>
-                  <HistoryIcon sx={{ mr: 2, color: 'text.secondary' }} />
+                  <HistoryIcon sx={{ mr: 2, color: 'var(--color-on-surface-variant)' }} />
                   <ListItemText primary={search.query} />
                 </ListItemButton>
               </ListItem>
@@ -162,6 +164,7 @@ export function SearchBar({ placeholder = 'Search products...', autoFocus = fals
       {/* Search Suggestions Dropdown */}
       {showSuggestionsDropdown && (
         <Paper
+          className="glass-card"
           elevation={3}
           sx={{
             position: 'absolute',
@@ -172,6 +175,7 @@ export function SearchBar({ placeholder = 'Search products...', autoFocus = fals
             maxHeight: 400,
             overflow: 'auto',
             zIndex: 1300,
+            backgroundColor: 'transparent',
           }}
         >
           <List>
@@ -179,9 +183,9 @@ export function SearchBar({ placeholder = 'Search products...', autoFocus = fals
               <ListItem key={suggestion.id} disablePadding>
                 <ListItemButton onClick={() => handleSuggestionClick(suggestion.text)}>
                   {suggestion.type === 'product' ? (
-                    <SearchIcon sx={{ mr: 2, color: 'text.secondary' }} />
+                    <SearchIcon sx={{ mr: 2, color: 'var(--color-on-surface-variant)' }} />
                   ) : (
-                    <TrendingIcon sx={{ mr: 2, color: 'text.secondary' }} />
+                    <TrendingIcon sx={{ mr: 2, color: 'var(--color-on-surface-variant)' }} />
                   )}
                   <ListItemText
                     primary={
@@ -203,6 +207,7 @@ export function SearchBar({ placeholder = 'Search products...', autoFocus = fals
       {/* Loading indicator */}
       {isLoading && showSuggestions && debouncedTerm.length >= 2 && (
         <Paper
+          className="glass-card"
           elevation={3}
           sx={{
             position: 'absolute',
@@ -212,9 +217,10 @@ export function SearchBar({ placeholder = 'Search products...', autoFocus = fals
             mt: 1,
             p: 2,
             zIndex: 1300,
+            backgroundColor: 'transparent',
           }}
         >
-          <Typography variant="body2" color="text.secondary" align="center">
+          <Typography variant="body2" color="var(--color-on-surface-variant)" align="center">
             Loading suggestions...
           </Typography>
         </Paper>
@@ -231,7 +237,7 @@ function highlightText(text: string, query: string): string {
   if (!query.trim()) return text;
 
   const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-  return text.replace(regex, '<mark style="background-color: #fef08a; font-weight: 600;">$1</mark>');
+  return text.replace(regex, '<mark style="background-color: color-mix(in srgb, var(--color-warning) 30%, transparent); font-weight: 600;">$1</mark>');
 }
 
 function escapeRegex(str: string): string {

@@ -19,7 +19,7 @@ export function AdminVendorsPage() {
       await updateStatus({ id, status }).unwrap();
       toast.success(`Vendor status updated to ${status}`);
     } catch {
-      toast.success(`Vendor status updated to ${status}`);
+      toast.error(`Failed to update vendor status. Please try again.`);
     }
   };
 
@@ -27,22 +27,23 @@ export function AdminVendorsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface">Vendor Management</h1>
-          <p className="text-sm text-on-surface-variant mt-1">Manage 3rd party enterprise hardware suppliers, SLAs, and onboarding status.</p>
+          <h1 className="text-3xl font-bold text-[var(--color-on-surface)]">Vendor Management</h1>
+          <div className="h-1 w-24 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mt-3" />
+          <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Manage 3rd party enterprise hardware suppliers, SLAs, and onboarding status.</p>
         </div>
-        <button onClick={() => toast.success('Vendor onboarding request sent')} className="px-4 py-2 bg-primary text-on-primary text-xs font-bold rounded-xl shadow">
+        <button onClick={() => toast.success('Vendor onboarding request sent')} className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-bold rounded-xl shadow-glow hover:brightness-110">
           + Onboard New Vendor
         </button>
       </div>
 
       <div className="glass-card rounded-3xl p-6 space-y-4">
         {isLoading ? (
-          <div className="p-8 text-center text-sm text-slate-400">Loading vendors...</div>
+          <div className="p-8 text-center text-sm text-[var(--color-on-surface-variant)]">Loading vendors...</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-outline-variant text-xs font-bold uppercase text-on-surface-variant">
+                <tr className="border-b border-[var(--color-outline-variant)] text-xs font-bold uppercase text-[var(--color-on-surface-variant)]">
                   <th className="pb-3">Company</th>
                   <th className="pb-3">Contact Email</th>
                   <th className="pb-3">Rating</th>
@@ -51,15 +52,19 @@ export function AdminVendorsPage() {
                   <th className="pb-3 text-right">Update Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-outline-variant">
+              <tbody className="divide-y divide-[var(--color-outline-variant)]">
                 {vendors.map((v) => (
-                  <tr key={v.id} className="hover:bg-surface-container-low">
-                    <td className="py-3 font-bold text-on-surface">{v.companyName}</td>
-                    <td className="py-3 text-on-surface-variant">{v.email}</td>
-                    <td className="py-3 text-secondary-fixed-dim font-semibold">★ {v.rating}</td>
-                    <td className="py-3 font-bold text-primary">${v.totalSales.toLocaleString()}</td>
+                  <tr key={v.id} className="hover:bg-[var(--color-surface-container-low)]">
+                    <td className="py-3 font-bold text-[var(--color-on-surface)]">{v.companyName}</td>
+                    <td className="py-3 text-[var(--color-on-surface-variant)]">{v.email}</td>
+                    <td className="py-3 text-[var(--color-secondary)] font-semibold">★ {v.rating}</td>
+                    <td className="py-3 font-bold text-[var(--color-primary)]">${v.totalSales.toLocaleString()}</td>
                     <td className="py-3">
-                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${v.status === 'active' ? 'bg-tertiary-fixed text-tertiary' : 'bg-secondary-fixed text-secondary'}`}>
+                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                        v.status === 'active' ? 'bg-success/10 text-success' :
+                        v.status === 'suspended' ? 'bg-error/10 text-error' :
+                        'bg-warning/10 text-warning'
+                      }`}>
                         {v.status.toUpperCase()}
                       </span>
                     </td>
@@ -67,7 +72,8 @@ export function AdminVendorsPage() {
                       <select
                         value={v.status}
                         onChange={(e) => handleStatusChange(v.id, e.target.value as Vendor['status'])}
-                        className="px-3 py-1 bg-surface-container-lowest border border-outline-variant rounded-lg text-xs font-semibold text-on-surface"
+                        aria-label={`Update status for vendor ${v.companyName}`}
+                        className="px-3 py-1 bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] rounded-lg text-xs font-semibold text-[var(--color-on-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
                       >
                         <option value="active">ACTIVE</option>
                         <option value="pending">PENDING</option>

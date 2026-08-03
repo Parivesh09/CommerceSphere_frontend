@@ -15,12 +15,12 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ children, variant = 'default', hoverable = false, padding = 'md', animated = true, className, ...props }, ref) => {
     const prefersReducedMotion = useReducedMotion();
     
-    const baseStyles = 'rounded-xl transition-all duration-200';
+    const baseStyles = 'rounded-2xl transition-all duration-200';
 
     const variantStyles = {
-      default: 'bg-white dark:bg-gray-800 shadow-sm',
-      elevated: 'bg-white dark:bg-gray-800 shadow-lg',
-      outlined: 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700',
+      default: 'glass-card',
+      elevated: 'glass-card shadow-glow',
+      outlined: 'bg-surface-container-lowest border border-outline-variant',
     };
 
     const paddingStyles = {
@@ -99,10 +99,10 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
     <div className={clsx('flex items-start justify-between', className)} {...props}>
       <div className="flex-1">
         {title && (
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
+          <h3 className="text-lg font-bold text-on-surface">{title}</h3>
         )}
         {subtitle && (
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{subtitle}</p>
+          <p className="mt-1 text-sm text-on-surface-variant">{subtitle}</p>
         )}
         {children}
       </div>

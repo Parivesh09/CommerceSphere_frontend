@@ -1,60 +1,20 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGetOrderByIdQuery, useCancelOrderMutation } from '../../../services/api/orderApi';
+import { useGetOrderByIdQuery, useCancelOrderMutation, buildTrackingTimeline } from '../../../services/api/orderApi';
 import { ROUTES } from '../../../constants';
 import toast from 'react-hot-toast';
-import type { OrderStatus } from '../../../types';
+import type { Order } from '../../../types';
+import type { TrackingStep } from '../../../services/api/orderApi';
 
 const statusColors: Record<string, string> = {
   CREATED: 'bg-surface-variant text-on-surface-variant',
-  PENDING_PAYMENT: 'bg-amber-100 text-amber-800',
-  PAID: 'bg-emerald-100 text-emerald-800',
-  PROCESSING: 'bg-blue-100 text-blue-800',
-  SHIPPED: 'bg-primary-fixed text-primary',
-  DELIVERED: 'bg-tertiary-container/20 text-tertiary',
-  CANCELLED: 'bg-error-container/20 text-error',
+  PENDING_PAYMENT: 'bg-warning/10 text-warning',
+  PAID: 'bg-success/10 text-success',
+  PROCESSING: 'bg-warning/10 text-warning',
+  SHIPPED: 'bg-info/10 text-info',
+  DELIVERED: 'bg-success/10 text-success',
+  CANCELLED: 'bg-error/10 text-error',
 };
-
-interface TimelineStep {
-  title: string;
-  description: string;
-  done: boolean;
-  current: boolean;
-}
-
-const TIMELINE_STEPS: { label: string; description: string }[] = [
-  { label: 'Order Placed', description: 'Your order has been received' },
-  { label: 'Payment Confirmed', description: 'Payment was successfully processed' },
-  { label: 'Warehouse Processing', description: 'Items are being prepared for shipment' },
-  { label: 'Shipped', description: 'Package is on its way to you' },
-  { label: 'Delivered', description: 'Package has been delivered' },
-];
-
-const CANCELLED_TIMELINE: TimelineStep[] = [
-  { title: 'Order Placed', description: 'Your order has been received', done: true, current: false },
-  { title: 'Order Cancelled', description: 'This order was cancelled', done: true, current: true },
-];
-
-function buildStatusTimeline(status: OrderStatus): TimelineStep[] {
-  if (status === 'CANCELLED') {
-    return CANCELLED_TIMELINE;
-  }
-
-  const reachedIndex =
-    status === 'CREATED' ? 0
-    : status === 'PENDING_PAYMENT' ? 1
-    : status === 'PAID' ? 2
-    : status === 'PROCESSING' ? 3
-    : status === 'SHIPPED' ? 4
-    : 5;
-
-  return TIMELINE_STEPS.map((step, idx) => ({
-    title: step.label,
-    description: step.description,
-    done: idx < reachedIndex,
-    current: idx === reachedIndex,
-  }));
-}
 
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -63,34 +23,56 @@ export default function OrderDetailPage() {
   const [cancelReason, setCancelReason] = useState('');
   const [showCancelDialog, setShowCancelDialog] = useState(false);
 
-  const { data: orderResponse, isLoading } = useGetOrderByIdQuery(orderId);
+  const { data: orderResponse, isLoading, isError } = useGetOrderByIdQuery(orderId);
   const [cancelOrder, { isLoading: isCancelling }] = useCancelOrderMutation();
 
-  const order = orderResponse?.data;
+  const fallbackTimeline: TrackingStep[] = [
+    { title: 'Order Placed', description: 'Order received and confirmed', timestamp: '', completed: true, current: false },
+    { title: 'Payment Confirmed', description: 'Payment processed successfully', timestamp: '', completed: true, current: false },
+    { title: 'Warehouse Processing', description: 'Preparing your order for shipment', timestamp: '', completed: true, current: true },
+    { title: 'Order Shipped', description: 'In transit to your address', timestamp: '', completed: false, current: false },
+    { title: 'Order Delivered', description: 'Ready to receive', timestamp: '', completed: false, current: false },
+  ];
+
+  const order = orderResponse?.data as Order | undefined;
+  const timeline = useMemo(() => (order ? buildTrackingTimeline(order) : fallbackTimeline), [order]);
   const orderStatus = order?.status || 'PROCESSING';
-  const timeline = buildStatusTimeline(orderStatus);
   const canCancel = !['SHIPPED', 'DELIVERED', 'CANCELLED'].includes(orderStatus);
 
   const handleCancelOrder = async () => {
     try {
       await cancelOrder({ id: orderId, reason: cancelReason }).unwrap();
       toast.success('Order cancelled successfully');
-      setShowCancelDialog(false);
     } catch {
       toast.error('Failed to cancel order. Please try again.');
+    } finally {
+      setShowCancelDialog(false);
     }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background pt-28 flex justify-center items-center">
+      <div className="page-bg min-h-screen pt-28 flex justify-center items-center">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }
 
+  if (isError && !order) {
+    return (
+      <div className="page-bg min-h-screen pt-28 flex flex-col items-center justify-center gap-4 px-4 text-center">
+        <span className="material-symbols-outlined text-6xl text-outline-variant">error</span>
+        <h1 className="text-2xl font-bold text-on-surface">Order not found</h1>
+        <p className="text-on-surface-variant max-w-md">We couldn't load this order. It may have been removed or you don't have access to it.</p>
+        <button onClick={() => navigate(ROUTES.ORDERS)} className="px-6 py-3 bg-primary text-on-primary font-semibold text-sm rounded-xl shadow-glow hover:brightness-110 transition-all">
+          Back to Orders
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-background text-on-surface pt-28 pb-16">
+    <div className="page-bg min-h-screen text-on-surface pt-28 pb-16">
       <main className="max-w-5xl mx-auto px-4 md:px-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
@@ -117,7 +99,7 @@ export default function OrderDetailPage() {
             </button>
             <button
               onClick={() => navigate(ROUTES.ORDERS)}
-              className="px-4 py-2 bg-primary text-on-primary font-semibold text-xs rounded-xl hover:brightness-90 transition-all"
+              className="px-4 py-2 bg-primary text-on-primary font-semibold text-xs rounded-xl shadow-glow hover:brightness-110 transition-all"
             >
               Back to Orders
             </button>
@@ -134,7 +116,7 @@ export default function OrderDetailPage() {
                 placeholder="Reason for cancellation (optional)"
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
-                className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none text-on-surface resize-none"
+                className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--color-primary)]/30 outline-none text-on-surface resize-none"
                 rows={3}
               />
               <div className="flex gap-3 justify-end">
@@ -144,7 +126,7 @@ export default function OrderDetailPage() {
                 <button
                   onClick={handleCancelOrder}
                   disabled={isCancelling}
-                  className="px-4 py-2 bg-error text-on-error rounded-lg text-sm font-semibold hover:brightness-90 transition-all disabled:opacity-50"
+                  className="px-4 py-2 bg-error text-on-error rounded-lg text-sm font-semibold hover:brightness-110 transition-all disabled:opacity-50"
                 >
                   {isCancelling ? 'Cancelling...' : 'Yes, Cancel Order'}
                 </button>
@@ -161,20 +143,20 @@ export default function OrderDetailPage() {
               <div key={idx} className="flex items-start gap-4 relative z-10">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                    step.done
+                    step.completed
                       ? 'bg-primary text-on-primary'
                       : step.current
-                      ? 'bg-amber-500 text-white ring-4 ring-amber-100'
-                      : 'bg-surface-variant text-on-surface-variant'
+                      ? 'bg-warning text-on-warning ring-4 ring-warning/20'
+                      : 'bg-outline-variant text-on-surface'
                   }`}
                 >
-                  {step.done ? '\u2713' : idx + 1}
+                  {step.completed ? '\u2713' : idx + 1}
                 </div>
                 <div>
                   <h3 className={`text-sm font-bold ${step.current ? 'text-primary' : 'text-on-surface'}`}>
                     {step.title}
                   </h3>
-                  <p className="text-sm text-on-surface-variant">{step.description}</p>
+                  <p className="text-sm text-on-surface-variant">{step.timestamp || step.description}</p>
                 </div>
               </div>
             ))}
@@ -196,7 +178,7 @@ export default function OrderDetailPage() {
             <h3 className="text-xl font-bold text-on-surface pb-2 border-b border-outline-variant">Payment Breakdown</h3>
             <div className="flex justify-between text-on-surface-variant">
               <span>Payment Status</span>
-              <span className="font-bold text-emerald-600">{order?.paymentStatus || 'COMPLETED'}</span>
+              <span className="font-bold text-success">{order?.paymentStatus || 'COMPLETED'}</span>
             </div>
             <div className="flex justify-between text-on-surface-variant">
               <span>Payment Method</span>

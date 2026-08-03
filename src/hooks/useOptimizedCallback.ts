@@ -6,7 +6,7 @@
  * Validates: Requirement 16.4
  */
 
-import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
+import { useCallback, useRef, useEffect, useState } from 'react';
 
 /**
  * Hook that returns a stable callback reference that always calls the latest version
@@ -25,7 +25,7 @@ export function useStableCallback<T extends (...args: unknown[]) => unknown>(
   });
   
    
-  return useCallback(((...args: unknown[]) => callbackRef.current(...args)) as T, []);
+  return useCallback((...args: unknown[]) => callbackRef.current(...args), []) as T;
 }
 
 /**
@@ -69,7 +69,7 @@ export function useThrottle<T extends (...args: unknown[]) => unknown>(
   
    
   return useCallback(
-    ((...args: unknown[]) => {
+    (...args: unknown[]) => {
       const now = Date.now();
       const timeSinceLastCall = now - lastCall.current;
       
@@ -86,9 +86,9 @@ export function useThrottle<T extends (...args: unknown[]) => unknown>(
           callback(...args);
         }, interval - timeSinceLastCall);
       }
-    }) as T,
+    },
     [callback, interval]
-  );
+  ) as T;
 }
 
 /**
@@ -99,13 +99,11 @@ export function useThrottle<T extends (...args: unknown[]) => unknown>(
  * @returns Previous value
  */
 export function usePrevious<T>(value: T): T | undefined {
-  const ref = useRef<T | undefined>(undefined);
-  
-  useEffect(() => {
-    ref.current = value;
-  }, [value]);
-  
-  return ref.current;
+  const [state, setState] = useState<{ value: T; prev: T | undefined }>({ value, prev: undefined });
+  if (state.value !== value) {
+    setState({ value, prev: state.value });
+  }
+  return state.prev;
 }
 
 /**
@@ -116,19 +114,11 @@ export function usePrevious<T>(value: T): T | undefined {
  * @returns Memoized value that only changes when deeply different
  */
 export function useDeepMemo<T>(value: T): T {
-  const ref = useRef<T>(value);
-  const prevValueRef = useRef<string | undefined>(undefined);
-  
-  const currentValue = useMemo(() => JSON.stringify(value), [value]);
-  
-  useEffect(() => {
-    if (prevValueRef.current !== currentValue) {
-      ref.current = value;
-      prevValueRef.current = currentValue;
-    }
-  }, [value, currentValue]);
-  
-  return ref.current;
+  const [state, setState] = useState<{ value: T; memoized: T }>({ value, memoized: value });
+  if (JSON.stringify(state.value) !== JSON.stringify(value)) {
+    setState({ value, memoized: value });
+  }
+  return state.memoized;
 }
 
 /**
@@ -137,20 +127,16 @@ export function useDeepMemo<T>(value: T): T {
  * @param componentName - Name of the component
  */
 export function useRenderTime(componentName: string): void {
-  const renderStart = useRef<number>(0);
-  
+  const lastRunRef = useRef<number>(0);
 
-  renderStart.current = performance.now();
-  
   useEffect(() => {
-    if (import.meta.env.DEV) {
-      const renderEnd = performance.now();
-      const duration = renderEnd - renderStart.current;
-      
-      if (duration > 16) { // Longer than one frame (60fps)
-        console.warn(`[Performance] ${componentName} render took ${duration.toFixed(2)}ms`);
-      }
+    if (!import.meta.env.DEV) return;
+    const now = performance.now();
+    const duration = lastRunRef.current > 0 ? now - lastRunRef.current : 0;
+    if (duration > 16) {
+      console.warn(`[Performance] ${componentName} render cycle took ${duration.toFixed(2)}ms`);
     }
+    lastRunRef.current = now;
   });
 }
 

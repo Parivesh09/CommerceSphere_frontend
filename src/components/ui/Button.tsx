@@ -36,19 +36,19 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const prefersReducedMotion = useReducedMotion();
     
     const baseStyles =
-      'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-target';
+      'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary disabled:opacity-50 disabled:cursor-not-allowed touch-target';
 
     const variantStyles = {
       primary:
-        'bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-primary-500 active:bg-primary-800',
+        'bg-primary text-on-primary shadow-glow hover:brightness-110 focus-visible:ring-primary active:brightness-95',
       secondary:
-        'bg-purple-600 text-white hover:bg-purple-700 focus-visible:ring-purple-500 active:bg-purple-800',
+        'bg-secondary text-on-secondary hover:brightness-110 focus-visible:ring-secondary active:brightness-95',
       outline:
-        'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 focus-visible:ring-primary-500 dark:border-primary-400 dark:text-primary-400 dark:hover:bg-primary-900/20',
+        'border-2 border-primary text-primary hover:bg-primary-container/40 focus-visible:ring-primary',
       ghost:
-        'text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-500 dark:text-gray-300 dark:hover:bg-gray-800',
+        'text-on-surface hover:bg-surface-container-high focus-visible:ring-primary',
       danger:
-        'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500 active:bg-red-800',
+        'bg-error text-on-error hover:brightness-110 focus-visible:ring-error active:brightness-95',
     };
 
     const sizeStyles = {

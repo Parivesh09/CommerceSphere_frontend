@@ -23,7 +23,7 @@ export function AdminProductsPage() {
         await deleteProduct(id).unwrap();
         toast.success('Product deleted successfully');
       } catch {
-        toast.success('Product removed from catalog');
+        toast.error('Failed to delete product. Please try again.');
       }
     }
   };
@@ -32,12 +32,13 @@ export function AdminProductsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface">Product Management</h1>
-          <p className="text-sm text-on-surface-variant mt-1">Manage catalog items, pricing, inventory levels, and visibility.</p>
+          <h1 className="text-3xl font-bold text-[var(--color-on-surface)]">Product Management</h1>
+          <div className="h-1 w-24 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mt-3" />
+          <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Manage catalog items, pricing, inventory levels, and visibility.</p>
         </div>
         <button
           onClick={() => navigate(ROUTES.ADMIN_PRODUCT_NEW)}
-          className="px-4 py-2.5 bg-primary text-on-primary text-xs font-bold rounded-xl shadow hover:bg-primary-container transition-colors flex items-center gap-1 self-start"
+          className="px-4 py-2.5 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-bold rounded-xl shadow-glow hover:brightness-110 transition-colors flex items-center gap-1 self-start"
         >
           <span className="material-symbols-outlined text-[18px]">add</span> Add New Product
         </button>
@@ -45,12 +46,12 @@ export function AdminProductsPage() {
 
       <div className="glass-card rounded-3xl p-6 space-y-4">
         {isLoading ? (
-          <div className="p-8 text-center text-sm text-slate-400">Loading catalog products...</div>
+          <div className="p-8 text-center text-sm text-[var(--color-on-surface-variant)]">Loading catalog products...</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-outline-variant text-xs font-bold uppercase text-on-surface-variant">
+                <tr className="border-b border-[var(--color-outline-variant)] text-xs font-bold uppercase text-[var(--color-on-surface-variant)]">
                   <th className="pb-3">Product</th>
                   <th className="pb-3">Price</th>
                   <th className="pb-3">Stock</th>
@@ -58,27 +59,27 @@ export function AdminProductsPage() {
                   <th className="pb-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-outline-variant">
+              <tbody className="divide-y divide-[var(--color-outline-variant)]">
                 {products.map((p) => (
-                  <tr key={p.id} className="hover:bg-surface-container-low">
-                    <td className="py-3 font-bold text-on-surface">{p.title}</td>
-                    <td className="py-3 font-semibold text-primary">${p.price.toLocaleString()}</td>
+                  <tr key={p.id} className="hover:bg-[var(--color-surface-container-low)]">
+                    <td className="py-3 font-bold text-[var(--color-on-surface)]">{p.title}</td>
+                    <td className="py-3 font-semibold text-[var(--color-primary)]">${p.price.toLocaleString()}</td>
                     <td className="py-3 font-medium">{p.inventoryQuantity} units</td>
                     <td className="py-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary-fixed text-primary">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[var(--color-primary-container)] text-[var(--color-primary)]">
                         {p.status || 'Active'}
                       </span>
                     </td>
                     <td className="py-3 text-right space-x-2">
                       <button
                         onClick={() => navigate(`/admin/products/${p.id}/edit`)}
-                        className="px-3 py-1 bg-surface-container-low text-on-surface text-xs font-semibold rounded-lg hover:bg-surface-container"
+                        className="px-3 py-1 bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] text-xs font-semibold rounded-lg hover:bg-[var(--color-surface-container)]"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(p.id)}
-                        className="px-3 py-1 bg-error-container text-error text-xs font-semibold rounded-lg hover:bg-error-container"
+                        className="px-3 py-1 bg-error/10 text-error text-xs font-semibold rounded-lg hover:bg-error/20"
                       >
                         Delete
                       </button>

@@ -109,6 +109,7 @@ export function AdminOrderDetailPage() {
           <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: 'var(--color-on-surface)' }}>
             Order #{order.id.slice(0, 8)}
           </Typography>
+          <Box sx={{ height: 4, width: 96, borderRadius: '9999px', mb: 1, background: 'linear-gradient(90deg, var(--color-primary), var(--color-secondary))' }} />
           <Typography variant="body1" sx={{ color: 'var(--color-on-surface-variant)' }}>
             Placed on {formatDate(order.createdAt)}
           </Typography>

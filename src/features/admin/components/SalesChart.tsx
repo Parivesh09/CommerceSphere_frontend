@@ -71,7 +71,7 @@ export default function SalesChart({ data }: SalesChartProps) {
                 yAxisId="left"
                 type="monotone"
                 dataKey="revenue"
-                stroke="#2563eb"
+                stroke="var(--color-primary)"
                 strokeWidth={2}
                 dot={{ r: 4 }}
                 activeDot={{ r: 6 }}
@@ -81,7 +81,7 @@ export default function SalesChart({ data }: SalesChartProps) {
                 yAxisId="right"
                 type="monotone"
                 dataKey="orders"
-                stroke="#7c3aed"
+                stroke="var(--color-secondary)"
                 strokeWidth={2}
                 dot={{ r: 4 }}
                 activeDot={{ r: 6 }}

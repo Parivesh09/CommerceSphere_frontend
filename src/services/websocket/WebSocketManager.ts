@@ -228,9 +228,9 @@ export class WebSocketManager {
     if (this.store) {
       try {
 
-        import('../../features/orders/api').then(({ ordersApi }) => {
+        import('../../services/api/orderApi').then(({ orderApi }) => {
 
-          const updateAction = ordersApi.util.updateQueryData('getOrderById', orderId, (draft) => {
+          const updateAction = orderApi.util.updateQueryData('getOrderById', orderId, (draft) => {
             if (draft?.data) {
               draft.data.status = status as OrderStatus;
               draft.data.updatedAt = new Date().toISOString();
@@ -240,7 +240,7 @@ export class WebSocketManager {
           this.store!.dispatch(updateAction as never);
 
 
-          const invalidateAction = ordersApi.util.invalidateTags([{ type: 'Orders', id: 'LIST' }]);
+          const invalidateAction = orderApi.util.invalidateTags([{ type: 'Orders', id: 'LIST' }]);
           this.store!.dispatch(invalidateAction as never);
         });
       } catch (error) {

@@ -64,9 +64,9 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({
       disabled={isLoading}
       className={`
         flex items-center justify-center rounded-full
-        bg-white/90 backdrop-blur-sm
+        bg-[var(--color-surface)]/90 backdrop-blur-sm
         transition-all duration-200
-        hover:scale-110 hover:bg-white
+        hover:scale-110 hover:bg-[var(--color-surface)]
         active:scale-95
         disabled:opacity-50 disabled:cursor-not-allowed
         ${sizeClasses[size]}
@@ -77,7 +77,7 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({
     >
       {inWishlist ? (
         <svg
-          className={`${iconSizeClasses[size]} text-red-500`}
+          className={`${iconSizeClasses[size]} text-error`}
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -89,7 +89,7 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({
         </svg>
       ) : (
         <svg
-          className={`${iconSizeClasses[size]} text-gray-600`}
+          className={`${iconSizeClasses[size]} text-[var(--color-on-surface-variant)]`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

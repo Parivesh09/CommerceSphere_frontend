@@ -9,8 +9,8 @@ const defaultOptions: ToastOptions = {
   duration: 4000,
   position: 'top-right',
   style: {
-    background: '#fff',
-    color: '#0f172a',
+    background: 'var(--color-surface-container-lowest)',
+    color: 'var(--color-on-surface)',
     borderRadius: '12px',
     padding: '16px',
     boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
@@ -105,21 +105,21 @@ export const ToasterProvider: React.FC = () => {
         success: {
           duration: 3000,
           iconTheme: {
-            primary: '#10b981',
-            secondary: '#fff',
+            primary: 'var(--color-success)',
+            secondary: 'var(--color-on-primary)',
           },
         },
         error: {
           duration: 4000,
           iconTheme: {
-            primary: '#ef4444',
-            secondary: '#fff',
+            primary: 'var(--color-error)',
+            secondary: 'var(--color-on-primary)',
           },
         },
         loading: {
           iconTheme: {
-            primary: '#3b82f6',
-            secondary: '#fff',
+            primary: 'var(--color-info)',
+            secondary: 'var(--color-on-primary)',
           },
         },
       }}

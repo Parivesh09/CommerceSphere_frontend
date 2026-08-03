@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useGetOrderByIdQuery } from '../api';
+import { useGetOrderByIdQuery } from '../../../services/api/orderApi';
 import type { OrderStatus } from '../../../types';
 
 const ACTIVE_STATUSES: OrderStatus[] = ['PENDING_PAYMENT', 'PAID', 'PROCESSING', 'SHIPPED'];
