@@ -26,7 +26,7 @@ const TRACKING_STEPS: Array<{ key: OrderStatus; label: string }> = [
   { key: 'DELIVERED', label: 'Order Delivered' },
 ];
 
-const STATUS_ORDER: OrderStatus[] = ['PENDING_PAYMENT', 'PAID', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
+const STATUS_ORDER: OrderStatus[] = ['CREATED', 'PENDING_PAYMENT', 'PAID', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
 
 export function buildTrackingTimeline(order: Order): TrackingStep[] {
   if (order.status === 'CANCELLED') {

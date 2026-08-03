@@ -6,7 +6,7 @@ import { AnimatePresence } from 'framer-motion';
 import { store } from './store';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { WebSocketProvider } from './services/websocket';
-import { SkipNavigation } from './components/ui';
+import { SkipNavigation, WebSocketStatus } from './components/ui';
 import { NetworkStatusIndicator } from './components/NetworkStatusIndicator';
 import { ErrorBoundary, RootErrorFallback, RouteErrorFallback } from './components/error';
 import { ROUTES } from './constants';
@@ -81,6 +81,7 @@ function AppRoutes() {
     <>
       <SkipNavigation />
       <NetworkStatusIndicator />
+      <WebSocketStatus />
 
       <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>

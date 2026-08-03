@@ -33,7 +33,7 @@ export const authApi = baseApi.injectEndpoints({
             );
           }
         } catch {
-          // Ignore: login failures surface via the mutation's error state.
+          // Credentials are only persisted on successful login
         }
       },
       invalidatesTags: [{ type: 'Auth', id: 'CURRENT' }, { type: 'Profile', id: 'USER' }],
@@ -62,7 +62,7 @@ export const authApi = baseApi.injectEndpoints({
             );
           }
         } catch {
-          // Ignore: registration failures surface via the mutation's error state.
+          // Credentials are only persisted on successful registration
         }
       },
       invalidatesTags: [{ type: 'Auth', id: 'CURRENT' }],

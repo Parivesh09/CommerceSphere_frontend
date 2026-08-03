@@ -105,9 +105,9 @@ The auth slice is already integrated in the Redux store at `store/slices/authSli
 
 ### Middleware
 
-Two middleware handle authentication concerns:
+Authentication and error handling are provided as follows:
 
-1. **authMiddleware** (`store/middleware/authMiddleware.ts`):
+1. **baseQueryWithReauth** (`services/api/baseApi.ts`):
    - Intercepts 401 responses
    - Automatically refreshes tokens
    - Retries failed requests

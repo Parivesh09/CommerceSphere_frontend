@@ -4,13 +4,13 @@ import { useGetProductsQuery } from '../../../services/api/productApi';
 import { useCart } from '../../cart/hooks';
 import { toggleWishlistItem } from '../../../features/wishlist/slice';
 import { useAppSelector } from '../../../hooks/useAppSelector';
-import toast from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { useGetCategoriesQuery } from '@/services/api';
+import toast from 'react-hot-toast';
 
 export default function ProductListPage() {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
   const { addToCart } = useCart();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);

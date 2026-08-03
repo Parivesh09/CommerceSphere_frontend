@@ -5,7 +5,7 @@ import authReducer from './slices/authSlice';
 import cartReducer from './slices/cartSlice';
 import uiReducer from './slices/uiSlice';
 import wishlistReducer from '../features/wishlist/slice';
-import { authMiddleware, errorMiddleware } from './middleware';
+import { errorMiddleware } from './middleware';
 
 /**
  * Redux store configuration
@@ -28,7 +28,6 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(baseApi.middleware)
-      .concat(authMiddleware)
       .concat(errorMiddleware),
 });
 

@@ -15,7 +15,6 @@ The store is configured with:
 store/
 ├── index.ts              # Store configuration
 ├── middleware/           # Custom middleware
-│   ├── authMiddleware.ts    # Automatic token refresh
 │   ├── errorMiddleware.ts   # Global error handling
 │   └── index.ts             # Middleware exports
 └── slices/              # Redux slices
@@ -34,12 +33,12 @@ The base API is configured in `services/api/baseApi.ts` with:
 - **Tag-based cache invalidation**: Efficient cache management using tags
 - **Endpoint injection pattern**: Modular API definitions per feature
 
-### 2. Authentication Middleware
+### 2. Automatic Token Refresh
 
-The `authMiddleware` handles:
+Token refresh is handled inside `baseApi` (`services/api/baseApi.ts`) via `baseQueryWithReauth`:
 
 - **Automatic token refresh**: Intercepts 401 responses and refreshes tokens
-- **Request retry**: Retries failed requests after successful token refresh
+- **Request retry**: Retries the original request once after successful token refresh
 - **Automatic logout**: Logs out users when refresh fails
 
 **Validates Requirements**: 2.5, 3.2
@@ -140,13 +139,11 @@ export const productsApi = baseApi.injectEndpoints({
 The middleware are applied in this order:
 
 1. **Default RTK middleware** (thunk, immutability checks, etc.)
-2. **RTK Query middleware** (caching, refetching, etc.)
-3. **Auth middleware** (token refresh)
-4. **Error middleware** (error handling)
+2. **RTK Query middleware** (caching, refetching, reauth, etc.)
+3. **Error middleware** (error handling)
 
-This order ensures that:
-- Token refresh happens before error handling
-- Errors are caught after all other processing
+Note: Automatic token refresh is part of the RTK Query base query, so it runs
+before requests are dispatched to the network.
 
 ## Configuration
 
@@ -173,7 +170,6 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(baseApi.middleware)
-      .concat(authMiddleware)
       .concat(errorMiddleware),
 });
 ```

@@ -31,7 +31,7 @@ export function AdminOrdersPage() {
       }
       toast.success(`Order ${id} status updated to ${status}`);
     } catch {
-      toast.error(`Failed to update order ${id}. Please try again.`);
+      toast.error(`Failed to update order ${id} status to ${status}. Please try again.`);
     }
   };
 

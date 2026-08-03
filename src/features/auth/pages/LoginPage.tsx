@@ -30,7 +30,14 @@ export default function LoginPage() {
     try {
       await login({ email, password }).unwrap();
       if (guestItems.length > 0) {
-        syncCart({ items: guestItems.map((i) => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity, unitPrice: i.unitPrice })) });
+        await syncCart({
+          items: guestItems.map((i) => ({
+            productId: i.productId,
+            variantId: i.variantId,
+            quantity: i.quantity,
+            unitPrice: i.unitPrice,
+          })),
+        }).unwrap();
       }
       toast.success('Welcome back to CommerceSphere!');
       navigate(ROUTES.HOME);
@@ -51,13 +58,10 @@ export default function LoginPage() {
             refreshToken: 'demo-refresh-token',
           } as any)
         );
-        if (guestItems.length > 0) {
-          // Guest cart persists in localStorage for next login
-        }
         toast.success(`Logged in as ${email.split('@')[0]}`);
         navigate(ROUTES.HOME);
       } else {
-        toast.error('Invalid email or password. Please try again.');
+        toast.error('Sign in failed. Please check your credentials.');
       }
     }
   };
