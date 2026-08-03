@@ -86,6 +86,7 @@ export function AdminProductEditorPage() {
           <h1 className="text-3xl font-bold text-[var(--color-on-surface)]">
             {isEditing ? 'Edit Enterprise Product' : 'Create New Product'}
           </h1>
+          <div className="h-1 w-24 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mt-3" />
           <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Configure title, pricing specs, categories, and inventory allocation.</p>
         </div>
         <button
@@ -106,7 +107,7 @@ export function AdminProductEditorPage() {
               placeholder="e.g. Matrix Point 2.0 Terminal"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-[var(--color-outline-variant)] text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             />
           </div>
 
@@ -118,7 +119,7 @@ export function AdminProductEditorPage() {
               placeholder="Enterprise specification description..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-[var(--color-outline-variant)] text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             />
           </div>
 
@@ -129,7 +130,7 @@ export function AdminProductEditorPage() {
               required
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-              className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-[var(--color-outline-variant)] text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             />
           </div>
 
@@ -140,7 +141,7 @@ export function AdminProductEditorPage() {
               required
               value={formData.inventoryQuantity}
               onChange={(e) => setFormData({ ...formData, inventoryQuantity: Number(e.target.value) })}
-              className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-[var(--color-outline-variant)] text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             />
           </div>
 
@@ -149,7 +150,7 @@ export function AdminProductEditorPage() {
             <select
               value={formData.categoryId}
               onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-[var(--color-outline-variant)] text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             >
               <option value="terminals">Terminals & POS</option>
               <option value="logistics">Logistics & RFID</option>
@@ -166,7 +167,7 @@ export function AdminProductEditorPage() {
               required
               value={formData.imageUrl}
               onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-[var(--color-outline-variant)] text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             />
           </div>
         </div>
@@ -175,7 +176,7 @@ export function AdminProductEditorPage() {
           <button
             type="submit"
             disabled={isSaving}
-            className="px-6 py-3 bg-primary text-on-primary text-sm font-bold rounded-xl shadow-lg hover:bg-primary-container transition-all disabled:opacity-50"
+            className="px-6 py-3 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-bold rounded-xl shadow-glow hover:brightness-110 transition-all disabled:opacity-50"
           >
             {isSaving ? 'Saving Product...' : isEditing ? 'Save Product Changes' : 'Publish Product'}
           </button>

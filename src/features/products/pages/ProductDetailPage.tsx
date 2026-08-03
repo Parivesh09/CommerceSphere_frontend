@@ -124,7 +124,7 @@ export default function ProductDetailPage() {
               <h1 className="text-3xl font-bold text-[var(--color-on-surface)] leading-tight mt-3">{product.title}</h1>
 
               {/* Rating */}
-              <div className="flex items-center gap-1 mt-3 text-amber-500 text-sm">
+              <div className="flex items-center gap-1 mt-3 text-warning text-sm">
                 <span className="material-symbols-outlined text-[18px]">star</span>
                 <span className="material-symbols-outlined text-[18px]">star</span>
                 <span className="material-symbols-outlined text-[18px]">star</span>
@@ -134,11 +134,11 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <div className="p-6 glass-card rounded-xl space-y-3">
+            <div className="p-6 glass-card rounded-2xl space-y-3">
               <div className="flex items-baseline gap-3">
                 <span className="text-3xl font-bold text-[var(--color-primary)]">${product.price.toLocaleString()}</span>
                 <span className="text-sm text-[var(--color-on-surface-variant)] line-through">${(product.price * 1.25).toFixed(2)}</span>
-                <span className="text-xs font-bold text-[var(--color-tertiary)] bg-[var(--color-tertiary-container)]/10 px-2 py-0.5 rounded-full">Save 20%</span>
+                <span className="text-xs font-bold text-on-error bg-error px-2 py-0.5 rounded-full">Save 20%</span>
               </div>
               <p className="text-xs text-[var(--color-on-surface-variant)]">Includes enterprise warranty & free express shipping.</p>
             </div>
@@ -190,7 +190,7 @@ export default function ProductDetailPage() {
               </button>
               <button
                 onClick={handleBuyNow}
-                className="bg-primary text-on-primary rounded-xl text-sm font-medium py-3 px-4 hover:shadow-lg active:scale-95 transition-all"
+                className="bg-primary text-on-primary rounded-xl text-sm font-medium py-3 px-4 shadow-glow hover:brightness-110 active:scale-95 transition-all"
               >
                 Buy Now
               </button>
@@ -259,9 +259,9 @@ export default function ProductDetailPage() {
                     <span className="font-bold text-sm text-[var(--color-on-surface)]">{rev.userName}</span>
                     <span className="text-xs text-[var(--color-on-surface-variant)]">{rev.createdAt}</span>
                   </div>
-                  <div className="text-amber-500 text-xs mb-2">
+                  <div className="text-warning text-xs mb-2">
                     {[...Array(rev.rating)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-[16px] text-amber-500">star</span>
+                      <span key={i} className="material-symbols-outlined text-[16px] text-warning">star</span>
                     ))}
                   </div>
                   <p className="text-xs text-[var(--color-on-surface-variant)]">{rev.comment}</p>
@@ -281,7 +281,8 @@ export default function ProductDetailPage() {
 
         {/* Related Products */}
         <div>
-          <h2 className="text-2xl font-bold text-[var(--color-on-surface)] mb-6">Recommended Recommendations</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-on-surface)]">Recommended Recommendations</h2>
+          <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mt-3 mb-6" />
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {(relatedData?.data || [
               { id: 'prod-2', title: 'Quantum Scan Pro', price: 849, image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80' },
@@ -290,7 +291,7 @@ export default function ProductDetailPage() {
               <div
                 key={rel.id}
                 onClick={() => navigate(`/products/${rel.id}`)}
-                className="glass-card rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all"
+                className="glass-card rounded-2xl p-4 cursor-pointer hover:shadow-lg transition-all"
               >
                 <img src={rel.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80'} alt="" className="w-full h-40 object-cover rounded-xl mb-3" />
                 <h4 className="font-bold text-sm text-[var(--color-on-surface)]">{rel.title}</h4>

@@ -49,8 +49,9 @@ export default function CategoriesPage() {
         <section className="mb-12">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-primary/90">Browse categories</p>
-            <h1 className="mt-4 text-4xl sm:text-5xl font-bold text-on-surface dark:text-on-surface">Find the right CommerceSphere solution</h1>
-            <p className="mt-4 text-base text-muted leading-7">
+            <h1 className="mt-4 text-4xl sm:text-5xl font-bold text-[var(--color-on-surface)]">Find the right CommerceSphere solution</h1>
+            <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mt-4" />
+            <p className="mt-4 text-base text-[var(--color-on-surface-variant)] leading-7">
               Explore enterprise categories optimized for retail, logistics, and customer experience.
               Filter by capability and discover products designed for modern commerce ecosystems.
             </p>
@@ -66,7 +67,7 @@ export default function CategoriesPage() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.08, duration: 0.4 }}
-              className="group text-left rounded-[2rem] overflow-hidden border border-outline-variant surface-card shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="group text-left rounded-2xl overflow-hidden glass-card transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl"
               aria-label={`Explore ${category.title}`}
             >
               <div className="relative h-56 overflow-hidden">
@@ -75,7 +76,7 @@ export default function CategoriesPage() {
                   alt={category.title}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-[var(--color-inverse-surface)]/70 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-inverse-surface)]/70 via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <span className="inline-flex items-center rounded-full bg-surface-container-lowest/90 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-on-surface">
                     {category.title}
@@ -95,7 +96,7 @@ export default function CategoriesPage() {
         </section>
 
         <section className="mt-16 grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
-          <div className="rounded-[2rem] bg-primary p-10 text-on-primary shadow-xl">
+          <div className="rounded-2xl bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-tertiary)] p-10 text-on-primary shadow-glow">
             <span className="text-xs font-semibold uppercase tracking-[0.28em] text-on-primary/80">CommerceSphere Insights</span>
             <h2 className="mt-4 text-3xl font-bold">Build a connected commerce ecosystem</h2>
             <p className="mt-4 text-sm leading-7 text-on-primary/80">
@@ -113,18 +114,18 @@ export default function CategoriesPage() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] surface-card p-10 shadow-xl">
-            <h2 className="text-2xl font-bold text-on-surface dark:text-on-surface">Trending category picks</h2>
+          <div className="rounded-2xl glass-card p-10">
+            <h2 className="text-2xl font-bold text-on-surface">Trending category picks</h2>
             <div className="mt-6 space-y-4">
-              <div className="rounded-3xl bg-surface-container-low p-5">
+              <div className="rounded-2xl bg-surface-container-low p-5">
                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-primary">Terminal suites</p>
                 <p className="mt-2 text-sm text-on-surface-variant">High-performance checkout hardware for omni-channel operations.</p>
               </div>
-              <div className="rounded-3xl bg-surface p-5">
+              <div className="rounded-2xl bg-surface p-5">
                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-primary">RFID devices</p>
                 <p className="mt-2 text-sm text-on-surface-variant">Hands-free scanning for warehouse and store automation.</p>
               </div>
-              <div className="rounded-3xl bg-surface-container-low p-5">
+              <div className="rounded-2xl bg-surface-container-low p-5">
                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-primary">Device bundles</p>
                 <p className="mt-2 text-sm text-on-surface-variant">Complete kits with software, hardware, and deployment services.</p>
               </div>

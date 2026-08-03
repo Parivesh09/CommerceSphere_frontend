@@ -18,12 +18,18 @@ import {
   ShoppingCart,
   People,
   Analytics,
-  Settings,
+  Warehouse,
+  Storefront,
+  AdminPanelSettings,
   Menu as MenuIcon,
+  Public,
+  Logout,
 } from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../constants';
+import { logout } from '../store/slices/authSlice';
+import { useAppDispatch } from '../hooks/useAppDispatch';
 
 const drawerWidth = 240;
 
@@ -31,27 +37,39 @@ const menuItems = [
   { text: 'Dashboard', icon: <Dashboard />, path: ROUTES.ADMIN },
   { text: 'Products', icon: <Inventory />, path: ROUTES.ADMIN_PRODUCTS },
   { text: 'Orders', icon: <ShoppingCart />, path: ROUTES.ADMIN_ORDERS },
+  { text: 'Inventory', icon: <Warehouse />, path: ROUTES.ADMIN_INVENTORY },
   { text: 'Users', icon: <People />, path: ROUTES.ADMIN_USERS },
   { text: 'Analytics', icon: <Analytics />, path: ROUTES.ADMIN_ANALYTICS },
-  { text: 'Settings', icon: <Settings />, path: ROUTES.ADMIN_SETTINGS },
+  { text: 'Vendors', icon: <Storefront />, path: ROUTES.ADMIN_VENDORS },
+  { text: 'Roles', icon: <AdminPanelSettings />, path: ROUTES.ADMIN_ROLES },
 ];
 
 export default function AdminLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const handleViewSite = () => {
+    navigate(ROUTES.HOME);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate(ROUTES.HOME);
+  };
+
   const drawer = (
-    <div>
+    <div className="flex flex-col h-full">
       <Toolbar>
         <Typography variant="h6" noWrap component="div">
           Admin Panel
         </Typography>
       </Toolbar>
-      <List component="nav" aria-label="Admin navigation menu">
+      <List component="nav" aria-label="Admin navigation menu" sx={{ flexGrow: 1 }}>
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton 
@@ -65,6 +83,32 @@ export default function AdminLayout() {
           </ListItem>
         ))}
       </List>
+      <Box
+        sx={{
+          borderTop: '1px solid var(--color-outline-variant)',
+          p: 1.5,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 0.5,
+        }}
+      >
+        <ListItemButton
+          onClick={handleViewSite}
+          aria-label="View storefront website"
+          sx={{ minHeight: 44 }}
+        >
+          <ListItemIcon aria-hidden="true"><Public /></ListItemIcon>
+          <ListItemText primary="View site" />
+        </ListItemButton>
+        <ListItemButton
+          onClick={handleLogout}
+          aria-label="Log out of admin panel"
+          sx={{ minHeight: 44, color: 'var(--color-error)' }}
+        >
+          <ListItemIcon aria-hidden="true" sx={{ color: 'var(--color-error)' }}><Logout /></ListItemIcon>
+          <ListItemText primary="Logout" />
+        </ListItemButton>
+      </Box>
     </div>
   );
 
@@ -75,6 +119,11 @@ export default function AdminLayout() {
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
+          background: 'var(--color-surface)',
+          color: 'var(--color-on-surface)',
+          backgroundImage: 'none',
+          boxShadow: 'none',
+          borderBottom: '1px solid var(--color-outline-variant)',
         }}
       >
         <Toolbar>
@@ -87,9 +136,23 @@ export default function AdminLayout() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="h1">
+          <Typography variant="h6" noWrap component="h1" sx={{ flexGrow: 1 }}>
             CommerceSphere Admin
           </Typography>
+          <IconButton
+            onClick={handleViewSite}
+            aria-label="View storefront website"
+            sx={{ minWidth: 44, minHeight: 44, '&:hover': { bgcolor: 'var(--color-surface-container-low)' } }}
+          >
+            <Public />
+          </IconButton>
+          <IconButton
+            onClick={handleLogout}
+            aria-label="Log out of admin panel"
+            sx={{ minWidth: 44, minHeight: 44, color: 'var(--color-error)', '&:hover': { bgcolor: 'var(--color-surface-container-low)' } }}
+          >
+            <Logout />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Box 
@@ -125,6 +188,7 @@ export default function AdminLayout() {
       <Box
         component="main"
         id="main-content"
+        className="page-bg"
         sx={{
           flexGrow: 1,
           p: 3,

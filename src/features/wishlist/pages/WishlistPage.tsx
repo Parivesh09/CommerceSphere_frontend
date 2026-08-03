@@ -31,7 +31,7 @@ export const WishlistPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] mx-auto px-4 md:px-10 py-20">
+      <div className="min-h-screen page-bg text-[var(--color-on-surface)] mx-auto px-4 md:px-10 py-20">
         <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-on-surface)] mb-8">
           My Wishlist
         </h1>
@@ -53,7 +53,7 @@ export const WishlistPage: React.FC = () => {
 
   if (wishlistCount === 0) {
     return (
-      <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] flex items-center justify-center p-6 text-center">
+      <div className="min-h-screen page-bg text-[var(--color-on-surface)] flex items-center justify-center p-6 text-center">
         <div className="max-w-md w-full glass-card rounded-2xl p-8 gap-6 flex flex-col items-center">
           <span className="material-symbols-outlined text-[48px] text-[var(--color-on-surface-variant)]">favorite</span>
           <h2 className="text-xl font-bold text-[var(--color-on-surface)]">
@@ -76,11 +76,14 @@ export const WishlistPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] mx-auto px-4 md:px-10 py-20">
+    <div className="min-h-screen page-bg text-[var(--color-on-surface)] mx-auto px-4 md:px-10 py-20">
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-on-surface)]">
-          My Wishlist
-        </h1>
+        <div className="space-y-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-on-surface)]">
+            My Wishlist
+          </h1>
+          <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full" />
+        </div>
         <p className="text-sm text-[var(--color-on-surface-variant)]">
           {wishlistCount} {wishlistCount === 1 ? 'item' : 'items'}
         </p>
@@ -104,7 +107,7 @@ export const WishlistPage: React.FC = () => {
               onClick={() => navigate(ROUTES.PRODUCT_DETAIL.replace(':id', product.id))}
             >
               {/* Product Image */}
-              <div className="relative aspect-square overflow-hidden bg-[var(--color-surface-variant)]">
+              <div className="relative aspect-square overflow-hidden bg-[var(--color-surface-container-low)]">
                 {primaryImage ? (
                   <img
                     src={primaryImage.url}
@@ -125,7 +128,7 @@ export const WishlistPage: React.FC = () => {
 
                 {/* Discount Badge */}
                 {hasDiscount && (
-                  <div className="absolute left-2 top-2 rounded-full bg-error px-2 py-1 text-xs font-semibold text-on-primary">
+                  <div className="absolute left-2 top-2 rounded-full bg-error px-2 py-1 text-xs font-semibold text-on-error">
                     -{discountPercentage}%
                   </div>
                 )}

@@ -38,7 +38,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       onClick={handleClick}
     >
       {/* Product Image */}
-      <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700">
+      <div className="relative aspect-square overflow-hidden bg-[var(--color-surface-container-low)]">
         {primaryImage ? (
           <img
             src={primaryImage.url}
@@ -47,7 +47,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             loading="lazy"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-gray-400">
+          <div className="flex h-full w-full items-center justify-center text-[var(--color-on-surface-variant)]">
             No Image
           </div>
         )}
@@ -59,7 +59,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         
         {/* Discount Badge */}
         {hasDiscount && (
-          <div className="absolute left-2 top-2 rounded-full bg-red-500 px-2 py-1 text-xs font-semibold text-white">
+          <div className="absolute left-2 top-2 rounded-full bg-error px-2 py-1 text-xs font-semibold text-on-error">
             -{discountPercentage}%
           </div>
         )}
@@ -67,7 +67,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Out of Stock Badge */}
         {product.stock === 0 && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-            <span className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-gray-900">
+            <span className="rounded-lg bg-surface px-4 py-2 text-sm font-semibold text-on-surface">
               Out of Stock
             </span>
           </div>
@@ -77,12 +77,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* Product Info */}
       <div className="p-4">
         {/* Category */}
-        <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+        <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-on-surface-variant)]">
           {product.category}
         </p>
 
         {/* Product Name */}
-        <h3 className="mt-1 line-clamp-2 text-base font-semibold text-gray-900 dark:text-gray-100">
+        <h3 className="mt-1 line-clamp-2 text-base font-semibold text-[var(--color-on-surface)]">
           {product.name}
         </h3>
 
@@ -94,8 +94,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 key={index}
                 className={`h-4 w-4 ${
                   index < Math.floor(product.rating)
-                    ? 'text-yellow-400'
-                    : 'text-gray-300 dark:text-gray-600'
+                    ? 'text-warning'
+                    : 'text-on-surface-variant'
                 }`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
@@ -104,18 +104,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               </svg>
             ))}
           </div>
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="text-sm text-[var(--color-on-surface-variant)]">
             ({product.reviewCount})
           </span>
         </div>
 
         {/* Price */}
         <div className="mt-3 flex items-center gap-2">
-          <span className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <span className="text-xl font-bold text-[var(--color-on-surface)]">
             ${product.price.toFixed(2)}
           </span>
           {hasDiscount && (
-            <span className="text-sm text-gray-500 line-through dark:text-gray-400">
+            <span className="text-sm text-[var(--color-on-surface-variant)] line-through">
               ${product.compareAtPrice!.toFixed(2)}
             </span>
           )}

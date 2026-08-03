@@ -129,8 +129,9 @@ export default function ProductListPage() {
         {/* Header */}
         <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-bold text-(--color-on-surface)">Enterprise Catalog</h1>
+            <h1 className="text-3xl font-bold text-[var(--color-on-surface)]">Enterprise Catalog</h1>
             <p className="text-sm text-on-surface-variant mt-1">Browse CommerceSphere enterprise hardware, IoT, and software tools.</p>
+            <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mt-4" />
           </div>
           <div className="flex items-center gap-3">
             <input
@@ -138,7 +139,7 @@ export default function ProductListPage() {
               placeholder="Search catalog..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-outline-variant bg-surface text-(--color-on-surface) text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="px-4 py-2 rounded-xl border border-outline-variant bg-surface text-[var(--color-on-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
             <select
               value={`${sortBy}-${sortOrder}`}
@@ -147,7 +148,7 @@ export default function ProductListPage() {
                 setSortBy(sb);
                 setSortOrder(so);
               }}
-              className="px-4 py-2 rounded-xl border border-outline-variant bg-surface text-(--color-on-surface) text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="px-4 py-2 rounded-xl border border-outline-variant bg-surface text-[var(--color-on-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
@@ -159,7 +160,7 @@ export default function ProductListPage() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar Filters */}
           <aside className="w-full lg:w-64 shrink-0">
-            <div className="glass-card rounded-xl p-6 sticky top-24 space-y-6">
+            <div className="glass-card rounded-2xl p-6 sticky top-24 space-y-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-on-surface)]">Filters</h2>
                 <button
@@ -231,7 +232,7 @@ export default function ProductListPage() {
                 {!import.meta.env.DEV && (
                   <button
                     onClick={() => refetch()}
-                    className="px-4 py-2 bg-primary text-on-primary text-xs font-semibold rounded-xl hover:brightness-90 transition-colors"
+                    className="px-4 py-2 bg-primary text-on-primary text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 transition-colors"
                   >
                     Retry
                   </button>
@@ -250,7 +251,7 @@ export default function ProductListPage() {
                     setSearchQuery('');
                     setPage(1);
                   }}
-                  className="px-4 py-2 bg-primary text-on-primary text-xs font-semibold rounded-xl hover:brightness-90 transition-colors"
+                  className="px-4 py-2 bg-primary text-on-primary text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 transition-colors"
                 >
                   Reset Filters
                 </button>
@@ -260,7 +261,7 @@ export default function ProductListPage() {
                 {productsList.map((product) => (
                   <div
                     key={product.id}
-                    className="bg-surface-container-lowest rounded-xl overflow-hidden hover:shadow-xl border border-[var(--color-outline-variant)]/20 flex flex-col group transition-all"
+                    className="glass-card rounded-2xl overflow-hidden flex flex-col group transition-all"
                   >
                     <div
                       onClick={() => navigate(`/products/${product.id}`)}
@@ -279,7 +280,7 @@ export default function ProductListPage() {
                         className={`absolute top-3 right-3 p-2 rounded-full shadow transition-colors ${
                           isWishlisted(product.id)
                             ? 'bg-primary text-on-primary'
-                            : 'bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] hover:bg-primary hover:text-on-primary'
+                            : 'bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)]'
                         }`}
                       >
                         <span className="material-symbols-outlined text-[18px]">favorite</span>
@@ -287,7 +288,7 @@ export default function ProductListPage() {
                     </div>
 
                     <div className="flex-grow px-4 pt-3 pb-2">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-[var(--color-primary-container)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-xs font-semibold uppercase tracking-widest">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-[var(--color-primary-container)] text-[var(--color-primary)] text-xs font-semibold uppercase tracking-widest">
                         {product.categoryId || 'Hardware'}
                       </span>
                       <h3
@@ -303,7 +304,7 @@ export default function ProductListPage() {
                       <span className="text-xl font-bold text-[var(--color-on-surface)]">${product.price.toLocaleString()}</span>
                       <button
                         onClick={() => handleAddToCart(product)}
-                        className="bg-primary text-on-primary rounded-xl text-sm px-4 py-2 hover:shadow-lg active:scale-95 transition-all font-medium"
+                        className="bg-primary text-on-primary rounded-xl text-sm px-4 py-2 shadow-glow hover:brightness-110 active:scale-95 transition-all font-medium"
                       >
                         Add to Cart
                       </button>

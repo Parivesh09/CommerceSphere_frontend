@@ -51,10 +51,11 @@ export default function CompareProductsPage() {
   const specKeys = ['Display', 'Connectivity', 'Battery', 'Encryption', 'Warranty'];
 
   return (
-    <div className="min-h-screen bg-background text-on-surface pt-28 pb-16">
+    <div className="min-h-screen page-bg text-on-surface pt-28 pb-16">
       <main className="max-w-7xl mx-auto px-6 md:px-10">
         <h1 className="text-3xl font-bold text-on-surface mb-2">Compare Products</h1>
-        <p className="text-sm text-on-surface-variant mb-8">Side-by-side technical specification matrix for enterprise evaluation.</p>
+        <p className="text-sm text-on-surface-variant mb-4">Side-by-side technical specification matrix for enterprise evaluation.</p>
+        <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mb-8" />
 
         <div className="overflow-x-auto">
           <table className="w-full min-w-[700px] border-collapse">
@@ -71,7 +72,7 @@ export default function CompareProductsPage() {
                       <p className="text-xl font-bold text-primary">${prod.price.toLocaleString()}</p>
                       <button
                         onClick={() => navigate(`/products/${prod.id}`)}
-                        className="px-4 py-2 bg-on-surface text-on-primary text-xs font-bold rounded-xl hover:bg-primary transition-colors w-full"
+                        className="px-4 py-2 bg-primary text-on-primary text-xs font-bold rounded-xl shadow-glow hover:brightness-110 transition-colors w-full"
                       >
                         View Product
                       </button>

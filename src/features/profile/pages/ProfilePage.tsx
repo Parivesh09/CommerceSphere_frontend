@@ -78,7 +78,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-on-surface pt-28 pb-16">
+    <div className="page-bg min-h-screen text-on-surface pt-28 pb-16">
       <main className="max-w-6xl mx-auto px-4 md:px-10">
         <h1 className="text-2xl font-bold text-on-surface mb-2">Account Settings</h1>
         <p className="text-sm text-on-surface-variant mb-8">Manage your enterprise profile, security credentials, and organization preferences.</p>
@@ -140,7 +140,7 @@ export default function ProfilePage() {
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
                       />
                     </div>
                     <div>
@@ -151,7 +151,7 @@ export default function ProfilePage() {
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
                       />
                     </div>
                     <div>
@@ -161,7 +161,7 @@ export default function ProfilePage() {
                         type="tel"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
                       />
                     </div>
                     <div>
@@ -180,7 +180,7 @@ export default function ProfilePage() {
                     <button
                       type="submit"
                       disabled={isUpdatingProfile}
-                      className="px-6 py-3 bg-primary text-on-primary text-xs font-semibold rounded-xl shadow-lg hover:brightness-90 transition-all disabled:opacity-50"
+                      className="px-6 py-3 bg-primary text-on-primary text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 transition-all disabled:opacity-50"
                     >
                       {isUpdatingProfile ? 'Saving...' : 'Save Profile Changes'}
                     </button>
@@ -200,7 +200,7 @@ export default function ProfilePage() {
                         required
                         value={passwordData.currentPassword}
                         onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
                       />
                     </div>
                     <div>
@@ -212,7 +212,7 @@ export default function ProfilePage() {
                         minLength={8}
                         value={passwordData.newPassword}
                         onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
                       />
                     </div>
                     <div>
@@ -223,13 +223,13 @@ export default function ProfilePage() {
                         required
                         value={passwordData.confirmPassword}
                         onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={isChangingPassword}
-                      className="px-6 py-2.5 bg-primary text-on-primary text-xs font-semibold rounded-xl hover:brightness-90 disabled:opacity-50"
+                      className="px-6 py-2.5 bg-primary text-on-primary text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 disabled:opacity-50"
                     >
                       {isChangingPassword ? 'Updating...' : 'Update Password'}
                     </button>

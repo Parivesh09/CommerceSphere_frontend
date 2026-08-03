@@ -11,11 +11,11 @@ import type { ErrorFallbackProps } from './ErrorBoundary';
  */
 const ComponentErrorFallback: React.FC<ErrorFallbackProps> = ({ error, reset }) => {
   return (
-    <div className="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded">
+    <div className="p-4 bg-error/10 border border-error/30 rounded-2xl">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <svg
-            className="h-5 w-5 text-red-500 dark:text-red-400 mr-2"
+            className="h-5 w-5 text-error mr-2"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -27,23 +27,23 @@ const ComponentErrorFallback: React.FC<ErrorFallbackProps> = ({ error, reset }) 
               d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span className="text-sm text-red-800 dark:text-red-200">
+          <span className="text-sm text-error">
             Component error
           </span>
         </div>
         <button
           onClick={reset}
-          className="px-3 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700 transition-colors"
+          className="px-3 py-1 bg-error text-on-error rounded text-xs hover:brightness-110 transition-colors"
         >
           Retry
         </button>
       </div>
       {import.meta.env.DEV && error && (
         <details className="mt-2">
-          <summary className="cursor-pointer text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200">
+          <summary className="cursor-pointer text-xs text-error hover:opacity-80">
             Details
           </summary>
-          <pre className="mt-1 text-xs text-red-700 dark:text-red-300 overflow-auto max-h-24">
+          <pre className="mt-1 text-xs text-on-surface-variant overflow-auto max-h-24">
             {error.message}
           </pre>
         </details>

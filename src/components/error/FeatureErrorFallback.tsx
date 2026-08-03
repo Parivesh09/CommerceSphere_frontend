@@ -11,11 +11,11 @@ import type { ErrorFallbackProps } from './ErrorBoundary';
  */
 const FeatureErrorFallback: React.FC<ErrorFallbackProps> = ({ error, reset }) => {
   return (
-    <div className="p-6 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+    <div className="p-6 bg-warning/10 border border-warning/30 rounded-lg">
       <div className="flex items-start">
         <div className="flex-shrink-0">
           <svg
-            className="h-6 w-6 text-yellow-600 dark:text-yellow-400"
+            className="h-6 w-6 text-warning"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -29,19 +29,19 @@ const FeatureErrorFallback: React.FC<ErrorFallbackProps> = ({ error, reset }) =>
           </svg>
         </div>
         <div className="ml-3 flex-1">
-          <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+          <h3 className="text-sm font-medium text-warning">
             Feature Unavailable
           </h3>
-          <p className="mt-1 text-sm text-yellow-700 dark:text-yellow-300">
+          <p className="mt-1 text-sm text-warning">
             This feature encountered an error and is temporarily unavailable.
             The rest of the page should still work normally.
           </p>
           {import.meta.env.DEV && error && (
             <details className="mt-2">
-              <summary className="cursor-pointer text-xs text-yellow-600 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-200">
+              <summary className="cursor-pointer text-xs text-warning hover:text-[var(--color-on-warning-container)]">
                 Error details (development only)
               </summary>
-              <pre className="mt-2 text-xs text-yellow-800 dark:text-yellow-200 overflow-auto max-h-32 p-2 bg-yellow-100 dark:bg-yellow-900/20 rounded">
+              <pre className="mt-2 text-xs text-warning overflow-auto max-h-32 p-2 bg-warning/10 rounded">
                 {error.message}
               </pre>
             </details>
@@ -49,7 +49,7 @@ const FeatureErrorFallback: React.FC<ErrorFallbackProps> = ({ error, reset }) =>
           <div className="mt-4">
             <button
               onClick={reset}
-              className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-warning text-on-warning rounded-md hover:bg-warning/90 transition-colors text-sm font-medium"
             >
               Try Again
             </button>

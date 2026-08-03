@@ -64,9 +64,9 @@ export default function LoginPage() {
 
   return (
     <div className="page-bg flex items-center justify-center min-h-screen py-20 px-4">
-      <div className="max-w-md w-full glass-card rounded-xl p-8 space-y-6">
+      <div className="max-w-md w-full glass-card rounded-2xl p-8 space-y-6">
         <div className="text-center space-y-2">
-          <span className="font-extrabold text-2xl tracking-tight text-[var(--color-on-surface)]">CommerceSphere</span>
+          <span className="font-extrabold text-2xl tracking-tight gradient-text">CommerceSphere</span>
           <h1 className="text-xl font-bold text-[var(--color-on-surface)]">Enterprise Sign In</h1>
           <p className="text-xs text-[var(--color-on-surface-variant)]">Access your corporate dashboard & catalog.</p>
         </div>
@@ -106,7 +106,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-primary text-on-primary rounded-xl text-sm font-medium py-3 px-4 hover:shadow-lg active:scale-95 transition-all disabled:opacity-50"
+            className="w-full bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-xl text-sm font-medium py-3 px-4 shadow-glow hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
           >
             {isLoading ? 'Authenticating...' : 'Sign In'}
           </button>

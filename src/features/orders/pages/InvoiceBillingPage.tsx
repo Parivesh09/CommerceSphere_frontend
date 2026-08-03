@@ -14,7 +14,7 @@ export default function InvoiceBillingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-on-surface pt-24 pb-16">
+    <div className="page-bg min-h-screen text-on-surface pt-24 pb-16">
       <main className="max-w-4xl mx-auto px-6">
         <div className="mb-6 flex justify-between items-center print:hidden">
           <button
@@ -26,7 +26,7 @@ export default function InvoiceBillingPage() {
           <div className="flex gap-3">
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-primary text-on-primary text-xs font-bold rounded-xl shadow hover:bg-primary flex items-center gap-1"
+              className="px-4 py-2 bg-primary text-on-primary text-xs font-bold rounded-xl shadow-glow hover:brightness-110 flex items-center gap-1"
             >
               <span className="material-symbols-outlined text-[18px]">print</span> Print / Download PDF
             </button>
@@ -34,7 +34,7 @@ export default function InvoiceBillingPage() {
         </div>
 
         {/* Invoice Container */}
-        <div className="bg-surface-container-lowest rounded-3xl p-8 md:p-12 shadow-xl border border-outline-variant print:shadow-none print:border-0 print:p-0">
+        <div className="bg-surface-container-lowest rounded-2xl p-8 md:p-12 shadow-xl border border-outline-variant print:shadow-none print:border-0 print:p-0">
           <div className="flex justify-between items-start pb-8 border-b border-outline-variant">
             <div>
               <h1 className="text-3xl font-bold text-on-surface">CommerceSphere</h1>

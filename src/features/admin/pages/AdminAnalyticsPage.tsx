@@ -16,6 +16,7 @@ export function AdminAnalyticsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-[var(--color-on-surface)]">Seller Insights & Analytics</h1>
+        <div className="h-1 w-24 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mt-3" />
         <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Deep analytics into gross merchandise value (GMV), conversion funnels, and top selling hardware.</p>
       </div>
 
@@ -58,9 +59,9 @@ export function AdminAnalyticsPage() {
                 <th className="pb-3 text-right">Gross Revenue Generated</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-outline-variant">
+            <tbody className="divide-y divide-[var(--color-outline-variant)]">
               {analyticsData.topProducts.map((p, idx) => (
-                <tr key={idx} className="hover:bg-surface-container-low">
+                <tr key={idx} className="hover:bg-[var(--color-surface-container-low)]">
                   <td className="py-3 font-bold text-[var(--color-on-surface)]">{p.title}</td>
                   <td className="py-3 font-medium text-[var(--color-on-surface-variant)]">{p.sales} units</td>
                   <td className="py-3 text-right font-bold text-[var(--color-primary)]">${p.revenue.toLocaleString()}</td>

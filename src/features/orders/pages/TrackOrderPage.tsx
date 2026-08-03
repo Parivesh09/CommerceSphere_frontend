@@ -22,9 +22,9 @@ export default function TrackOrderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-on-surface pt-32 pb-16 flex items-center justify-center">
+    <div className="page-bg min-h-screen text-on-surface pt-32 pb-16 flex items-center justify-center">
       <div className="max-w-md w-full px-6">
-        <div className="glass-card rounded-3xl p-8 space-y-6 text-center">
+        <div className="glass-card rounded-2xl p-8 space-y-6 text-center">
           <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
             <span className="material-symbols-outlined text-[36px]">local_shipping</span>
           </div>
@@ -50,7 +50,7 @@ export default function TrackOrderPage() {
                 }}
                 aria-invalid={Boolean(error)}
                 aria-describedby={error ? 'tracking-id-error' : undefined}
-                className="w-full px-4 py-3 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-primary text-on-surface placeholder:text-on-surface-variant/60"
+                className="w-full px-4 py-3 rounded-xl bg-surface-container-lowest border border-outline-variant text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 text-on-surface placeholder:text-on-surface-variant/60"
               />
               {error && (
                 <p id="tracking-id-error" role="alert" className="text-xs text-error px-1">
@@ -60,7 +60,7 @@ export default function TrackOrderPage() {
             </div>
             <button
               type="submit"
-              className="w-full py-3 bg-primary text-on-primary font-bold rounded-xl shadow-lg hover:bg-primary-container transition-all text-sm"
+              className="w-full py-3 bg-primary text-on-primary font-bold rounded-xl shadow-glow hover:brightness-110 transition-all text-sm"
             >
               Track Package
             </button>

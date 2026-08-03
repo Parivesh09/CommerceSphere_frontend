@@ -55,20 +55,20 @@ export default function OrdersPage() {
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case 'DELIVERED':
-        return 'bg-emerald-100 text-emerald-700';
+        return 'bg-success/10 text-success';
       case 'SHIPPED':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-info/10 text-info';
       case 'PROCESSING':
-        return 'bg-amber-100 text-amber-700';
+        return 'bg-warning/10 text-warning';
       case 'CANCELLED':
-        return 'bg-rose-100 text-rose-700';
+        return 'bg-error/10 text-error';
       default:
-        return 'bg-slate-100 text-slate-700';
+        return 'bg-surface-variant text-on-surface-variant';
     }
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] pt-28 pb-16">
+    <div className="page-bg min-h-screen text-[var(--color-on-surface)] pt-28 pb-16">
       <main className="max-w-7xl mx-auto px-4 md:px-10">
         <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-on-surface)] mb-2">Order History</h1>
         <p className="text-sm text-[var(--color-on-surface-variant)] mb-8">View past purchases, track active shipments, and download corporate invoices.</p>
@@ -109,7 +109,7 @@ export default function OrdersPage() {
             {!import.meta.env.DEV && (
               <button
                 onClick={() => refetch()}
-                className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl hover:brightness-90 transition-colors"
+                className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 transition-colors"
               >
                 Retry
               </button>
@@ -122,7 +122,7 @@ export default function OrdersPage() {
             <p className="text-sm text-[var(--color-on-surface-variant)]">When you place an order it will show up here.</p>
             <button
               onClick={() => navigate('/products')}
-              className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl hover:brightness-90 transition-colors"
+              className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 transition-colors"
             >
               Browse Products
             </button>
@@ -151,7 +151,7 @@ export default function OrdersPage() {
                   <div className="flex gap-3">
                     <button
                       onClick={() => navigate(`/orders/${order.id}`)}
-                      className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl hover:brightness-90 transition-colors"
+                      className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 transition-colors"
                     >
                       Track Shipment
                     </button>

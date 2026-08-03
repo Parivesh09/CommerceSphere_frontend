@@ -134,7 +134,7 @@ export const Drawer: React.FC<DrawerProps> = ({
             exit={slideVariants[position].exit}
             transition={prefersReducedMotion ? { duration: 0.01 } : transitions.springSmooth}
             className={clsx(
-              'absolute flex flex-col bg-white shadow-2xl dark:bg-gray-800',
+              'absolute flex flex-col bg-[var(--color-surface)] shadow-2xl',
               positionStyles[position],
               sizeStyles[position][size]
             )}
@@ -144,11 +144,11 @@ export const Drawer: React.FC<DrawerProps> = ({
           >
             {/* Header */}
             {(title || showCloseButton) && (
-              <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
+              <div className="flex items-center justify-between border-b border-[var(--color-outline-variant)] px-6 py-4">
                 {title && (
                   <h2
                     id="drawer-title"
-                    className="text-xl font-semibold text-gray-900 dark:text-gray-100"
+                    className="text-xl font-semibold text-[var(--color-on-surface)]"
                   >
                     {title}
                   </h2>
@@ -156,7 +156,7 @@ export const Drawer: React.FC<DrawerProps> = ({
                 {showCloseButton && (
                   <button
                     onClick={onClose}
-                    className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                    className="rounded-lg p-1 text-[var(--color-on-surface-variant)] transition-colors hover:bg-[var(--color-surface-container-high)] hover:text-[var(--color-on-surface)]"
                     aria-label="Close drawer"
                   >
                     <svg

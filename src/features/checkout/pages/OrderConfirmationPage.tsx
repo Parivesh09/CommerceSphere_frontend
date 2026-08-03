@@ -13,7 +13,7 @@ export default function OrderConfirmationPage() {
     return (
       <div className="page-bg pt-28 pb-16">
         <main className="max-w-3xl mx-auto px-6">
-          <div className="surface-card rounded-3xl p-8 md:p-12 text-center space-y-6">
+          <div className="glass-card rounded-2xl p-8 md:p-12 text-center space-y-6">
             <div className="w-16 h-16 rounded-full bg-tertiary-fixed text-tertiary flex items-center justify-center mx-auto">
               <span className="material-symbols-outlined text-[36px]">check_circle</span>
             </div>
@@ -23,7 +23,7 @@ export default function OrderConfirmationPage() {
             </p>
             <button
               onClick={() => navigate(ROUTES.ORDERS)}
-              className="button-primary text-sm"
+              className="px-6 py-3 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-xl text-sm font-semibold shadow-glow hover:brightness-110 transition-all"
             >
               View My Orders
             </button>
@@ -36,7 +36,7 @@ export default function OrderConfirmationPage() {
   return (
     <div className="page-bg pt-28 pb-16">
       <main className="max-w-3xl mx-auto px-6">
-        <div className="surface-card rounded-3xl p-8 md:p-12 text-center space-y-6">
+        <div className="glass-card rounded-2xl p-8 md:p-12 text-center space-y-6">
           <div className="w-16 h-16 rounded-full bg-tertiary-fixed text-tertiary flex items-center justify-center mx-auto">
             <span className="material-symbols-outlined text-[36px]">check_circle</span>
           </div>
@@ -46,7 +46,7 @@ export default function OrderConfirmationPage() {
             Thank you for your order. We have received your order details and our fulfillment pipeline is processing it.
           </p>
 
-          <div className="surface-card p-6 rounded-2xl text-left space-y-3 text-sm">
+          <div className="glass-card p-6 rounded-2xl text-left space-y-3 text-sm">
             <div className="flex justify-between pb-2 border-b border-outline-variant">
               <span className="text-on-surface-variant">Order Reference</span>
               <span className="font-bold text-primary">{orderId}</span>
@@ -64,13 +64,13 @@ export default function OrderConfirmationPage() {
           <div className="flex flex-wrap justify-center gap-4 pt-4">
             <button
               onClick={() => navigate(`/orders/${orderId}`)}
-              className="button-primary text-sm"
+              className="px-6 py-3 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-xl text-sm font-semibold shadow-glow hover:brightness-110 transition-all"
             >
               Track Order Status
             </button>
             <button
               onClick={() => navigate(`/orders/${orderId}/invoice`)}
-              className="button-secondary text-sm flex items-center gap-2"
+              className="px-6 py-3 rounded-xl text-sm font-semibold border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-low)] transition-all flex items-center gap-2"
             >
               <span className="material-symbols-outlined text-[18px]">receipt_long</span> Download Invoice
             </button>

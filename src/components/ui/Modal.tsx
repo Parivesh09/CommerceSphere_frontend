@@ -101,7 +101,7 @@ export const Modal: React.FC<ModalProps> = ({
             exit="exit"
             transition={prefersReducedMotion ? { duration: 0.01 } : transitions.default}
             className={clsx(
-              'relative z-10 w-full rounded-2xl bg-white shadow-2xl dark:bg-gray-800',
+              'relative z-10 w-full rounded-2xl bg-[var(--color-surface)] shadow-2xl',
               sizeStyles[size]
             )}
             role="dialog"
@@ -111,11 +111,11 @@ export const Modal: React.FC<ModalProps> = ({
           >
             {/* Header */}
             {(title || showCloseButton) && (
-              <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
+              <div className="flex items-center justify-between border-b border-[var(--color-outline-variant)] px-6 py-4">
                 {title && (
                   <h2
                     id="modal-title"
-                    className="text-xl font-semibold text-gray-900 dark:text-gray-100"
+                    className="text-xl font-semibold text-[var(--color-on-surface)]"
                   >
                     {title}
                   </h2>
@@ -123,7 +123,7 @@ export const Modal: React.FC<ModalProps> = ({
                 {showCloseButton && (
                   <button
                     onClick={onClose}
-                    className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                    className="rounded-lg p-1 text-[var(--color-on-surface-variant)] transition-colors hover:bg-[var(--color-surface-container-high)] hover:text-[var(--color-on-surface)]"
                     aria-label="Close modal"
                   >
                     <svg
