@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../../constants';
 
 export default function CompareProductsPage() {
   const navigate = useNavigate();

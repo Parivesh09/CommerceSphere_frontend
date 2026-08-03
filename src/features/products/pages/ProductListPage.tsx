@@ -4,11 +4,12 @@ import { useGetProductsQuery } from '../../../services/api/productApi';
 import { useCart } from '../../cart/hooks';
 import { toggleWishlistItem } from '../../../features/wishlist/slice';
 import { useAppSelector } from '../../../hooks/useAppSelector';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import toast from 'react-hot-toast';
-import { ROUTES } from '../../../constants';
 
 export default function ProductListPage() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
   const { addToCart } = useCart();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
@@ -91,7 +92,7 @@ export default function ProductListPage() {
 
   const productsList = (responseData?.data && responseData.data.length > 0)
     ? responseData.data
-    : sampleProducts;
+    : (import.meta.env.DEV ? sampleProducts : []);
 
   const totalPages = responseData?.totalPages || 1;
 
@@ -221,6 +222,12 @@ export default function ProductListPage() {
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div key={i} className="h-80 glass-card rounded-2xl animate-pulse bg-white/50"></div>
                 ))}
+              </div>
+            ) : productsList.length === 0 ? (
+              <div className="text-center py-20">
+                <span className="material-symbols-outlined text-5xl text-outline-variant mb-4">inventory_2</span>
+                <h3 className="text-lg font-bold text-on-surface">No products found</h3>
+                <p className="text-sm text-on-surface-variant mt-1">Try adjusting your filters or search query.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">

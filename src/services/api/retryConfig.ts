@@ -38,7 +38,7 @@ export const calculateRetryDelay = (retryCount: number): number => {
  * 
  * Does NOT retry on:
  * - 4xx client errors (except 429 rate limit)
- * - 401 authentication errors (handled by authMiddleware)
+ * - 401 authentication errors (handled by baseQueryWithReauth)
  */
 export const shouldRetry = (error: unknown): boolean => {
 

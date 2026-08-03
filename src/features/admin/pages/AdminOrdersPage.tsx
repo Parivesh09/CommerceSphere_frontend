@@ -14,7 +14,7 @@ export function AdminOrdersPage() {
     { id: 'ORD-431890', userId: 'usr-103', totalAmount: 4500.00, status: 'DELIVERED' as OrderStatus, createdAt: '2026-07-10' },
   ];
 
-  const orders = responseData?.data || sampleOrders;
+  const orders = responseData?.data || (import.meta.env.DEV ? sampleOrders : []);
 
   const handleStatusChange = async (id: string, status: OrderStatus) => {
     try {
@@ -27,7 +27,7 @@ export function AdminOrdersPage() {
       }
       toast.success(`Order ${id} status updated to ${status}`);
     } catch {
-      toast.success(`Order ${id} status updated to ${status}`);
+      toast.error(`Failed to update order ${id} status to ${status}. Please try again.`);
     }
   };
 
@@ -41,6 +41,8 @@ export function AdminOrdersPage() {
       <div className="glass-card rounded-3xl p-6 space-y-4">
         {isLoading ? (
           <div className="p-8 text-center text-sm text-slate-400">Loading orders...</div>
+        ) : orders.length === 0 ? (
+          <div className="p-8 text-center text-sm text-slate-400">No orders found.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">

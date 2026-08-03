@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useCreateProductMutation, useGetProductQuery } from '../../../services/api/productApi';
+import { useCreateProductMutation, useGetProductQuery, useUpdateProductMutation } from '../../../services/api/productApi';
 import { ROUTES } from '../../../constants';
 import toast from 'react-hot-toast';
 
@@ -10,35 +10,53 @@ export function AdminProductEditorPage() {
   const isEditing = Boolean(id && id !== 'new');
 
   const { data: existingProduct } = useGetProductQuery(id || '', { skip: !isEditing });
-  const [createProduct, { isLoading }] = useCreateProductMutation();
+  const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
+  const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
+  const isLoading = isCreating || isUpdating;
 
   const [formData, setFormData] = useState({
-    title: existingProduct?.title || '',
-    description: existingProduct?.description || '',
-    price: existingProduct?.price || 999,
-    categoryId: existingProduct?.categoryId || 'terminals',
-    inventoryQuantity: existingProduct?.inventoryQuantity || 50,
-    imageUrl: existingProduct?.images?.[0]?.url || 'https://images.unsplash.com/photo-1556742049-0a67daf64f42?auto=format&fit=crop&w=600&q=80',
+    title: '',
+    description: '',
+    price: 999,
+    categoryId: 'terminals',
+    inventoryQuantity: 50,
+    imageUrl: 'https://images.unsplash.com/photo-1556742049-0a67daf64f42?auto=format&fit=crop&w=600&q=80',
   });
+  const [loadedProductId, setLoadedProductId] = useState<string | null>(null);
+
+  if (isEditing && existingProduct && loadedProductId !== existingProduct.id) {
+    setLoadedProductId(existingProduct.id);
+    setFormData({
+      title: existingProduct.title,
+      description: existingProduct.description,
+      price: existingProduct.price,
+      categoryId: existingProduct.categoryId,
+      inventoryQuantity: existingProduct.inventoryQuantity,
+      imageUrl: existingProduct.images?.[0]?.url || '',
+    });
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = {
+      title: formData.title,
+      description: formData.description,
+      price: Number(formData.price),
+      categoryId: formData.categoryId,
+      inventoryQuantity: Number(formData.inventoryQuantity),
+      images: [{ id: 'img-1', productId: 'temp', url: formData.imageUrl, displayOrder: 0, createdAt: '' }],
+      status: 'active' as const,
+    };
     try {
-      await createProduct({
-        title: formData.title,
-        description: formData.description,
-        price: Number(formData.price),
-        categoryId: formData.categoryId,
-        inventoryQuantity: Number(formData.inventoryQuantity),
-        images: [{ id: 'img-1', productId: 'temp', url: formData.imageUrl, displayOrder: 0, createdAt: '' }],
-        status: 'active',
-      }).unwrap();
-
+      if (isEditing && id) {
+        await updateProduct({ id, data: payload }).unwrap();
+      } else {
+        await createProduct(payload).unwrap();
+      }
       toast.success(isEditing ? 'Product updated successfully' : 'New product created in catalog');
       navigate(ROUTES.ADMIN_PRODUCTS);
     } catch {
-      toast.success(isEditing ? 'Product updated successfully' : 'New product created in catalog');
-      navigate(ROUTES.ADMIN_PRODUCTS);
+      toast.error(isEditing ? 'Failed to update product. Please try again.' : 'Failed to create product. Please try again.');
     }
   };
 

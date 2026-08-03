@@ -6,7 +6,7 @@ import { AnimatePresence } from 'framer-motion';
 import { store } from './store';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { WebSocketProvider } from './services/websocket';
-import { SkipNavigation } from './components/ui';
+import { SkipNavigation, WebSocketStatus } from './components/ui';
 import { NetworkStatusIndicator } from './components/NetworkStatusIndicator';
 import { ErrorBoundary, RootErrorFallback, RouteErrorFallback } from './components/error';
 import { ROUTES } from './constants';
@@ -37,6 +37,7 @@ import {
   LazyAdminProductsPage,
   LazyAdminProductEditorPage,
   LazyAdminOrdersPage,
+  LazyAdminOrderDetailPage,
   LazyAdminInventoryPage,
   LazyAdminUsersPage,
   LazyAdminAnalyticsPage,
@@ -80,6 +81,7 @@ function AppRoutes() {
     <>
       <SkipNavigation />
       <NetworkStatusIndicator />
+      <WebSocketStatus />
 
       <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>
@@ -316,6 +318,14 @@ function AppRoutes() {
               element={
                 <ErrorBoundary level="route" fallback={RouteErrorFallback}>
                   <LazyAdminOrdersPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_ORDER_DETAIL}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazyAdminOrderDetailPage />
                 </ErrorBoundary>
               }
             />

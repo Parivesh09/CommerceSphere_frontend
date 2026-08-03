@@ -33,6 +33,7 @@ export const authApi = baseApi.injectEndpoints({
             );
           }
         } catch {
+          // Credentials are only persisted on successful login
         }
       },
       invalidatesTags: [{ type: 'Auth', id: 'CURRENT' }, { type: 'Profile', id: 'USER' }],
@@ -61,6 +62,7 @@ export const authApi = baseApi.injectEndpoints({
             );
           }
         } catch {
+          // Credentials are only persisted on successful registration
         }
       },
       invalidatesTags: [{ type: 'Auth', id: 'CURRENT' }],

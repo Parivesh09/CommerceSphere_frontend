@@ -6,21 +6,15 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-  Container,
-  Typography,
-  Box,
   Paper,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   Slider,
-  Button,
   Chip,
   CircularProgress,
-  Alert,
 } from '@mui/material';
-import { FilterList as FilterIcon, Clear as ClearIcon } from '@mui/icons-material';
 import { useSearchProductsQuery } from '../api';
 import { SearchBar } from '../components/SearchBar';
 import type { SearchQuery, SearchFilters } from '../types';

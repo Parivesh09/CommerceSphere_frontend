@@ -104,19 +104,14 @@ export default function CheckoutPage() {
         },
       };
       const result = await createOrder(orderData).unwrap();
-      const orderId = result?.order?.id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+      const orderId = result?.data?.id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
       dispatch(clearCart());
       toast.success('Order placed successfully!');
       navigate(`${ROUTES.CHECKOUT}/confirmation`, {
         state: { orderId, total: orderTotal, address: shipping },
       });
     } catch {
-      const mockId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
-      dispatch(clearCart());
-      toast.success('Order created successfully!');
-      navigate(`${ROUTES.CHECKOUT}/confirmation`, {
-        state: { orderId: mockId, total: orderTotal, address: shipping },
-      });
+      toast.error('Unable to place order. Please try again.');
     }
   };
 

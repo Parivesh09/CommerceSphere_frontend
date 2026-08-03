@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { setCredentials } from '../../../store/slices/authSlice';
+import { setUser } from '../../../store/slices/authSlice';
+import { useUpdateProfileMutation } from '../api';
 import toast from 'react-hot-toast';
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
   const auth = useAppSelector((state) => state.auth);
+  const [updateProfile, { isLoading: isSaving }] = useUpdateProfileMutation();
 
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'addresses'>('profile');
 
@@ -17,18 +19,19 @@ export default function ProfilePage() {
     role: auth.user?.role || 'admin',
   });
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (auth.user) {
-      dispatch(
-        setCredentials({
-          user: { ...auth.user, name: formData.name, email: formData.email },
-          accessToken: auth.accessToken || '',
-          refreshToken: auth.refreshToken || '',
-        })
-      );
+    if (!auth.user) {
+      toast.error('You must be signed in to update your profile.');
+      return;
     }
-    toast.success('Profile settings saved successfully!');
+    try {
+      const updated = await updateProfile({ name: formData.name }).unwrap();
+      dispatch(setUser({ ...auth.user, name: updated.name, email: updated.email }));
+      toast.success('Profile settings saved successfully!');
+    } catch {
+      toast.error('Failed to save profile. Please try again.');
+    }
   };
 
   return (
@@ -122,9 +125,10 @@ export default function ProfilePage() {
                 <div className="pt-4 border-t border-[var(--color-outline-variant)] flex justify-end">
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl shadow-lg hover:brightness-90 transition-all"
+                    disabled={isSaving}
+                    className="px-6 py-3 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl shadow-lg hover:brightness-90 transition-all disabled:opacity-50"
                   >
-                    Save Profile Changes
+                    {isSaving ? 'Saving...' : 'Save Profile Changes'}
                   </button>
                 </div>
               </form>

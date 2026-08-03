@@ -22,31 +22,39 @@ export default function LoginPage() {
     try {
       await login({ email, password }).unwrap();
       if (guestItems.length > 0) {
-        syncCart({ items: guestItems.map((i) => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })) });
+        await syncCart({
+          items: guestItems.map((i) => ({
+            productId: i.productId,
+            variantId: i.variantId,
+            quantity: i.quantity,
+            unitPrice: i.unitPrice,
+          })),
+        }).unwrap();
       }
       toast.success('Welcome back to CommerceSphere!');
       navigate(ROUTES.HOME);
     } catch {
-      // Demo fallback login if backend is not actively serving auth endpoint
-      const isAdmin = email.includes('admin');
-      const isSeller = email.includes('seller');
-      dispatch(
-        setCredentials({
-          user: {
-            id: '00000000-0000-0000-0000-000000000001',
-            name: email.split('@')[0],
-            email,
-            role: isAdmin ? 'admin' : isSeller ? 'seller' : 'customer',
-          },
-          accessToken: 'demo-access-token',
-          refreshToken: 'demo-refresh-token',
-        } as any)
-      );
-      if (guestItems.length > 0) {
-        // Guest cart persists in localStorage for next login
+      if (import.meta.env.DEV) {
+        // Demo fallback login if backend is not actively serving auth endpoint
+        const isAdmin = email.includes('admin');
+        const isSeller = email.includes('seller');
+        dispatch(
+          setCredentials({
+            user: {
+              id: '00000000-0000-0000-0000-000000000001',
+              name: email.split('@')[0],
+              email,
+              role: isAdmin ? 'admin' : isSeller ? 'seller' : 'customer',
+            },
+            accessToken: 'demo-access-token',
+            refreshToken: 'demo-refresh-token',
+          } as any)
+        );
+        toast.success(`Logged in as ${email.split('@')[0]}`);
+        navigate(ROUTES.HOME);
+      } else {
+        toast.error('Sign in failed. Please check your credentials.');
       }
-      toast.success(`Logged in as ${email.split('@')[0]}`);
-      navigate(ROUTES.HOME);
     }
   };
 

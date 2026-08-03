@@ -4,12 +4,14 @@ import { useGetProductQuery, useGetProductReviewsQuery } from '../../../services
 import { useGetSimilarProductsQuery } from '../../../services/api/recommendationApi';
 import { useCart } from '../../cart/hooks';
 import { toggleWishlistItem } from '../../../features/wishlist/slice';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import toast from 'react-hot-toast';
 import { ROUTES } from '../../../constants';
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);

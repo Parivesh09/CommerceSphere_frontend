@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGetOrderByIdQuery, useTrackOrderQuery, useCancelOrderMutation } from '../../../services/api/orderApi';
+import { useGetOrderByIdQuery, useCancelOrderMutation } from '../../../services/api/orderApi';
 import { ROUTES } from '../../../constants';
 import toast from 'react-hot-toast';
 import type { OrderStatus } from '../../../types';
@@ -15,6 +15,47 @@ const statusColors: Record<string, string> = {
   CANCELLED: 'bg-error-container/20 text-error',
 };
 
+interface TimelineStep {
+  title: string;
+  description: string;
+  done: boolean;
+  current: boolean;
+}
+
+const TIMELINE_STEPS: { label: string; description: string }[] = [
+  { label: 'Order Placed', description: 'Your order has been received' },
+  { label: 'Payment Confirmed', description: 'Payment was successfully processed' },
+  { label: 'Warehouse Processing', description: 'Items are being prepared for shipment' },
+  { label: 'Shipped', description: 'Package is on its way to you' },
+  { label: 'Delivered', description: 'Package has been delivered' },
+];
+
+const CANCELLED_TIMELINE: TimelineStep[] = [
+  { title: 'Order Placed', description: 'Your order has been received', done: true, current: false },
+  { title: 'Order Cancelled', description: 'This order was cancelled', done: true, current: true },
+];
+
+function buildStatusTimeline(status: OrderStatus): TimelineStep[] {
+  if (status === 'CANCELLED') {
+    return CANCELLED_TIMELINE;
+  }
+
+  const reachedIndex =
+    status === 'CREATED' ? 0
+    : status === 'PENDING_PAYMENT' ? 1
+    : status === 'PAID' ? 2
+    : status === 'PROCESSING' ? 3
+    : status === 'SHIPPED' ? 4
+    : 5;
+
+  return TIMELINE_STEPS.map((step, idx) => ({
+    title: step.label,
+    description: step.description,
+    done: idx < reachedIndex,
+    current: idx === reachedIndex,
+  }));
+}
+
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -23,20 +64,11 @@ export default function OrderDetailPage() {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   const { data: orderResponse, isLoading } = useGetOrderByIdQuery(orderId);
-  const { data: trackResponse } = useTrackOrderQuery(orderId);
   const [cancelOrder, { isLoading: isCancelling }] = useCancelOrderMutation();
 
-  const mockTimeline = [
-    { title: 'Order Placed', time: 'Jul 26, 10:30 AM', done: true, current: false },
-    { title: 'Payment Confirmed', time: 'Jul 26, 10:32 AM', done: true, current: false },
-    { title: 'Warehouse Processing', time: 'Jul 26, 02:15 PM', done: true, current: true },
-    { title: 'Shipped via FedEx Express', time: 'Estimated Jul 27', done: false, current: false },
-    { title: 'Out for Delivery', time: 'Estimated Jul 28', done: false, current: false },
-  ];
-
-  const timeline = trackResponse?.data?.timeline || mockTimeline;
   const order = orderResponse?.data;
   const orderStatus = order?.status || 'PROCESSING';
+  const timeline = buildStatusTimeline(orderStatus);
   const canCancel = !['SHIPPED', 'DELIVERED', 'CANCELLED'].includes(orderStatus);
 
   const handleCancelOrder = async () => {
@@ -45,8 +77,7 @@ export default function OrderDetailPage() {
       toast.success('Order cancelled successfully');
       setShowCancelDialog(false);
     } catch {
-      toast.success('Order cancelled successfully');
-      setShowCancelDialog(false);
+      toast.error('Failed to cancel order. Please try again.');
     }
   };
 
@@ -143,7 +174,7 @@ export default function OrderDetailPage() {
                   <h3 className={`text-sm font-bold ${step.current ? 'text-primary' : 'text-on-surface'}`}>
                     {step.title}
                   </h3>
-                  <p className="text-sm text-on-surface-variant">{step.time || step.description}</p>
+                  <p className="text-sm text-on-surface-variant">{step.description}</p>
                 </div>
               </div>
             ))}

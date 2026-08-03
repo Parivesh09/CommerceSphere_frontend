@@ -231,9 +231,9 @@ export class WebSocketManager {
         import('../../features/orders/api').then(({ ordersApi }) => {
 
           const updateAction = ordersApi.util.updateQueryData('getOrderById', orderId, (draft) => {
-            if (draft) {
-              draft.status = status as OrderStatus;
-              draft.updatedAt = new Date().toISOString();
+            if (draft?.data) {
+              draft.data.status = status as OrderStatus;
+              draft.data.updatedAt = new Date().toISOString();
             }
           });
           
