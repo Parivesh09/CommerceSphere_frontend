@@ -44,6 +44,10 @@ export const LazyProductDetailPage = withSuspense(
   lazy(() => import('@/features/products/pages/ProductDetailPage'))
 );
 
+export const LazyProductReviewsPage = withSuspense(
+  lazy(() => import('@/features/products/pages/ProductReviewsPage'))
+);
+
 export const LazySearchResultsPage = withSuspense(
   lazy(() => import('@/features/search/pages/SearchResultsPage').then((m) => ({ default: m.SearchResultsPage })))
 );

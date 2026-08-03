@@ -1,49 +1,52 @@
 import { useCallback } from 'react';
-import {
-  useGetWishlistQuery,
-  useAddToWishlistMutation,
-  useRemoveFromWishlistMutation,
-} from '../api';
+import { useAppSelector } from '../../../hooks/useAppSelector';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { toggleWishlistItem, removeFromGuestWishlist } from '../slice';
 
+export interface WishlistDisplayItem {
+  id: string;
+  title: string;
+  price: number;
+  image: string;
+  inStock: boolean;
+}
+
+/**
+ * Wishlist hook backed by the local guest wishlist slice (persisted to
+ * localStorage). No backend wishlist service exists yet, so the wishlist is
+ * stored per-browser and the UI never issues failing API requests.
+ */
 export const useWishlist = () => {
-  const {
-    data: wishlist,
-    isLoading,
-    error,
-  } = useGetWishlistQuery(undefined);
-
-  const [addToWishlistMutation] = useAddToWishlistMutation();
-  const [removeFromWishlistMutation] = useRemoveFromWishlistMutation();
+  const dispatch = useAppDispatch();
+  const wishlist = useAppSelector((state) => state.wishlist);
 
   const addToWishlist = useCallback(
-    async (productId: string) => {
-      return addToWishlistMutation({ productId }).unwrap();
+    (item: WishlistDisplayItem) => {
+      dispatch(toggleWishlistItem(item));
     },
-    [addToWishlistMutation]
+    [dispatch]
   );
 
   const removeFromWishlist = useCallback(
-    async (productId: string) => {
-      return removeFromWishlistMutation({ productId }).unwrap();
+    (productId: string) => {
+      dispatch(removeFromGuestWishlist(productId));
     },
-    [removeFromWishlistMutation]
+    [dispatch]
   );
 
   const isInWishlist = useCallback(
     (productId: string): boolean => {
-      return wishlist?.items?.some((item) => item.productId === productId) ?? false;
+      return wishlist.guestWishlist.includes(productId);
     },
-    [wishlist]
+    [wishlist.guestWishlist]
   );
 
-  const wishlistItems = wishlist?.items ?? [];
-  const wishlistCount = wishlist?.items?.length ?? 0;
+  const wishlistItems = wishlist.items;
+  const wishlistCount = wishlist.items.length;
 
   return {
     wishlistItems,
     wishlistCount,
-    isLoading,
-    error,
     addToWishlist,
     removeFromWishlist,
     isInWishlist,

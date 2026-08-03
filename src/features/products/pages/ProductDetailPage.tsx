@@ -267,6 +267,12 @@ export default function ProductDetailPage() {
                   <p className="text-xs text-[var(--color-on-surface-variant)]">{rev.comment}</p>
                 </div>
               ))}
+              <button
+                onClick={() => navigate(ROUTES.PRODUCT_REVIEWS.replace(':id', productId))}
+                className="mt-4 text-sm font-semibold text-[var(--color-primary)] hover:underline"
+              >
+                View all reviews →
+              </button>
             </div>
           )}
 

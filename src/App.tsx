@@ -19,6 +19,7 @@ import {
   LazyHomePage,
   LazyProductListPage,
   LazyProductDetailPage,
+  LazyProductReviewsPage,
   LazySearchResultsPage,
   LazyCategoriesPage,
   LazyCompareProductsPage,
@@ -133,6 +134,14 @@ function AppRoutes() {
               }
             />
             <Route
+              path={ROUTES.PRODUCT_REVIEWS}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazyProductReviewsPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
               path={ROUTES.CATEGORIES}
               element={
                 <ErrorBoundary level="route" fallback={RouteErrorFallback}>
@@ -168,9 +177,7 @@ function AppRoutes() {
               path={ROUTES.WISHLIST}
               element={
                 <ErrorBoundary level="route" fallback={RouteErrorFallback}>
-                  <ProtectedRoute>
-                    <LazyWishlistPage />
-                  </ProtectedRoute>
+                  <LazyWishlistPage />
                 </ErrorBoundary>
               }
             />

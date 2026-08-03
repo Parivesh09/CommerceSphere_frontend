@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useWishlist } from '../hooks';
-import { ROUTES } from '../../../constants';
 import toast from 'react-hot-toast';
 
 export interface WishlistButtonProps {
   productId: string;
+  title?: string;
+  price?: number;
+  image?: string;
+  inStock?: boolean;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 export const WishlistButton: React.FC<WishlistButtonProps> = ({
   productId,
+  title = 'Product',
+  price = 0,
+  image = '',
+  inStock = true,
   size = 'md',
   className = '',
 }) => {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const [isLoading, setIsLoading] = useState(false);
   const inWishlist = isInWishlist(productId);
@@ -34,22 +37,18 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({
     lg: 'h-6 w-6',
   };
 
-  const handleClick = async (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (!isAuthenticated) {
-      toast.error('Please login to add items to your wishlist');
-      navigate(ROUTES.LOGIN);
-      return;
-    }
 
     setIsLoading(true);
     try {
       if (inWishlist) {
-        await removeFromWishlist(productId);
+        removeFromWishlist(productId);
+        toast.success('Removed from wishlist');
       } else {
-        await addToWishlist(productId);
+        addToWishlist({ id: productId, title, price, image, inStock });
+        toast.success('Added to wishlist');
       }
     } catch (error) {
       console.error('Failed to update wishlist:', error);

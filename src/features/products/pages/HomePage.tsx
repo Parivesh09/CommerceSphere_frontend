@@ -3,6 +3,7 @@ import { ROUTES } from '../../../constants';
 import { useGetProductsQuery } from '../../../services/api/productApi';
 import { useCart } from '../../cart/hooks';
 import toast from 'react-hot-toast';
+import { ProductCard } from '../components';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -48,16 +49,16 @@ export default function HomePage() {
 
         <div className="relative z-20 max-w-7xl mx-auto px-4 md:px-10 w-full py-24">
           <div className="max-w-2xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-[var(--color-primary)] text-xs font-semibold uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-(--color-primary) text-xs font-semibold uppercase tracking-widest">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] shadow-glow" />
               Enterprise Collection 2026
             </div>
-            <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.05] tracking-tight text-[var(--color-on-surface)]">
+            <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.05] tracking-tight text-(--color-on-surface)">
               New Season.
               <br />
               <span className="gradient-text">Redefined Utility.</span>
             </h1>
-            <p className="text-lg md:text-xl text-[var(--color-on-surface-variant)] max-w-lg leading-relaxed">
+            <p className="text-lg md:text-xl text-on-surface-variant max-w-lg leading-relaxed">
               Experience the next generation of commerce. Built for performance, designed for the world's most demanding retail ecosystems.
             </p>
             <div className="flex gap-4 pt-4">
@@ -69,7 +70,7 @@ export default function HomePage() {
               </button>
               <button
                 onClick={() => navigate(ROUTES.ENTERPRISE)}
-                className="px-8 py-4 rounded-xl font-semibold text-base border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-low)] hover:border-[var(--color-primary)]/50 transition-all active:scale-[0.97] flex items-center gap-2"
+                className="px-8 py-4 rounded-xl font-semibold text-base border border-[var(--color-outline-variant)] text-(--color-on-surface) hover:bg-[var(--color-surface-container-low)] hover:border-[var(--color-primary)]/50 transition-all active:scale-[0.97] flex items-center gap-2"
               >
                 View Lookbook
                 <span className="material-symbols-outlined text-xl">arrow_forward</span>
@@ -83,12 +84,12 @@ export default function HomePage() {
       <section className="py-20 max-w-7xl mx-auto px-4 md:px-10">
         <div className="flex justify-between items-end mb-10">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-on-surface)]">Curated Categories</h2>
-            <p className="text-base text-[var(--color-on-surface-variant)] mt-2">Precision engineered for every enterprise need.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-(--color-on-surface)">Curated Categories</h2>
+            <p className="text-base text-on-surface-variant mt-2">Precision engineered for every enterprise need.</p>
           </div>
           <button
             onClick={() => navigate(ROUTES.PRODUCTS)}
-            className="text-[var(--color-primary)] font-semibold text-sm flex items-center gap-1 hover:underline underline-offset-4 shrink-0"
+            className="text-(--color-primary) font-semibold text-sm flex items-center gap-1 hover:underline underline-offset-4 shrink-0"
           >
             Browse All <span className="material-symbols-outlined text-lg">open_in_new</span>
           </button>
@@ -131,52 +132,26 @@ export default function HomePage() {
       </section>
 
       {/* Trending Now */}
-      <section className="py-20 bg-[var(--color-surface-container-low)]/70 backdrop-blur-sm">
+      <section className="py-20 bg-surface-container-low/70 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 md:px-10">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-on-surface)]">Trending Now</h2>
-            <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] mx-auto mt-4 rounded-full" />
+            <h2 className="text-3xl md:text-4xl font-bold text-(--color-on-surface)">Trending Now</h2>
+            <div className="h-1 w-20 bg-linear-to-r from-(--color-primary) to-secondary mx-auto mt-4 rounded-full" />
           </div>
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-96 rounded-2xl bg-[var(--color-surface-container)] animate-pulse" />
+                <div key={i} className="h-96 rounded-2xl bg-surface-container animate-pulse" />
               ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {productsList.map((product) => (
-                <div key={product.id} className="glass-card rounded-2xl overflow-hidden flex flex-col p-4 hover:shadow-glow transition-shadow">
-                  <div className="relative aspect-square rounded-xl overflow-hidden mb-4 bg-[var(--color-surface-container-low)]">
-                    <div
-                      className="bg-cover bg-center w-full h-full transition-transform duration-500 hover:scale-105 cursor-pointer"
-                      style={{ backgroundImage: `url('${product.image}')` }}
-                      onClick={() => navigate(`/products/${product.id}`)}
-                    />
-                    <div className="absolute top-3 right-3 bg-[var(--color-surface-container-lowest)]/90 backdrop-blur-sm p-2 rounded-full cursor-pointer hover:bg-[var(--color-primary)] hover:text-[var(--color-on-primary)] transition-colors">
-                      <span className="material-symbols-outlined text-xl">favorite</span>
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <span className="text-xs font-semibold text-[var(--color-primary)] uppercase tracking-wider">{product.category}</span>
-                    <h3
-                      className="text-base font-bold text-[var(--color-on-surface)] mt-1 cursor-pointer hover:text-[var(--color-primary)] transition-colors"
-                      onClick={() => navigate(`/products/${product.id}`)}
-                    >
-                      {product.title}
-                    </h3>
-                    <p className="text-sm text-[var(--color-on-surface-variant)] mt-1 line-clamp-2">{product.description}</p>
-                  </div>
-                  <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--color-outline-variant)]/30">
-                    <span className="text-xl font-bold text-[var(--color-on-surface)]">${product.price.toLocaleString()}</span>
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      className="bg-[var(--color-primary)] text-[var(--color-on-primary)] px-4 py-2 rounded-lg text-sm font-semibold shadow-glow hover:brightness-110 transition-all active:scale-95"
-                    >
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  handleAddToCart={handleAddToCart}
+                />
               ))}
             </div>
           )}
@@ -195,8 +170,8 @@ export default function HomePage() {
               <div className="p-4 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] rounded-2xl text-white shadow-glow">
                 <span className="material-symbols-outlined text-3xl">{feature.icon}</span>
               </div>
-              <h3 className="text-xl font-bold text-[var(--color-on-surface)]">{feature.title}</h3>
-              <p className="text-base text-[var(--color-on-surface-variant)] leading-relaxed">{feature.desc}</p>
+              <h3 className="text-xl font-bold text-(--color-on-surface)">{feature.title}</h3>
+              <p className="text-base text-on-surface-variant leading-relaxed">{feature.desc}</p>
             </div>
           ))}
         </div>
@@ -220,7 +195,7 @@ export default function HomePage() {
               placeholder="Enterprise Email"
               type="email"
             />
-            <button className="px-10 py-4 bg-white text-[var(--color-primary)] font-bold rounded-xl hover:opacity-90 transition-all active:scale-95 shadow-xl text-base" type="submit">
+            <button className="px-10 py-4 bg-white text-(--color-primary) font-bold rounded-xl hover:opacity-90 transition-all active:scale-95 shadow-xl text-base" type="submit">
               Subscribe
             </button>
           </form>
