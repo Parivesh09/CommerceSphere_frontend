@@ -5,10 +5,12 @@ import { useCart } from '../../cart/hooks';
 import { toggleWishlistItem } from '../../../features/wishlist/slice';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import toast from 'react-hot-toast';
-import { ROUTES } from '../../../constants';
+import { useDispatch } from 'react-redux';
+import { useGetCategoriesQuery } from '@/services/api';
 
 export default function ProductListPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
   const [searchParams] = useSearchParams();
   const { addToCart } = useCart();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
@@ -21,7 +23,7 @@ export default function ProductListPage() {
   const [page, setPage] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>(searchParams.get('search') || '');
 
-  const { data: responseData, isLoading } = useGetProductsQuery({
+  const { data: responseData, isLoading, isError, refetch } = useGetProductsQuery({
     page,
     pageSize: 8,
     category: selectedCategory !== 'all' ? selectedCategory : undefined,
@@ -31,6 +33,8 @@ export default function ProductListPage() {
     sortOrder,
     search: searchQuery || undefined,
   });
+
+  const { data: categoriesData } = useGetCategoriesQuery()
 
   const sampleProducts = [
     {
@@ -89,11 +93,11 @@ export default function ProductListPage() {
     },
   ];
 
-  const productsList = (responseData?.data && responseData.data.length > 0)
-    ? responseData.data
-    : sampleProducts;
+  const productsList = isError
+    ? import.meta.env.DEV ? sampleProducts : []
+    : (responseData?.data ?? []);
 
-  const totalPages = responseData?.totalPages || 1;
+  const totalPages = isError ? 1 : (responseData?.totalPages || 1);
 
   const handleAddToCart = (product: typeof sampleProducts[0]) => {
     addToCart({
@@ -126,7 +130,8 @@ export default function ProductListPage() {
         <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <h1 className="text-3xl font-bold text-[var(--color-on-surface)]">Enterprise Catalog</h1>
-            <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Browse CommerceSphere enterprise hardware, IoT, and software tools.</p>
+            <p className="text-sm text-on-surface-variant mt-1">Browse CommerceSphere enterprise hardware, IoT, and software tools.</p>
+            <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mt-4" />
           </div>
           <div className="flex items-center gap-3">
             <input
@@ -134,7 +139,7 @@ export default function ProductListPage() {
               placeholder="Search catalog..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-[var(--color-outline-variant)] bg-surface text-[var(--color-on-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
+              className="px-4 py-2 rounded-xl border border-outline-variant bg-surface text-[var(--color-on-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
             <select
               value={`${sortBy}-${sortOrder}`}
@@ -143,7 +148,7 @@ export default function ProductListPage() {
                 setSortBy(sb);
                 setSortOrder(so);
               }}
-              className="px-4 py-2 rounded-xl border border-[var(--color-outline-variant)] bg-surface text-[var(--color-on-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
+              className="px-4 py-2 rounded-xl border border-outline-variant bg-surface text-[var(--color-on-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
@@ -155,7 +160,7 @@ export default function ProductListPage() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar Filters */}
           <aside className="w-full lg:w-64 shrink-0">
-            <div className="glass-card rounded-xl p-6 sticky top-24 space-y-6">
+            <div className="glass-card rounded-2xl p-6 sticky top-24 space-y-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-on-surface)]">Filters</h2>
                 <button
@@ -175,14 +180,7 @@ export default function ProductListPage() {
               <div>
                 <h3 className="text-xs uppercase tracking-wider font-semibold text-[var(--color-on-surface-variant)] mb-6">Categories</h3>
                 <div className="space-y-2">
-                  {[
-                    { id: 'all', label: 'All Products' },
-                    { id: 'terminals', label: 'Terminals & POS' },
-                    { id: 'logistics', label: 'Logistics & RFID' },
-                    { id: 'bundles', label: 'Starter Kits' },
-                    { id: 'management', label: 'Smart Devices' },
-                    { id: 'audio', label: 'Peripherals' },
-                  ].map((cat) => (
+                  {categoriesData?.map((cat) => (
                     <button
                       key={cat.id}
                       onClick={() => setSelectedCategory(cat.id)}
@@ -192,7 +190,7 @@ export default function ProductListPage() {
                           : 'hover:bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]'
                       }`}
                     >
-                      {cat.label}
+                      {cat.name}
                     </button>
                   ))}
                 </div>
@@ -215,19 +213,55 @@ export default function ProductListPage() {
           </aside>
 
           {/* Product Grid */}
-          <div className="flex-grow">
+          <div className="grow">
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="h-80 glass-card rounded-2xl animate-pulse bg-white/50"></div>
+                  <div key={i} className="h-80 glass-card rounded-2xl animate-pulse"></div>
                 ))}
+              </div>
+            ) : isError ? (
+              <div className="glass-card rounded-2xl p-12 text-center max-w-lg mx-auto space-y-4">
+                <span className="material-symbols-outlined text-[48px] text-error">error_outline</span>
+                <h2 className="text-lg font-bold text-on-surface">Couldn't Load Products</h2>
+                <p className="text-sm text-on-surface-variant">
+                  {import.meta.env.DEV
+                    ? 'The catalog service is offline. Showing sample products for development preview.'
+                    : 'We couldn\'t reach the catalog service. Please try again.'}
+                </p>
+                {!import.meta.env.DEV && (
+                  <button
+                    onClick={() => refetch()}
+                    className="px-4 py-2 bg-primary text-on-primary text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 transition-colors"
+                  >
+                    Retry
+                  </button>
+                )}
+              </div>
+            ) : productsList.length === 0 ? (
+              <div className="glass-card rounded-2xl p-12 text-center max-w-lg mx-auto space-y-4">
+                <span className="material-symbols-outlined text-[48px] text-outline-variant">search_off</span>
+                <h2 className="text-lg font-bold text-on-surface">No Products Found</h2>
+                <p className="text-sm text-on-surface-variant">Try adjusting your filters or search query.</p>
+                <button
+                  onClick={() => {
+                    setSelectedCategory('all');
+                    setMinPrice(0);
+                    setMaxPrice(5000);
+                    setSearchQuery('');
+                    setPage(1);
+                  }}
+                  className="px-4 py-2 bg-primary text-on-primary text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 transition-colors"
+                >
+                  Reset Filters
+                </button>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {productsList.map((product) => (
                   <div
                     key={product.id}
-                    className="bg-surface-container-lowest rounded-xl overflow-hidden hover:shadow-xl border border-[var(--color-outline-variant)]/20 flex flex-col group transition-all"
+                    className="glass-card rounded-2xl overflow-hidden flex flex-col group transition-all"
                   >
                     <div
                       onClick={() => navigate(`/products/${product.id}`)}
@@ -246,7 +280,7 @@ export default function ProductListPage() {
                         className={`absolute top-3 right-3 p-2 rounded-full shadow transition-colors ${
                           isWishlisted(product.id)
                             ? 'bg-primary text-on-primary'
-                            : 'bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] hover:bg-primary hover:text-on-primary'
+                            : 'bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)]'
                         }`}
                       >
                         <span className="material-symbols-outlined text-[18px]">favorite</span>
@@ -254,7 +288,7 @@ export default function ProductListPage() {
                     </div>
 
                     <div className="flex-grow px-4 pt-3 pb-2">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-[var(--color-primary-container)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-xs font-semibold uppercase tracking-widest">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-[var(--color-primary-container)] text-[var(--color-primary)] text-xs font-semibold uppercase tracking-widest">
                         {product.categoryId || 'Hardware'}
                       </span>
                       <h3
@@ -270,7 +304,7 @@ export default function ProductListPage() {
                       <span className="text-xl font-bold text-[var(--color-on-surface)]">${product.price.toLocaleString()}</span>
                       <button
                         onClick={() => handleAddToCart(product)}
-                        className="bg-primary text-on-primary rounded-xl text-sm px-4 py-2 hover:shadow-lg active:scale-95 transition-all font-medium"
+                        className="bg-primary text-on-primary rounded-xl text-sm px-4 py-2 shadow-glow hover:brightness-110 active:scale-95 transition-all font-medium"
                       >
                         Add to Cart
                       </button>

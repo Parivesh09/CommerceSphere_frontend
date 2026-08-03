@@ -1,6 +1,5 @@
 import { baseApi } from '../../../services/api/baseApi';
-import { API_TAGS } from '../../../constants';
-import type { Product, ProductFilters, PaginatedResponse } from '../types';
+import type { Product } from '../types';
 
 export const productsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

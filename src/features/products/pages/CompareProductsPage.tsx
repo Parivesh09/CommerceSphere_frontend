@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../../constants';
 
 export default function CompareProductsPage() {
   const navigate = useNavigate();
@@ -52,27 +51,28 @@ export default function CompareProductsPage() {
   const specKeys = ['Display', 'Connectivity', 'Battery', 'Encryption', 'Warranty'];
 
   return (
-    <div className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] pt-28 pb-16">
+    <div className="min-h-screen page-bg text-on-surface pt-28 pb-16">
       <main className="max-w-7xl mx-auto px-6 md:px-10">
-        <h1 className="text-3xl font-bold text-[#0b1c30] mb-2">Compare Products</h1>
-        <p className="text-sm text-[#464555] mb-8">Side-by-side technical specification matrix for enterprise evaluation.</p>
+        <h1 className="text-3xl font-bold text-on-surface mb-2">Compare Products</h1>
+        <p className="text-sm text-on-surface-variant mb-4">Side-by-side technical specification matrix for enterprise evaluation.</p>
+        <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mb-8" />
 
         <div className="overflow-x-auto">
           <table className="w-full min-w-[700px] border-collapse">
             <thead>
               <tr>
-                <th className="p-4 text-left w-48 bg-[#eff4ff] rounded-tl-2xl font-bold text-xs uppercase text-[#464555]">
+                <th className="p-4 text-left w-48 bg-surface-container-low rounded-tl-2xl font-bold text-xs uppercase text-on-surface-variant">
                   Product Overview
                 </th>
                 {productsToCompare.map((prod) => (
-                  <th key={prod.id} className="p-6 bg-white border border-slate-100 text-center w-72">
+                  <th key={prod.id} className="p-6 bg-surface-container-lowest border border-outline-variant text-center w-72">
                     <div className="space-y-3">
                       <img src={prod.image} alt="" className="w-32 h-32 object-cover rounded-xl mx-auto shadow-sm" />
-                      <h3 className="font-bold text-sm text-[#0b1c30]">{prod.title}</h3>
-                      <p className="text-xl font-bold text-[#3525cd]">${prod.price.toLocaleString()}</p>
+                      <h3 className="font-bold text-sm text-on-surface">{prod.title}</h3>
+                      <p className="text-xl font-bold text-primary">${prod.price.toLocaleString()}</p>
                       <button
                         onClick={() => navigate(`/products/${prod.id}`)}
-                        className="px-4 py-2 bg-[#0b1c30] text-white text-xs font-bold rounded-xl hover:bg-[#3525cd] transition-colors w-full"
+                        className="px-4 py-2 bg-primary text-on-primary text-xs font-bold rounded-xl shadow-glow hover:brightness-110 transition-colors w-full"
                       >
                         View Product
                       </button>
@@ -81,12 +81,12 @@ export default function CompareProductsPage() {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-outline-variant">
               {specKeys.map((key) => (
-                <tr key={key} className="hover:bg-slate-50">
-                  <td className="p-4 font-bold text-xs uppercase text-[#464555] bg-[#eff4ff]">{key}</td>
+                <tr key={key} className="hover:bg-surface-container-high">
+                  <td className="p-4 font-bold text-xs uppercase text-on-surface-variant bg-surface-container-low">{key}</td>
                   {productsToCompare.map((prod) => (
-                    <td key={prod.id} className="p-4 text-center text-sm font-medium text-[#0b1c30] bg-white border border-slate-100">
+                    <td key={prod.id} className="p-4 text-center text-sm font-medium text-on-surface bg-surface-container-lowest border border-outline-variant">
                       {prod.specs[key as keyof typeof prod.specs]}
                     </td>
                   ))}

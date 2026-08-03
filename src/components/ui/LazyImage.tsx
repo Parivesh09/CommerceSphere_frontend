@@ -131,8 +131,8 @@ export function LazyImage({
       
       {/* Error state */}
       {hasError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-          <div className="text-center text-gray-500 dark:text-gray-400">
+        <div className="absolute inset-0 flex items-center justify-center bg-[var(--color-surface-container-high)]">
+          <div className="text-center text-[var(--color-on-surface-variant)]">
             <svg
               className="w-12 h-12 mx-auto mb-2"
               fill="none"
@@ -153,7 +153,7 @@ export function LazyImage({
       
       {/* Loading skeleton */}
       {!isLoaded && !hasError && !placeholder && (
-        <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse" />
+        <div className="absolute inset-0 bg-[var(--color-surface-container-high)] animate-pulse" />
       )}
     </div>
   );

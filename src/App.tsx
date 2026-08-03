@@ -37,6 +37,7 @@ import {
   LazyAdminProductsPage,
   LazyAdminProductEditorPage,
   LazyAdminOrdersPage,
+  LazyAdminOrderDetailPage,
   LazyAdminInventoryPage,
   LazyAdminUsersPage,
   LazyAdminAnalyticsPage,
@@ -316,6 +317,14 @@ function AppRoutes() {
               element={
                 <ErrorBoundary level="route" fallback={RouteErrorFallback}>
                   <LazyAdminOrdersPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_ORDER_DETAIL}
+              element={
+                <ErrorBoundary level="route" fallback={RouteErrorFallback}>
+                  <LazyAdminOrderDetailPage />
                 </ErrorBoundary>
               }
             />

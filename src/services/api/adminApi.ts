@@ -1,5 +1,5 @@
 import { baseApi } from './baseApi';
-import type { User, Product, ApiResponse } from '../../types';
+import type { User, ApiResponse } from '../../types';
 
 export interface AdminAnalyticsMetrics {
   totalRevenue: number;

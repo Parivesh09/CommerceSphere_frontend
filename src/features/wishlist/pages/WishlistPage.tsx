@@ -15,14 +15,23 @@ import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { Skeleton } from '../../../components/ui/Skeleton';
 import { ROUTES } from '../../../constants';
+import { useCart } from '../../cart/hooks';
+import toast from 'react-hot-toast';
 
 export const WishlistPage: React.FC = () => {
   const navigate = useNavigate();
   const { wishlistItems, isLoading, wishlistCount } = useWishlist();
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (product: { id: string; name: string; price: number; stock: number }) => {
+    if (product.stock === 0) return;
+    addToCart({ productId: product.id, quantity: 1, unitPrice: product.price });
+    toast.success(`${product.name} added to cart!`);
+  };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] mx-auto px-4 md:px-10 py-20">
+      <div className="min-h-screen page-bg text-[var(--color-on-surface)] mx-auto px-4 md:px-10 py-20">
         <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-on-surface)] mb-8">
           My Wishlist
         </h1>
@@ -44,7 +53,7 @@ export const WishlistPage: React.FC = () => {
 
   if (wishlistCount === 0) {
     return (
-      <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] flex items-center justify-center p-6 text-center">
+      <div className="min-h-screen page-bg text-[var(--color-on-surface)] flex items-center justify-center p-6 text-center">
         <div className="max-w-md w-full glass-card rounded-2xl p-8 gap-6 flex flex-col items-center">
           <span className="material-symbols-outlined text-[48px] text-[var(--color-on-surface-variant)]">favorite</span>
           <h2 className="text-xl font-bold text-[var(--color-on-surface)]">
@@ -67,11 +76,14 @@ export const WishlistPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] mx-auto px-4 md:px-10 py-20">
+    <div className="min-h-screen page-bg text-[var(--color-on-surface)] mx-auto px-4 md:px-10 py-20">
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-on-surface)]">
-          My Wishlist
-        </h1>
+        <div className="space-y-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-on-surface)]">
+            My Wishlist
+          </h1>
+          <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full" />
+        </div>
         <p className="text-sm text-[var(--color-on-surface-variant)]">
           {wishlistCount} {wishlistCount === 1 ? 'item' : 'items'}
         </p>
@@ -95,7 +107,7 @@ export const WishlistPage: React.FC = () => {
               onClick={() => navigate(ROUTES.PRODUCT_DETAIL.replace(':id', product.id))}
             >
               {/* Product Image */}
-              <div className="relative aspect-square overflow-hidden bg-[var(--color-surface-variant)]">
+              <div className="relative aspect-square overflow-hidden bg-[var(--color-surface-container-low)]">
                 {primaryImage ? (
                   <img
                     src={primaryImage.url}
@@ -110,13 +122,13 @@ export const WishlistPage: React.FC = () => {
                 )}
 
                 {/* Wishlist Button */}
-                <div className="absolute right-2 top-sm">
+                <div className="absolute right-2 top-2">
                   <WishlistButton productId={product.id} size="md" />
                 </div>
 
                 {/* Discount Badge */}
                 {hasDiscount && (
-                  <div className="absolute left-2 top-sm rounded-full bg-red-500 px-2 py-1 text-xs font-semibold text-[var(--color-on-primary)]">
+                  <div className="absolute left-2 top-2 rounded-full bg-error px-2 py-1 text-xs font-semibold text-on-error">
                     -{discountPercentage}%
                   </div>
                 )}
@@ -124,7 +136,7 @@ export const WishlistPage: React.FC = () => {
                 {/* Out of Stock Badge */}
                 {product.stock === 0 && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                    <span className="rounded-xl bg-[var(--color-surface)] px-4 py-2 text-sm font-bold text-[var(--color-on-surface)]">
+                    <span className="rounded-xl bg-surface px-4 py-2 text-sm font-bold text-on-surface">
                       Out of Stock
                     </span>
                   </div>
@@ -151,8 +163,8 @@ export const WishlistPage: React.FC = () => {
                         key={index}
                         className={`h-4 w-4 ${
                           index < Math.floor(product.rating)
-                            ? 'text-yellow-400'
-                            : 'text-[var(--color-on-surface-variant)]'
+                            ? 'text-warning'
+                            : 'text-on-surface-variant'
                         }`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
@@ -187,8 +199,7 @@ export const WishlistPage: React.FC = () => {
                   disabled={product.stock === 0}
                   onClick={(e) => {
                     e.stopPropagation();
-
-                    console.log('Add to cart:', product.id);
+                    handleAddToCart(product);
                   }}
                 >
                   {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}

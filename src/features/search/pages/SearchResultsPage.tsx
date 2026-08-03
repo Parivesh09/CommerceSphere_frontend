@@ -6,21 +6,15 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-  Container,
-  Typography,
-  Box,
   Paper,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   Slider,
-  Button,
   Chip,
   CircularProgress,
-  Alert,
 } from '@mui/material';
-import { FilterList as FilterIcon, Clear as ClearIcon } from '@mui/icons-material';
 import { useSearchProductsQuery } from '../api';
 import { SearchBar } from '../components/SearchBar';
 import type { SearchQuery, SearchFilters } from '../types';
@@ -115,7 +109,7 @@ export function SearchResultsPage() {
 
   if (!query) {
     return (
-      <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)]">
+      <div className="min-h-screen page-bg text-[var(--color-on-surface)]">
         <div className="max-w-6xl mx-auto px-4 md:px-10 py-20">
           <SearchBar autoFocus />
           <div className="text-center mt-12">
@@ -129,7 +123,7 @@ export function SearchResultsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)]">
+    <div className="min-h-screen page-bg text-[var(--color-on-surface)]">
       <div className="max-w-6xl mx-auto px-4 md:px-10 py-20">
         {/* Search Bar */}
         <div className="mb-6">
@@ -168,7 +162,7 @@ export function SearchResultsPage() {
         <div className="flex gap-6 flex-col md:flex-row">
           {/* Filters Sidebar */}
           <div className="w-full md:w-1/4">
-            <Paper sx={{ p: '24px', position: 'sticky', top: 80, backgroundColor: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--color-outline-variant)', boxShadow: 'none' }}>
+            <Paper className="glass-card" sx={{ p: '24px', position: 'sticky', top: 80, borderRadius: '16px', backgroundColor: 'transparent', boxShadow: 'none' }}>
               <div className="flex justify-between items-center mb-6">
                 <p className="text-xl font-bold text-[var(--color-on-surface)] flex items-center gap-3">
                   <span className="material-symbols-outlined text-[20px]">filter_list</span> Filters
@@ -222,7 +216,7 @@ export function SearchResultsPage() {
           {/* Results Grid */}
           <div className="flex-1">
             {error && (
-              <div className="glass-card rounded-2xl p-6 mb-6 text-sm" style={{ color: 'var(--color-error, #dc2626)', backgroundColor: 'rgba(220, 38, 38, 0.08)' }}>
+              <div className="rounded-2xl p-6 mb-6 text-sm border border-[var(--color-error)]/20 bg-[var(--color-error)]/10 text-[var(--color-error)]">
                 <span className="material-symbols-outlined text-[16px] mr-3">error</span> Failed to load search results. Please try again.
               </div>
             )}
@@ -245,7 +239,7 @@ export function SearchResultsPage() {
                     <button
                       onClick={() => setPage((p) => p + 1)}
                       disabled={isFetching}
-                      className="px-6 py-3 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl hover:brightness-90 disabled:opacity-50 transition-all"
+                      className="px-6 py-3 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 disabled:opacity-50 transition-all"
                     >
                       {isFetching ? 'Loading...' : 'Load More'}
                     </button>
@@ -286,12 +280,12 @@ function ProductCard({ product }: ProductCardProps) {
         cursor: 'pointer',
         transition: 'transform 0.2s, box-shadow 0.2s',
         borderRadius: '16px',
-        backgroundColor: 'var(--color-surface)',
-        border: '1px solid var(--color-outline-variant)',
+        backgroundColor: 'transparent',
+        border: 'none',
         boxShadow: 'none',
         '&:hover': {
           transform: 'translateY(-4px)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+          boxShadow: '0 12px 24px -8px color-mix(in srgb, var(--color-primary) 35%, transparent)',
         },
       }}
     >
@@ -315,12 +309,12 @@ function ProductCard({ product }: ProductCardProps) {
       <p className="text-sm text-[var(--color-on-surface)] font-bold truncate mb-3">
         {product.name}
       </p>
-      <p className="text-xl font-bold text-[var(--color-primary)]">
+      <p className="text-xl font-bold text-[var(--color-on-surface)]">
         ${product.price.toFixed(2)}
       </p>
       {product.rating && (
         <p className="text-sm text-[var(--color-on-surface-variant)]">
-          <span className="material-symbols-outlined text-[14px] align-text-bottom">star</span> {product.rating} ({product.reviewCount} reviews)
+          <span className="material-symbols-outlined text-[14px] text-warning align-text-bottom">star</span> {product.rating} ({product.reviewCount} reviews)
         </p>
       )}
     </Paper>

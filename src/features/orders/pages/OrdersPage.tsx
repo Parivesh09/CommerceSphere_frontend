@@ -3,64 +3,72 @@ import { useNavigate } from 'react-router-dom';
 import { useGetOrdersQuery } from '../../../services/api/orderApi';
 import type { OrderStatus } from '../../../types';
 
+interface OrderRow {
+  id: string;
+  status: OrderStatus;
+  totalAmount: number;
+  createdAt: string;
+  itemsCount: number;
+}
+
+const SAMPLE_ORDERS: OrderRow[] = [
+  {
+    id: 'ORD-892415',
+    status: 'PROCESSING',
+    totalAmount: 1299.0,
+    createdAt: '2026-07-26T10:30:00Z',
+    itemsCount: 1,
+  },
+  {
+    id: 'ORD-762109',
+    status: 'SHIPPED',
+    totalAmount: 849.0,
+    createdAt: '2026-07-20T14:15:00Z',
+    itemsCount: 2,
+  },
+  {
+    id: 'ORD-431890',
+    status: 'DELIVERED',
+    totalAmount: 4500.0,
+    createdAt: '2026-07-10T09:00:00Z',
+    itemsCount: 3,
+  },
+];
+
 export default function OrdersPage() {
   const navigate = useNavigate();
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
-  const { data: responseData, isLoading } = useGetOrdersQuery({
+  const { data: responseData, isLoading, isError, refetch } = useGetOrdersQuery({
     status: selectedStatus !== 'ALL' ? (selectedStatus as OrderStatus) : undefined,
   });
 
-  const sampleOrders = [
-    {
-      id: 'ORD-892415',
-      status: 'PROCESSING' as OrderStatus,
-      totalAmount: 1299.00,
-      createdAt: '2026-07-26T10:30:00Z',
-      itemsCount: 1,
-    },
-    {
-      id: 'ORD-762109',
-      status: 'SHIPPED' as OrderStatus,
-      totalAmount: 849.00,
-      createdAt: '2026-07-20T14:15:00Z',
-      itemsCount: 2,
-    },
-    {
-      id: 'ORD-431890',
-      status: 'DELIVERED' as OrderStatus,
-      totalAmount: 4500.00,
-      createdAt: '2026-07-10T09:00:00Z',
-      itemsCount: 3,
-    },
-  ];
-
-  const ordersList = (responseData?.data && responseData.data.length > 0)
-    ? responseData.data.map((o) => ({
+  const ordersList: OrderRow[] = isError
+    ? import.meta.env.DEV ? SAMPLE_ORDERS : []
+    : (responseData?.data ?? []).map((o) => ({
         id: o.id,
         status: o.status,
         totalAmount: o.totalAmount,
         createdAt: o.createdAt,
         itemsCount: o.items?.length || 1,
-      }))
-    : sampleOrders;
+      }));
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case 'DELIVERED':
-        return 'bg-emerald-100 text-emerald-700';
+        return 'bg-success/10 text-success';
       case 'SHIPPED':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-info/10 text-info';
       case 'PROCESSING':
-        return 'bg-amber-100 text-amber-700';
+        return 'bg-warning/10 text-warning';
       case 'CANCELLED':
-        return 'bg-rose-100 text-rose-700';
+        return 'bg-error/10 text-error';
       default:
-        return 'bg-slate-100 text-slate-700';
+        return 'bg-surface-variant text-on-surface-variant';
     }
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] pt-28 pb-16">
+    <div className="page-bg min-h-screen text-[var(--color-on-surface)] pt-28 pb-16">
       <main className="max-w-7xl mx-auto px-4 md:px-10">
         <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-on-surface)] mb-2">Order History</h1>
         <p className="text-sm text-[var(--color-on-surface-variant)] mb-8">View past purchases, track active shipments, and download corporate invoices.</p>
@@ -86,8 +94,38 @@ export default function OrdersPage() {
         {isLoading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-28 glass-card rounded-2xl animate-pulse bg-white/50"></div>
+              <div key={i} className="h-28 glass-card rounded-2xl animate-pulse"></div>
             ))}
+          </div>
+        ) : isError ? (
+          <div className="glass-card rounded-2xl p-12 text-center max-w-lg mx-auto space-y-4">
+            <span className="material-symbols-outlined text-[48px] text-[var(--color-error)]">error_outline</span>
+            <h2 className="text-lg font-bold text-[var(--color-on-surface)]">Couldn't Load Your Orders</h2>
+            <p className="text-sm text-[var(--color-on-surface-variant)]">
+              {import.meta.env.DEV
+                ? 'The orders service is offline. Showing sample data for development preview.'
+                : 'We couldn\'t reach the orders service. Please try again.'}
+            </p>
+            {!import.meta.env.DEV && (
+              <button
+                onClick={() => refetch()}
+                className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 transition-colors"
+              >
+                Retry
+              </button>
+            )}
+          </div>
+        ) : ordersList.length === 0 ? (
+          <div className="glass-card rounded-2xl p-12 text-center max-w-lg mx-auto space-y-4">
+            <span className="material-symbols-outlined text-[48px] text-[var(--color-outline-variant)]">receipt_long</span>
+            <h2 className="text-lg font-bold text-[var(--color-on-surface)]">No Orders Yet</h2>
+            <p className="text-sm text-[var(--color-on-surface-variant)]">When you place an order it will show up here.</p>
+            <button
+              onClick={() => navigate('/products')}
+              className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 transition-colors"
+            >
+              Browse Products
+            </button>
           </div>
         ) : (
           <div className="space-y-4">
@@ -113,7 +151,7 @@ export default function OrdersPage() {
                   <div className="flex gap-3">
                     <button
                       onClick={() => navigate(`/orders/${order.id}`)}
-                      className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl hover:brightness-90 transition-colors"
+                      className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-xl shadow-glow hover:brightness-110 transition-colors"
                     >
                       Track Shipment
                     </button>

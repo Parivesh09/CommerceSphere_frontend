@@ -61,10 +61,10 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   if (hasError) {
     return (
       <div
-        className={`flex items-center justify-center bg-gray-200 dark:bg-gray-700 ${className}`}
+        className={`flex items-center justify-center bg-[var(--color-surface-container-high)] ${className}`}
         style={{ aspectRatio }}
       >
-        <span className="text-gray-400 text-sm">Image not available</span>
+        <span className="text-[var(--color-on-surface-variant)] text-sm">Image not available</span>
       </div>
     );
   }

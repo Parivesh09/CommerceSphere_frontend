@@ -19,25 +19,26 @@ export function AdminUsersPage() {
       await updateRole({ userId, role }).unwrap();
       toast.success(`User role updated to ${role}`);
     } catch {
-      toast.success(`User role updated to ${role}`);
+      toast.error(`Failed to update role for ${userId}. Please try again.`);
     }
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-on-surface">Customer CRM & User Roles</h1>
-        <p className="text-sm text-on-surface-variant mt-1">Manage enterprise customer accounts, access levels, and moderation roles.</p>
+        <h1 className="text-3xl font-bold text-[var(--color-on-surface)]">Customer CRM & User Roles</h1>
+        <div className="h-1 w-24 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mt-3" />
+        <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Manage enterprise customer accounts, access levels, and moderation roles.</p>
       </div>
 
       <div className="glass-card rounded-3xl p-6 space-y-4">
         {isLoading ? (
-          <div className="p-8 text-center text-sm text-slate-400">Loading user database...</div>
+          <div className="p-8 text-center text-sm text-[var(--color-on-surface-variant)]">Loading user database...</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-outline-variant text-xs font-bold uppercase text-on-surface-variant">
+                <tr className="border-b border-[var(--color-outline-variant)] text-xs font-bold uppercase text-[var(--color-on-surface-variant)]">
                   <th className="pb-3">Customer Name</th>
                   <th className="pb-3">Email Address</th>
                   <th className="pb-3">Joined Date</th>
@@ -45,14 +46,14 @@ export function AdminUsersPage() {
                   <th className="pb-3 text-right">Access Role</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-outline-variant">
+              <tbody className="divide-y divide-[var(--color-outline-variant)]">
                 {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-surface-container-low">
-                    <td className="py-3 font-bold text-on-surface">{u.name}</td>
-                    <td className="py-3 text-on-surface-variant">{u.email}</td>
-                    <td className="py-3 text-on-surface-variant">{new Date(u.createdAt).toLocaleDateString()}</td>
+                  <tr key={u.id} className="hover:bg-[var(--color-surface-container-low)]">
+                    <td className="py-3 font-bold text-[var(--color-on-surface)]">{u.name}</td>
+                    <td className="py-3 text-[var(--color-on-surface-variant)]">{u.email}</td>
+                    <td className="py-3 text-[var(--color-on-surface-variant)]">{new Date(u.createdAt).toLocaleDateString()}</td>
                     <td className="py-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary-fixed text-primary">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[var(--color-primary-container)] text-[var(--color-primary)]">
                         {u.role.toUpperCase()}
                       </span>
                     </td>
@@ -60,7 +61,8 @@ export function AdminUsersPage() {
                       <select
                         value={u.role}
                         onChange={(e) => handleRoleChange(u.id, e.target.value as User['role'])}
-                        className="px-3 py-1 bg-surface-container-lowest border border-outline-variant rounded-lg text-xs font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+                        aria-label={`Update access role for ${u.name}`}
+                        className="px-3 py-1 bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] rounded-lg text-xs font-semibold text-[var(--color-on-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
                       >
                         <option value="customer">CUSTOMER</option>
                         <option value="moderator">MODERATOR</option>

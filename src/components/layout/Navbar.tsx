@@ -5,6 +5,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { setCartDrawerOpen } from '../../store/slices/uiSlice';
 import { logout } from '../../store/slices/authSlice';
 import { ROUTES } from '../../constants';
+import { ThemeToggle } from '../ui/ThemeToggle';
 
 const navLinks = [
   { label: 'Shop', path: ROUTES.PRODUCTS },
@@ -44,14 +45,14 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="fixed top-0 w-full z-50 bg-[var(--color-surface)]/80 backdrop-blur-md border-b border-[var(--color-outline-variant)]/30 shadow-sm h-20 flex items-center"
+        className="fixed top-0 w-full z-50 bg-[var(--color-surface)]/70 backdrop-blur-xl border-b border-[var(--color-outline-variant)]/40 shadow-[inset_0_-1px_0_0_var(--color-primary)/10] h-20 flex items-center"
         role="navigation"
         aria-label="Main navigation"
       >
         <div className="flex justify-between items-center w-full px-4 md:px-10 max-w-7xl mx-auto">
           <div className="flex items-center gap-8">
             <span
-              className="text-2xl font-extrabold tracking-tighter text-[var(--color-on-surface)] cursor-pointer select-none"
+              className="text-2xl font-extrabold tracking-tighter gradient-text cursor-pointer select-none"
               onClick={() => navigate(ROUTES.HOME)}
               role="button"
               tabIndex={0}
@@ -59,14 +60,14 @@ export default function Navbar() {
             >
               CommerceSphere
             </span>
-            <div className="hidden md:flex gap-6 items-center">
+            <div className="hidden md:flex gap-2 items-center">
               {navLinks.map((link) => (
                 <span
                   key={link.path}
-                  className={`text-sm cursor-pointer transition-all ${
+                  className={`text-sm cursor-pointer transition-all px-3.5 py-2 rounded-xl ${
                     isActive(link.path)
-                      ? 'text-[var(--color-primary)] font-bold border-b-2 border-[var(--color-primary)] pb-1'
-                      : 'text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)]'
+                      ? 'bg-[var(--color-primary-container)] text-[var(--color-primary)] font-bold'
+                      : 'text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] hover:bg-[var(--color-surface-container-low)]'
                   }`}
                   onClick={() => navigate(link.path)}
                   role="button"
@@ -79,6 +80,7 @@ export default function Navbar() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <button
               className="p-2.5 hover:bg-[var(--color-surface-container-low)] transition-colors duration-200 rounded-full"
               onClick={() => navigate(ROUTES.SEARCH)}
@@ -150,7 +152,7 @@ export default function Navbar() {
                     )}
                     <div className="border-t border-[var(--color-outline-variant)]/20 mt-1 pt-1">
                       <button
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-[var(--color-surface-container-high)] transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-error hover:bg-[var(--color-surface-container-high)] transition-colors"
                         onClick={handleLogout}
                       >
                         <span className="material-symbols-outlined text-[18px]">logout</span>
@@ -162,7 +164,7 @@ export default function Navbar() {
               </div>
             ) : (
               <button
-                className="px-6 py-2.5 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[var(--color-primary)]/20 transition-all active:scale-95"
+                className="px-6 py-2.5 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-xl text-sm font-semibold shadow-glow hover:brightness-110 transition-all active:scale-95"
                 onClick={() => navigate(ROUTES.LOGIN)}
               >
                 Login

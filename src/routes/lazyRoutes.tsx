@@ -140,6 +140,10 @@ export const LazyAdminRolesPage = withSuspense(
   lazy(() => import('@/features/admin/pages/AdminRolesPage').then(m => ({ default: m.AdminRolesPage })))
 );
 
+export const LazyAdminOrderDetailPage = withSuspense(
+  lazy(() => import('@/features/admin/pages/AdminOrderDetailPage').then(m => ({ default: m.AdminOrderDetailPage })))
+);
+
 // Seller Pages
 export const LazySellerDashboard = withSuspense(
   lazy(() => import('@/features/seller/pages/SellerDashboardPage'))

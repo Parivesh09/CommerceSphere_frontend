@@ -15,11 +15,20 @@ export default function CartPage() {
   const progressPercent = Math.min(100, (subtotal / freeShippingThreshold) * 100);
 
   const handleApplyPromo = () => {
-    if (promoCode.trim().toUpperCase() === 'ENTERPRISE20') {
+    const code = promoCode.trim().toUpperCase();
+    if (!code) {
+      toast.error('Please enter a promo code.');
+      return;
+    }
+    if (items.length === 0) {
+      toast.error('Add items to your cart before applying a promo code.');
+      return;
+    }
+    if (code === 'ENTERPRISE20') {
       setDiscount(subtotal * 0.2);
       toast.success('20% Enterprise Promo Code Applied!');
-    } else if (promoCode.trim()) {
-      toast.error('Invalid promo code');
+    } else {
+      toast.error(`"${code}" is not a valid promo code.`);
     }
   };
 
@@ -29,7 +38,8 @@ export default function CartPage() {
     <div className="page-bg pt-28 pb-16">
       <main className="max-w-7xl mx-auto px-4 md:px-10">
         <h1 className="text-3xl font-bold text-[var(--color-on-surface)] mb-2">Your Shopping Cart</h1>
-        <p className="text-sm text-[var(--color-on-surface-variant)] mb-8">Review items, apply corporate discount codes, and proceed to secure checkout.</p>
+        <p className="text-sm text-[var(--color-on-surface-variant)] mb-4">Review items, apply corporate discount codes, and proceed to secure checkout.</p>
+        <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mb-8" />
 
         {items.length === 0 ? (
           <div className="glass-card rounded-2xl p-12 text-center max-w-lg mx-auto space-y-4">
@@ -38,7 +48,7 @@ export default function CartPage() {
             <p className="text-sm text-[var(--color-on-surface-variant)]">Looks like you haven't added any enterprise hardware to your order yet.</p>
             <button
               onClick={() => navigate(ROUTES.PRODUCTS)}
-              className="bg-primary text-on-primary rounded-xl font-medium text-sm px-6 py-3 hover:shadow-lg active:scale-95 transition-all"
+              className="bg-primary text-on-primary rounded-xl font-medium text-sm px-6 py-3 shadow-glow hover:brightness-110 active:scale-95 transition-all"
             >
               Browse Catalog
             </button>
@@ -48,7 +58,7 @@ export default function CartPage() {
             {/* Cart Items Column */}
             <div className="lg:col-span-8 space-y-6">
               {/* Free Shipping Bar */}
-              <div className="glass-card rounded-xl p-4 space-y-2">
+              <div className="glass-card rounded-2xl p-4 space-y-2">
                 <div className="flex justify-between text-xs font-semibold text-[var(--color-on-surface)]">
                   <span>
                     {subtotal >= freeShippingThreshold
@@ -81,7 +91,7 @@ export default function CartPage() {
                   {items.map((item) => (
                     <div
                       key={item.id}
-                      className="glass-card rounded-xl p-4 flex flex-col sm:flex-row items-center gap-4"
+                      className="glass-card rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4"
                     >
                       <div className="flex items-center gap-4 w-full sm:w-auto">
                         <img
@@ -100,6 +110,7 @@ export default function CartPage() {
                         {/* Quantity Controls */}
                         <div className="flex items-center border border-[var(--color-outline-variant)] rounded-xl glass-card">
                           <button
+                            aria-label={`Decrease quantity of ${item.product?.title || 'item'}`}
                             onClick={() => updateQuantity(item.productId, item.variantId, Math.max(1, item.quantity - 1))}
                             className="w-8 h-8 flex items-center justify-center font-bold hover:bg-[var(--color-surface-container-high)] rounded-l-xl text-sm text-[var(--color-on-surface)]"
                           >
@@ -107,6 +118,7 @@ export default function CartPage() {
                           </button>
                           <span className="w-8 text-center text-xs font-bold text-[var(--color-on-surface)]">{item.quantity}</span>
                           <button
+                            aria-label={`Increase quantity of ${item.product?.title || 'item'}`}
                             onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
                             className="w-8 h-8 flex items-center justify-center font-bold hover:bg-[var(--color-surface-container-high)] rounded-r-xl text-sm text-[var(--color-on-surface)]"
                           >
@@ -119,6 +131,7 @@ export default function CartPage() {
                         </span>
 
                         <button
+                          aria-label={`Remove ${item.product?.title || 'item'} from cart`}
                           onClick={() => removeItem(item.productId, item.variantId)}
                           className="p-1.5 text-[var(--color-outline)] hover:text-[var(--color-error)] transition-colors"
                           title="Remove item"
@@ -132,7 +145,7 @@ export default function CartPage() {
               </div>
 
               {/* Trust badges */}
-              <div className="glass-card rounded-xl p-4 flex flex-wrap items-center justify-center gap-6 text-xs text-[var(--color-on-surface-variant)]">
+              <div className="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-center gap-6 text-xs text-[var(--color-on-surface-variant)]">
                 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">lock</span> Secure Checkout</span>
                 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">local_shipping</span> Free Delivery on $500+</span>
                 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">verified</span> Enterprise Grade</span>
@@ -142,8 +155,11 @@ export default function CartPage() {
 
             {/* Order Summary Sidebar */}
             <div className="lg:col-span-4 space-y-6">
-              <div className="glass-card rounded-xl p-6 shadow-lg sticky top-24 space-y-6">
-                <h2 className="font-bold text-lg text-[var(--color-on-surface)] pb-3 border-b border-[var(--color-outline-variant)]">Order Summary</h2>
+              <div className="glass-card rounded-2xl p-6 shadow-lg sticky top-24 space-y-6">
+                <div className="space-y-2">
+                  <h2 className="font-bold text-lg text-[var(--color-on-surface)]">Order Summary</h2>
+                  <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full" />
+                </div>
 
                 {/* Promo Input */}
                 <div className="flex gap-2">
@@ -156,7 +172,7 @@ export default function CartPage() {
                   />
                   <button
                     onClick={handleApplyPromo}
-                    className="bg-primary text-on-primary rounded-xl text-xs font-medium px-4 py-2 hover:shadow-lg active:scale-95 transition-all"
+                    className="bg-primary text-on-primary rounded-xl text-xs font-medium px-4 py-2 shadow-glow hover:brightness-110 active:scale-95 transition-all"
                   >
                     Apply
                   </button>
@@ -191,14 +207,14 @@ export default function CartPage() {
 
                 <button
                   onClick={() => navigate(ROUTES.CHECKOUT)}
-                  className="w-full bg-primary text-on-primary rounded-xl text-sm font-medium py-3 px-4 hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/25"
+                  className="w-full bg-primary text-on-primary rounded-xl text-sm font-medium py-3 px-4 shadow-glow hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                   Proceed to Checkout <span className="material-symbols-outlined text-[18px]">lock</span>
                 </button>
               </div>
 
               {/* Recently Viewed */}
-              <div className="glass-card rounded-xl p-4">
+              <div className="glass-card rounded-2xl p-4">
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-on-surface-variant)] mb-3">Recently Viewed</h3>
                 <div className="flex gap-3 overflow-x-auto pb-1">
                   {[

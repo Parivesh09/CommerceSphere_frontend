@@ -70,19 +70,19 @@ export default function ConversionChart({ data }: ConversionChartProps) {
               <Bar
                 yAxisId="left"
                 dataKey="visitors"
-                fill="#94a3b8"
+                fill="var(--color-outline)"
                 name="Visitors"
               />
               <Bar
                 yAxisId="left"
                 dataKey="conversions"
-                fill="#2563eb"
+                fill="var(--color-primary)"
                 name="Conversions"
               />
               <Bar
                 yAxisId="right"
                 dataKey="rate"
-                fill="#10b981"
+                fill="var(--color-success)"
                 name="Rate (%)"
               />
             </BarChart>

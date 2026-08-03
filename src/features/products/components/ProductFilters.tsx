@@ -110,22 +110,22 @@ export const ProductFiltersComponent: React.FC<ProductFiltersProps> = ({
 
       {/* Categories */}
       <Card padding="md">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 className="text-lg font-semibold text-[var(--color-on-surface)]">
           Categories
         </h3>
         <div className="mt-4 space-y-2">
           {categories.map((category) => (
             <label
               key={category}
-              className="flex cursor-pointer items-center gap-2 rounded-lg p-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="flex cursor-pointer items-center gap-2 rounded-lg p-2 transition-colors hover:bg-[var(--color-surface-container-low)]"
             >
               <input
                 type="checkbox"
                 checked={filters.category === category}
                 onChange={() => handleCategoryChange(category)}
-                className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                className="h-4 w-4 rounded border-[var(--color-outline-variant)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]/30"
               />
-              <span className="text-sm text-gray-700 dark:text-gray-300">
+              <span className="text-sm text-[var(--color-on-surface-variant)]">
                 {category}
               </span>
             </label>
@@ -135,12 +135,12 @@ export const ProductFiltersComponent: React.FC<ProductFiltersProps> = ({
 
       {/* Price Range */}
       <Card padding="md">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 className="text-lg font-semibold text-[var(--color-on-surface)]">
           Price Range
         </h3>
         <div className="mt-4 space-y-3">
           <div>
-            <label className="text-sm text-gray-600 dark:text-gray-400">
+            <label className="text-sm text-[var(--color-on-surface-variant)]">
               Min Price
             </label>
             <input
@@ -150,11 +150,11 @@ export const ProductFiltersComponent: React.FC<ProductFiltersProps> = ({
               value={localMinPrice}
               onChange={(e) => setLocalMinPrice(e.target.value)}
               placeholder="$0"
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              className="mt-1 w-full rounded-lg border border-[var(--color-outline-variant)] px-3 py-2 text-sm bg-[var(--color-surface)] text-[var(--color-on-surface)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/30"
             />
           </div>
           <div>
-            <label className="text-sm text-gray-600 dark:text-gray-400">
+            <label className="text-sm text-[var(--color-on-surface-variant)]">
               Max Price
             </label>
             <input
@@ -164,7 +164,7 @@ export const ProductFiltersComponent: React.FC<ProductFiltersProps> = ({
               value={localMaxPrice}
               onChange={(e) => setLocalMaxPrice(e.target.value)}
               placeholder="Any"
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              className="mt-1 w-full rounded-lg border border-[var(--color-outline-variant)] px-3 py-2 text-sm bg-[var(--color-surface)] text-[var(--color-on-surface)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/30"
             />
           </div>
           <Button
@@ -180,21 +180,21 @@ export const ProductFiltersComponent: React.FC<ProductFiltersProps> = ({
 
       {/* Rating Filter */}
       <Card padding="md">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 className="text-lg font-semibold text-[var(--color-on-surface)]">
           Minimum Rating
         </h3>
         <div className="mt-4 space-y-2">
           {[4, 3, 2, 1].map((rating) => (
             <label
               key={rating}
-              className="flex cursor-pointer items-center gap-2 rounded-lg p-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="flex cursor-pointer items-center gap-2 rounded-lg p-2 transition-colors hover:bg-[var(--color-surface-container-low)]"
             >
               <input
                 type="radio"
                 name="rating"
                 checked={filters.minRating === rating}
                 onChange={() => handleRatingChange(rating)}
-                className="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-500"
+                className="h-4 w-4 border-[var(--color-outline-variant)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]/30"
               />
               <div className="flex items-center gap-1">
                 {Array.from({ length: 5 }).map((_, index) => (
@@ -202,8 +202,8 @@ export const ProductFiltersComponent: React.FC<ProductFiltersProps> = ({
                     key={index}
                     className={`h-4 w-4 ${
                       index < rating
-                        ? 'text-yellow-400'
-                        : 'text-gray-300 dark:text-gray-600'
+                        ? 'text-warning'
+                        : 'text-[var(--color-on-surface-variant)]'
                     }`}
                     fill="currentColor"
                     viewBox="0 0 20 20"
@@ -211,7 +211,7 @@ export const ProductFiltersComponent: React.FC<ProductFiltersProps> = ({
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                 ))}
-                <span className="ml-1 text-sm text-gray-600 dark:text-gray-400">
+                <span className="ml-1 text-sm text-[var(--color-on-surface-variant)]">
                   & up
                 </span>
               </div>

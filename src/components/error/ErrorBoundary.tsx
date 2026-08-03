@@ -124,7 +124,7 @@ const DefaultErrorFallback: React.FC<ErrorFallbackProps> = ({ error, reset, leve
       role="alert"
       className="flex flex-col items-center justify-center p-8 text-center"
     >
-      <div className="mb-4 text-red-500">
+      <div className="mb-4 text-error">
         <svg
           className="h-16 w-16 mx-auto"
           fill="none"
@@ -139,16 +139,16 @@ const DefaultErrorFallback: React.FC<ErrorFallbackProps> = ({ error, reset, leve
           />
         </svg>
       </div>
-      <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">
+      <h2 className="text-2xl font-bold mb-2 text-[var(--color-on-surface)]">
         Oops! Something went wrong
       </h2>
-      <p className="text-gray-600 dark:text-gray-400 mb-4">{getLevelMessage()}</p>
+      <p className="text-[var(--color-on-surface-variant)] mb-4">{getLevelMessage()}</p>
       {import.meta.env.DEV && error && (
         <details className="mb-4 text-left max-w-2xl w-full">
-          <summary className="cursor-pointer text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+          <summary className="cursor-pointer text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]">
             Error details (development only)
           </summary>
-          <pre className="mt-2 p-4 bg-gray-100 dark:bg-gray-800 rounded text-xs overflow-auto">
+          <pre className="mt-2 p-4 bg-[var(--color-surface-container-high)] rounded text-xs overflow-auto">
             {error.message}
             {'\n\n'}
             {error.stack}
@@ -157,7 +157,7 @@ const DefaultErrorFallback: React.FC<ErrorFallbackProps> = ({ error, reset, leve
       )}
       <button
         onClick={reset}
-        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        className="px-6 py-2 bg-[var(--color-primary)] text-on-primary rounded-lg hover:bg-[var(--color-primary)]/90 transition-colors"
       >
         Try Again
       </button>

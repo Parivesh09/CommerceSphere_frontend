@@ -35,12 +35,12 @@ export default function UserGrowthChart({ data }: UserGrowthChartProps) {
             >
               <defs>
                 <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#2563eb" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#2563eb" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0.1} />
                 </linearGradient>
                 <linearGradient id="colorNewUsers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="var(--color-success)" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="var(--color-success)" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" />
@@ -69,7 +69,7 @@ export default function UserGrowthChart({ data }: UserGrowthChartProps) {
               <Area
                 type="monotone"
                 dataKey="users"
-                stroke="#2563eb"
+                stroke="var(--color-primary)"
                 fillOpacity={1}
                 fill="url(#colorUsers)"
                 name="users"
@@ -77,7 +77,7 @@ export default function UserGrowthChart({ data }: UserGrowthChartProps) {
               <Area
                 type="monotone"
                 dataKey="newUsers"
-                stroke="#10b981"
+                stroke="var(--color-success)"
                 fillOpacity={1}
                 fill="url(#colorNewUsers)"
                 name="newUsers"

@@ -22,19 +22,19 @@ export function WebSocketStatus() {
       case 'connecting':
         return {
           text: 'Connecting to real-time updates...',
-          color: 'bg-blue-500',
+          color: 'bg-info',
           icon: '🔄',
         };
       case 'reconnecting':
         return {
           text: `Reconnecting... (attempt ${state.reconnectAttempts})`,
-          color: 'bg-yellow-500',
+          color: 'bg-warning',
           icon: '🔄',
         };
       case 'error':
         return {
           text: state.lastError || 'Connection error',
-          color: 'bg-red-500',
+          color: 'bg-error',
           icon: '⚠️',
         };
       default:

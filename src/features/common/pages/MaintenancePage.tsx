@@ -7,7 +7,7 @@ export function MaintenancePage() {
   return (
     <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] flex items-center justify-center p-6 text-center">
       <div className="max-w-md w-full glass-card rounded-2xl p-8 gap-6 flex flex-col items-center">
-        <div className="w-16 h-16 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto">
+        <div className="w-16 h-16 rounded-full bg-warning/10 text-warning flex items-center justify-center mx-auto">
           <span className="material-symbols-outlined text-[36px]">engineering</span>
         </div>
         <h1 className="text-xl font-bold text-[var(--color-on-surface)]">Scheduled Maintenance</h1>
@@ -16,7 +16,7 @@ export function MaintenancePage() {
         </p>
         <button
           onClick={() => navigate(ROUTES.HOME)}
-          className="px-6 py-3 bg-primary text-on-primary text-xs font-semibold rounded-xl hover:brightness-90 transition-all"
+          className="px-6 py-3 bg-[var(--color-primary)] text-on-primary text-xs font-semibold rounded-xl hover:brightness-90 transition-all"
         >
           Check Status
         </button>

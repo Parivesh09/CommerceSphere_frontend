@@ -47,7 +47,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 md:px-10">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-12">
           <div className="col-span-2">
-            <span className="text-xl font-bold text-[var(--color-on-surface)]">CommerceSphere</span>
+            <span className="text-xl font-extrabold tracking-tight gradient-text">CommerceSphere</span>
             <p className="mt-4 text-sm text-[var(--color-on-surface-variant)] pr-4 max-w-xs leading-relaxed">
               The comprehensive ecosystem for modern retail operations. Scaling with you from first sale to global domination.
             </p>

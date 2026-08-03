@@ -41,15 +41,15 @@ export const FormField: React.FC<FormFieldProps> = ({
       {label && (
         <label
           htmlFor={htmlFor}
-          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="text-sm font-medium text-[var(--color-on-surface-variant)]"
         >
           {label}
-          {required && <span className="ml-1 text-red-500">*</span>}
+          {required && <span className="ml-1 text-error">*</span>}
         </label>
       )}
       {children}
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+        <p className="text-sm text-error" role="alert">
           {error}
         </p>
       )}
@@ -84,18 +84,18 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const hasError = !!error;
 
     const baseStyles =
-      'block w-full rounded-lg border bg-white px-4 py-2.5 text-gray-900 transition-colors duration-200 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-800 dark:text-gray-100 resize-y min-h-[100px]';
+      'block w-full rounded-lg border bg-[var(--color-surface)] px-4 py-2.5 text-[var(--color-on-surface)] transition-colors duration-200 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 resize-y min-h-[100px]';
 
     const errorStyles = hasError
-      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-      : 'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600';
+      ? 'border-error focus:ring-error/30'
+      : 'border-[var(--color-outline-variant)] focus:ring-[var(--color-primary)]/30';
 
     return (
       <div className={clsx('flex flex-col gap-1.5', fullWidth ? 'w-full' : '', className)}>
         {label && (
           <label
             htmlFor={textareaId}
-            className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            className="text-sm font-medium text-[var(--color-on-surface-variant)]"
           >
             {label}
           </label>
@@ -111,12 +111,12 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           {...props}
         />
         {error && (
-          <p id={`${textareaId}-error`} className="text-sm text-red-600 dark:text-red-400">
+          <p id={`${textareaId}-error`} className="text-sm text-error">
             {error}
           </p>
         )}
         {helperText && !error && (
-          <p id={`${textareaId}-helper`} className="text-sm text-gray-500 dark:text-gray-400">
+          <p id={`${textareaId}-helper`} className="text-sm text-[var(--color-on-surface-variant)]">
             {helperText}
           </p>
         )}
@@ -154,18 +154,18 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     const hasError = !!error;
 
     const baseStyles =
-      'block w-full rounded-lg border bg-white px-4 py-2.5 text-gray-900 transition-colors duration-200 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-800 dark:text-gray-100';
+      'block w-full rounded-lg border bg-[var(--color-surface)] px-4 py-2.5 text-[var(--color-on-surface)] transition-colors duration-200 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50';
 
     const errorStyles = hasError
-      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-      : 'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600';
+      ? 'border-error focus:ring-error/30'
+      : 'border-[var(--color-outline-variant)] focus:ring-[var(--color-primary)]/30';
 
     return (
       <div className={clsx('flex flex-col gap-1.5', fullWidth ? 'w-full' : '', className)}>
         {label && (
           <label
             htmlFor={selectId}
-            className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            className="text-sm font-medium text-[var(--color-on-surface-variant)]"
           >
             {label}
           </label>
@@ -187,12 +187,12 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           ))}
         </select>
         {error && (
-          <p id={`${selectId}-error`} className="text-sm text-red-600 dark:text-red-400">
+          <p id={`${selectId}-error`} className="text-sm text-error">
             {error}
           </p>
         )}
         {helperText && !error && (
-          <p id={`${selectId}-helper`} className="text-sm text-gray-500 dark:text-gray-400">
+          <p id={`${selectId}-helper`} className="text-sm text-[var(--color-on-surface-variant)]">
             {helperText}
           </p>
         )}
@@ -221,7 +221,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             ref={ref}
             type="checkbox"
             id={checkboxId}
-            className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800"
+            className="h-4 w-4 rounded border-[var(--color-outline-variant)] text-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/30 bg-[var(--color-surface)]"
             aria-invalid={hasError}
             aria-describedby={hasError ? `${checkboxId}-error` : undefined}
             {...props}
@@ -229,14 +229,14 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           {label && (
             <label
               htmlFor={checkboxId}
-              className="text-sm text-gray-700 dark:text-gray-300"
+              className="text-sm text-[var(--color-on-surface)]"
             >
               {label}
             </label>
           )}
         </div>
         {error && (
-          <p id={`${checkboxId}-error`} className="text-sm text-red-600 dark:text-red-400">
+          <p id={`${checkboxId}-error`} className="text-sm text-error">
             {error}
           </p>
         )}

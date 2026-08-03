@@ -5,7 +5,7 @@ import CartDrawer from '../features/cart/components/CartDrawer';
 
 export default function MainLayout() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div className="page-bg" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
       <main id="main-content" className="flex-grow pt-20" role="main" aria-label="Main content">
         <Outlet />

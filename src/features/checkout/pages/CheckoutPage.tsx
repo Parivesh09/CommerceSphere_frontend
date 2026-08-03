@@ -39,8 +39,8 @@ const StepCircle = ({ step, current, label }: { step: number; current: boolean; 
     <div
       className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all ${
         current
-          ? 'bg-primary text-on-primary shadow-primary/30'
-          : 'bg-surface-container-high text-on-surface-variant border border-outline-variant'
+          ? 'bg-primary text-on-primary shadow-glow'
+          : 'bg-outline-variant text-on-surface'
       }`}
     >
       <span className="font-bold text-sm">{step}</span>
@@ -104,29 +104,46 @@ export default function CheckoutPage() {
         },
       };
       const result = await createOrder(orderData).unwrap();
-      const orderId = result?.order?.id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+      const orderId = result?.data?.id;
+      if (!orderId) {
+        throw new Error('Order was created without a reference id.');
+      }
       dispatch(clearCart());
       toast.success('Order placed successfully!');
       navigate(`${ROUTES.CHECKOUT}/confirmation`, {
         state: { orderId, total: orderTotal, address: shipping },
       });
     } catch {
-      const mockId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
-      dispatch(clearCart());
-      toast.success('Order created successfully!');
-      navigate(`${ROUTES.CHECKOUT}/confirmation`, {
-        state: { orderId: mockId, total: orderTotal, address: shipping },
-      });
+      toast.error('Failed to place your order. Please review your details and try again.');
     }
+  };
+
+  const validateShipping = (): boolean => {
+    const requiredFields: Array<[keyof ShippingForm, string]> = [
+      ['firstName', 'first name'],
+      ['lastName', 'last name'],
+      ['street', 'street address'],
+      ['city', 'city'],
+      ['state', 'state'],
+      ['postalCode', 'postal code'],
+      ['phone', 'phone number'],
+    ];
+    for (const [key, label] of requiredFields) {
+      if (!shipping[key].trim()) {
+        toast.error(`Please provide your ${label}.`);
+        return false;
+      }
+    }
+    return true;
   };
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-background pt-32 text-center px-4">
+      <div className="page-bg min-h-screen pt-32 text-center px-4">
         <span className="material-symbols-outlined text-6xl text-outline-variant mb-4">shopping_cart</span>
         <h2 className="text-2xl font-bold text-on-surface mb-2">No items in cart for checkout</h2>
         <p className="text-on-surface-variant mb-6">Add some products before proceeding to checkout.</p>
-        <button onClick={() => navigate(ROUTES.PRODUCTS)} className="bg-primary text-on-primary px-8 py-3 rounded-xl font-medium hover:shadow-lg active:scale-95 transition-all">
+        <button onClick={() => navigate(ROUTES.PRODUCTS)} className="bg-primary text-on-primary px-8 py-3 rounded-xl font-medium shadow-glow hover:brightness-110 active:scale-95 transition-all">
           Return to Catalog
         </button>
       </div>
@@ -135,7 +152,7 @@ export default function CheckoutPage() {
 
   const renderShippingStep = () => (
     <div className="space-y-6">
-      <section className="glass-card p-6 md:p-8 rounded-xl">
+      <section className="glass-card p-6 md:p-8 rounded-2xl">
         <div className="flex items-center gap-3 mb-6">
           <span className="material-symbols-outlined text-primary text-2xl">local_shipping</span>
           <h2 className="text-xl font-bold text-on-surface">Shipping Address</h2>
@@ -147,9 +164,10 @@ export default function CheckoutPage() {
               <input
                 type="text"
                 placeholder="Jane"
+                required
                 value={shipping.firstName}
                 onChange={(e) => setShipping({ ...shipping, firstName: e.target.value })}
-                className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
+                className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-primary)]/30 outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -157,9 +175,10 @@ export default function CheckoutPage() {
               <input
                 type="text"
                 placeholder="Doe"
+                required
                 value={shipping.lastName}
                 onChange={(e) => setShipping({ ...shipping, lastName: e.target.value })}
-                className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
+                className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-primary)]/30 outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
               />
             </div>
           </div>
@@ -168,9 +187,10 @@ export default function CheckoutPage() {
             <input
               type="text"
               placeholder="123 Enterprise Way"
-              value={shipping.street}
+              required
+                value={shipping.street}
               onChange={(e) => setShipping({ ...shipping, street: e.target.value })}
-              className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
+              className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-primary)]/30 outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -179,17 +199,19 @@ export default function CheckoutPage() {
               <input
                 type="text"
                 placeholder="New York"
+                required
                 value={shipping.city}
                 onChange={(e) => setShipping({ ...shipping, city: e.target.value })}
-                className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
+                className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-primary)]/30 outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
               />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-on-surface-variant px-1">State / Province</label>
               <select
+                required
                 value={shipping.state}
                 onChange={(e) => setShipping({ ...shipping, state: e.target.value })}
-                className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface"
+                className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-primary)]/30 outline-none transition-all text-on-surface"
               >
                 <option value="">Select</option>
                 <option value="NY">New York</option>
@@ -204,9 +226,10 @@ export default function CheckoutPage() {
               <input
                 type="text"
                 placeholder="10001"
+                required
                 value={shipping.postalCode}
                 onChange={(e) => setShipping({ ...shipping, postalCode: e.target.value })}
-                className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
+                className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-primary)]/30 outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
               />
             </div>
           </div>
@@ -215,15 +238,16 @@ export default function CheckoutPage() {
             <input
               type="tel"
               placeholder="+1 (555) 000-0000"
-              value={shipping.phone}
+              required
+                value={shipping.phone}
               onChange={(e) => setShipping({ ...shipping, phone: e.target.value })}
-              className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
+              className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-primary)]/30 outline-none transition-all text-on-surface placeholder:text-on-surface-variant/50"
             />
           </div>
         </div>
       </section>
 
-      <section className="glass-card p-6 md:p-8 rounded-xl">
+      <section className="glass-card p-6 md:p-8 rounded-2xl">
         <div className="flex items-center gap-3 mb-6">
           <span className="material-symbols-outlined text-primary text-2xl">speed</span>
           <h2 className="text-xl font-bold text-on-surface">Delivery Method</h2>
@@ -270,8 +294,10 @@ export default function CheckoutPage() {
 
       <div className="flex justify-end pt-2">
         <button
-          onClick={() => setCurrentStep('payment')}
-          className="bg-primary text-on-primary px-10 py-3.5 rounded-xl font-semibold flex items-center gap-2 hover:bg-primary-container transition-all active:scale-95 shadow-lg shadow-primary/20"
+          onClick={() => {
+            if (validateShipping()) setCurrentStep('payment');
+          }}
+          className="bg-primary text-on-primary px-10 py-3.5 rounded-xl font-semibold flex items-center gap-2 shadow-glow hover:brightness-110 transition-all active:scale-95"
         >
           Continue to Payment
           <span className="material-symbols-outlined">arrow_forward</span>
@@ -282,7 +308,7 @@ export default function CheckoutPage() {
 
   const renderPaymentStep = () => (
     <div className="space-y-6">
-      <section className="glass-card p-6 md:p-8 rounded-xl">
+      <section className="glass-card p-6 md:p-8 rounded-2xl">
         <div className="flex items-center gap-3 mb-6">
           <span className="material-symbols-outlined text-primary text-2xl">payment</span>
           <h2 className="text-xl font-bold text-on-surface">Payment Method</h2>
@@ -318,17 +344,17 @@ export default function CheckoutPage() {
               <input
                 type="text"
                 placeholder="4242 4242 4242 4242"
-                className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface"
+                className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-primary)]/30 outline-none transition-all text-on-surface"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold text-on-surface-variant px-1">Expiry Date</label>
-                <input type="text" placeholder="MM/YY" className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface" />
+                <input type="text" placeholder="MM/YY" className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-primary)]/30 outline-none transition-all text-on-surface" />
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold text-on-surface-variant px-1">CVC</label>
-                <input type="text" placeholder="123" className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-on-surface" />
+                <input type="text" placeholder="123" className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-primary)]/30 outline-none transition-all text-on-surface" />
               </div>
             </div>
           </div>
@@ -347,7 +373,7 @@ export default function CheckoutPage() {
         </button>
         <button
           onClick={() => setCurrentStep('review')}
-          className="bg-primary text-on-primary px-10 py-3.5 rounded-xl font-semibold flex items-center gap-2 hover:bg-primary-container transition-all active:scale-95 shadow-lg shadow-primary/20"
+          className="bg-primary text-on-primary px-10 py-3.5 rounded-xl font-semibold flex items-center gap-2 shadow-glow hover:brightness-110 transition-all active:scale-95"
         >
           Review Order
           <span className="material-symbols-outlined">arrow_forward</span>
@@ -358,7 +384,7 @@ export default function CheckoutPage() {
 
   const renderReviewStep = () => (
     <div className="space-y-6">
-      <section className="glass-card p-6 md:p-8 rounded-xl">
+      <section className="glass-card p-6 md:p-8 rounded-2xl">
         <div className="flex items-center gap-3 mb-6">
           <span className="material-symbols-outlined text-primary text-2xl">checklist</span>
           <h2 className="text-xl font-bold text-on-surface">Review Your Order</h2>
@@ -408,7 +434,7 @@ export default function CheckoutPage() {
         <button
           onClick={handlePlaceOrder}
           disabled={isLoading}
-          className="bg-primary text-on-primary px-10 py-3.5 rounded-xl font-semibold flex items-center gap-2 hover:bg-primary-container transition-all active:scale-95 shadow-lg shadow-primary/20 disabled:opacity-50"
+          className="bg-primary text-on-primary px-10 py-3.5 rounded-xl font-semibold flex items-center gap-2 shadow-glow hover:brightness-110 transition-all active:scale-95 disabled:opacity-50"
         >
           {isLoading ? (
             <>
@@ -427,7 +453,7 @@ export default function CheckoutPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background pt-28 pb-16">
+    <div className="page-bg min-h-screen pt-28 pb-16">
       <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm h-20">
         <div className="flex justify-between items-center w-full px-4 md:px-10 max-w-7xl mx-auto h-full">
           <div className="flex items-center gap-3">
@@ -465,7 +491,7 @@ export default function CheckoutPage() {
 
           {/* Order Summary Sidebar */}
           <aside className="lg:col-span-4 lg:sticky lg:top-28">
-            <div className="glass-card p-6 rounded-xl shadow-md border-t-4 border-primary space-y-5">
+            <div className="glass-card p-6 rounded-2xl shadow-md border-t-4 border-primary space-y-5">
               <h3 className="text-lg font-bold text-on-surface">Order Summary</h3>
 
               {/* Item List */}
@@ -519,7 +545,7 @@ export default function CheckoutPage() {
                 <input
                   type="text"
                   placeholder="Promo Code"
-                  className="flex-grow bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none text-on-surface placeholder:text-on-surface-variant/50"
+                  className="flex-grow bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--color-primary)]/30 outline-none text-on-surface placeholder:text-on-surface-variant/50"
                 />
                 <button type="button" className="bg-surface-container-high text-on-surface-variant px-4 py-2 rounded-lg text-xs font-semibold border border-outline-variant hover:bg-surface-variant transition-all">
                   Apply
