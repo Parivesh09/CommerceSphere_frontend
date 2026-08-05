@@ -38,14 +38,6 @@ const baseQueryWithoutReauth = fetchBaseQuery({
   },
 });
 
-/**
- * Base query with automatic token refresh
- *
- * On a 401 response the access token is refreshed once using the stored
- * refresh token, then the original request is retried. Refresh attempts are
- * never themselves retried (loop-safe). If refresh fails the user is logged
- * out and redirected to the login page.
- */
 const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
   args,
   api,
@@ -57,7 +49,9 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
     const state = api.getState() as RootState;
     const { accessToken, refreshToken, user } = state.auth;
 
-    const isRefreshRequest = (typeof args === 'string' ? args : args.url).toString().includes('/auth/refresh');
+    const isRefreshRequest = (typeof args === 'string' ? args : args.url)
+      .toString()
+      .includes('/auth/refresh');
 
     if (refreshToken && !isRefreshRequest) {
       const refreshResult = await baseQueryWithoutReauth(
@@ -78,31 +72,15 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
         result = await baseQueryWithoutReauth(args, api, extraOptions);
       } else {
         api.dispatch(logout());
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login';
-        }
       }
     } else if (!refreshToken || !accessToken) {
       api.dispatch(logout());
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
-      }
     }
   }
 
   return result;
 };
 
-/**
- * Base query with automatic retry logic
- *
- * Wraps the base query with retry functionality that:
- * - Retries failed requests up to 3 times
- * - Uses exponential backoff with jitter
- * - Only retries on network errors and 5xx server errors
- *
- * Validates: Requirement 14.2
- */
 const baseQuery = retry(
   async (args, api, extraOptions) => {
     const result = await baseQueryWithReauth(args, api, extraOptions);
@@ -118,7 +96,7 @@ const baseQuery = retry(
     backoff: async (attempt) => {
       const delay = calculateRetryDelay(attempt);
       console.log(`Retrying request (attempt ${attempt + 1}/3) after ${Math.round(delay)}ms`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     },
   }
 );

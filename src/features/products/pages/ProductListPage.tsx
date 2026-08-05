@@ -7,6 +7,7 @@ import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { useGetCategoriesQuery } from '@/services/api';
 import toast from 'react-hot-toast';
+import { sampleProducts } from '@/constants/genral';
 
 export default function ProductListPage() {
   const navigate = useNavigate();
@@ -15,7 +16,9 @@ export default function ProductListPage() {
   const { addToCart } = useCart();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
 
-  const [selectedCategory, setSelectedCategory] = useState<string>(searchParams.get('category') || 'all');
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    searchParams.get('category') || 'all'
+  );
   const [minPrice, setMinPrice] = useState<number>(0);
   const [maxPrice, setMaxPrice] = useState<number>(5000);
   const [sortBy, setSortBy] = useState<'price' | 'createdAt' | 'popularity'>('price');
@@ -23,7 +26,12 @@ export default function ProductListPage() {
   const [page, setPage] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>(searchParams.get('search') || '');
 
-  const { data: responseData, isLoading, isError, refetch } = useGetProductsQuery({
+  const {
+    data: responseData,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetProductsQuery({
     page,
     pageSize: 8,
     category: selectedCategory !== 'all' ? selectedCategory : undefined,
@@ -34,72 +42,17 @@ export default function ProductListPage() {
     search: searchQuery || undefined,
   });
 
-  const { data: categoriesData } = useGetCategoriesQuery()
-
-  const sampleProducts = [
-    {
-      id: 'prod-1',
-      title: 'Matrix Point 2.0 Terminal',
-      description: 'The benchmark for enterprise transactions with instant settlement.',
-      price: 1299,
-      categoryId: 'terminals',
-      inventoryQuantity: 25,
-      images: [{ id: '1', productId: 'prod-1', url: 'https://images.unsplash.com/photo-1556742049-0a67daf64f42?auto=format&fit=crop&w=600&q=80', displayOrder: 0, createdAt: '' }],
-    },
-    {
-      id: 'prod-2',
-      title: 'Quantum Scan Pro',
-      description: 'Sub-millisecond barcode & QR code inventory tracking unit.',
-      price: 849,
-      categoryId: 'logistics',
-      inventoryQuantity: 40,
-      images: [{ id: '2', productId: 'prod-2', url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80', displayOrder: 0, createdAt: '' }],
-    },
-    {
-      id: 'prod-3',
-      title: 'CommerceSphere Founder Kit',
-      description: 'Complete retail foundation package with hardware & IoT hubs.',
-      price: 4500,
-      categoryId: 'bundles',
-      inventoryQuantity: 12,
-      images: [{ id: '3', productId: 'prod-3', url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80', displayOrder: 0, createdAt: '' }],
-    },
-    {
-      id: 'prod-4',
-      title: 'Core Tablet Gen 3',
-      description: 'Mobile management device with ultra-thin bezel & biometric security.',
-      price: 1199,
-      categoryId: 'management',
-      inventoryQuantity: 18,
-      images: [{ id: '4', productId: 'prod-4', url: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=600&q=80', displayOrder: 0, createdAt: '' }],
-    },
-    {
-      id: 'prod-5',
-      title: 'Premium Wireless Noise-Canceling Headphones',
-      description: 'High-fidelity audio with spatial spatial tracking and 40-hour battery life.',
-      price: 349,
-      categoryId: 'audio',
-      inventoryQuantity: 60,
-      images: [{ id: '5', productId: 'prod-5', url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80', displayOrder: 0, createdAt: '' }],
-    },
-    {
-      id: 'prod-6',
-      title: 'Smart RFID Warehouse Scanner',
-      description: 'Long-range batch RFID inventory scanner with industrial casing.',
-      price: 950,
-      categoryId: 'logistics',
-      inventoryQuantity: 30,
-      images: [{ id: '6', productId: 'prod-6', url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80', displayOrder: 0, createdAt: '' }],
-    },
-  ];
+  const { data: categoriesData } = useGetCategoriesQuery();
 
   const productsList = isError
-    ? import.meta.env.DEV ? sampleProducts : []
+    ? import.meta.env.DEV
+      ? sampleProducts
+      : []
     : (responseData?.data ?? []);
 
-  const totalPages = isError ? 1 : (responseData?.totalPages || 1);
+  const totalPages = isError ? 1 : responseData?.totalPages || 1;
 
-  const handleAddToCart = (product: typeof sampleProducts[0]) => {
+  const handleAddToCart = (product: (typeof sampleProducts)[0]) => {
     addToCart({
       productId: product.id,
       quantity: 1,
@@ -108,7 +61,7 @@ export default function ProductListPage() {
     toast.success(`${product.title} added to cart!`);
   };
 
-  const handleToggleWishlist = (product: typeof sampleProducts[0]) => {
+  const handleToggleWishlist = (product: (typeof sampleProducts)[0]) => {
     dispatch(
       toggleWishlistItem({
         id: product.id,
@@ -129,8 +82,12 @@ export default function ProductListPage() {
         {/* Header */}
         <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--color-on-surface)]">Enterprise Catalog</h1>
-            <p className="text-sm text-on-surface-variant mt-1">Browse CommerceSphere enterprise hardware, IoT, and software tools.</p>
+            <h1 className="text-3xl font-bold text-[var(--color-on-surface)]">
+              Enterprise Catalog
+            </h1>
+            <p className="text-sm text-on-surface-variant mt-1">
+              Browse CommerceSphere enterprise hardware, IoT, and software tools.
+            </p>
             <div className="h-1 w-20 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-full mt-4" />
           </div>
           <div className="flex items-center gap-3">
@@ -144,7 +101,10 @@ export default function ProductListPage() {
             <select
               value={`${sortBy}-${sortOrder}`}
               onChange={(e) => {
-                const [sb, so] = e.target.value.split('-') as ['price' | 'createdAt' | 'popularity', 'asc' | 'desc'];
+                const [sb, so] = e.target.value.split('-') as [
+                  'price' | 'createdAt' | 'popularity',
+                  'asc' | 'desc',
+                ];
                 setSortBy(sb);
                 setSortOrder(so);
               }}
@@ -162,7 +122,9 @@ export default function ProductListPage() {
           <aside className="w-full lg:w-64 shrink-0">
             <div className="glass-card rounded-2xl p-6 sticky top-24 space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-on-surface)]">Filters</h2>
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-on-surface)]">
+                  Filters
+                </h2>
                 <button
                   onClick={() => {
                     setSelectedCategory('all');
@@ -178,7 +140,9 @@ export default function ProductListPage() {
 
               {/* Categories */}
               <div>
-                <h3 className="text-xs uppercase tracking-wider font-semibold text-[var(--color-on-surface-variant)] mb-6">Categories</h3>
+                <h3 className="text-xs uppercase tracking-wider font-semibold text-[var(--color-on-surface-variant)] mb-6">
+                  Categories
+                </h3>
                 <div className="space-y-2">
                   {categoriesData?.map((cat) => (
                     <button
@@ -198,7 +162,9 @@ export default function ProductListPage() {
 
               {/* Price Filter */}
               <div>
-                <h3 className="text-xs uppercase tracking-wider font-semibold text-[var(--color-on-surface-variant)] mb-6">Max Price (${maxPrice})</h3>
+                <h3 className="text-xs uppercase tracking-wider font-semibold text-[var(--color-on-surface-variant)] mb-6">
+                  Max Price (${maxPrice})
+                </h3>
                 <input
                   type="range"
                   min="100"
@@ -222,12 +188,14 @@ export default function ProductListPage() {
               </div>
             ) : isError ? (
               <div className="glass-card rounded-2xl p-12 text-center max-w-lg mx-auto space-y-4">
-                <span className="material-symbols-outlined text-[48px] text-error">error_outline</span>
+                <span className="material-symbols-outlined text-[48px] text-error">
+                  error_outline
+                </span>
                 <h2 className="text-lg font-bold text-on-surface">Couldn't Load Products</h2>
                 <p className="text-sm text-on-surface-variant">
                   {import.meta.env.DEV
                     ? 'The catalog service is offline. Showing sample products for development preview.'
-                    : 'We couldn\'t reach the catalog service. Please try again.'}
+                    : "We couldn't reach the catalog service. Please try again."}
                 </p>
                 {!import.meta.env.DEV && (
                   <button
@@ -240,9 +208,13 @@ export default function ProductListPage() {
               </div>
             ) : productsList.length === 0 ? (
               <div className="glass-card rounded-2xl p-12 text-center max-w-lg mx-auto space-y-4">
-                <span className="material-symbols-outlined text-[48px] text-outline-variant">search_off</span>
+                <span className="material-symbols-outlined text-[48px] text-outline-variant">
+                  search_off
+                </span>
                 <h2 className="text-lg font-bold text-on-surface">No Products Found</h2>
-                <p className="text-sm text-on-surface-variant">Try adjusting your filters or search query.</p>
+                <p className="text-sm text-on-surface-variant">
+                  Try adjusting your filters or search query.
+                </p>
                 <button
                   onClick={() => {
                     setSelectedCategory('all');
@@ -268,7 +240,10 @@ export default function ProductListPage() {
                       className="relative aspect-square overflow-hidden cursor-pointer bg-[var(--color-surface-container-low)]"
                     >
                       <img
-                        src={product.images?.[0]?.url || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80'}
+                        src={
+                          product.images?.[0]?.url ||
+                          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80'
+                        }
                         alt={product.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
@@ -297,11 +272,15 @@ export default function ProductListPage() {
                       >
                         {product.title}
                       </h3>
-                      <p className="text-xs text-[var(--color-on-surface-variant)] mt-1 line-clamp-2">{product.description}</p>
+                      <p className="text-xs text-[var(--color-on-surface-variant)] mt-1 line-clamp-2">
+                        {product.description}
+                      </p>
                     </div>
 
                     <div className="flex justify-between items-center px-4 pb-4 pt-4 border-t border-[var(--color-outline-variant)]/30 mt-auto">
-                      <span className="text-xl font-bold text-[var(--color-on-surface)]">${product.price.toLocaleString()}</span>
+                      <span className="text-xl font-bold text-[var(--color-on-surface)]">
+                        ${product.price.toLocaleString()}
+                      </span>
                       <button
                         onClick={() => handleAddToCart(product)}
                         className="bg-primary text-on-primary rounded-xl text-sm px-4 py-2 shadow-glow hover:brightness-110 active:scale-95 transition-all font-medium"

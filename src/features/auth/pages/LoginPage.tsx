@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLoginMutation } from '../../../services/api/authApi';
 import { useAppSelector } from '../../../hooks/useAppSelector';
-import { useAppDispatch } from '../../../hooks/useAppDispatch';
+// import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { useSyncCartMutation } from '../../cart/api';
-import { setCredentials } from '../../../store/slices/authSlice';
+// import { setCredentials } from '../../../store/slices/authSlice';
 import { ROUTES } from '../../../constants';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [login, { isLoading }] = useLoginMutation();
@@ -41,28 +41,8 @@ export default function LoginPage() {
       }
       toast.success('Welcome back to CommerceSphere!');
       navigate(ROUTES.HOME);
-    } catch {
-      if (import.meta.env.DEV) {
-        // Demo fallback (development only): sign in when the auth service is not running.
-        const isAdmin = email.includes('admin');
-        const isSeller = email.includes('seller');
-        dispatch(
-          setCredentials({
-            user: {
-              id: '00000000-0000-0000-0000-000000000001',
-              name: email.split('@')[0],
-              email,
-              role: isAdmin ? 'admin' : isSeller ? 'seller' : 'customer',
-            },
-            accessToken: 'demo-access-token',
-            refreshToken: 'demo-refresh-token',
-          } as any)
-        );
-        toast.success(`Logged in as ${email.split('@')[0]}`);
-        navigate(ROUTES.HOME);
-      } else {
-        toast.error('Sign in failed. Please check your credentials.');
-      }
+    } catch (error: any) {
+      toast.error(error.data?.error?.message || 'Sign in failed.');
     }
   };
 
@@ -70,14 +50,23 @@ export default function LoginPage() {
     <div className="page-bg flex items-center justify-center min-h-screen py-20 px-4">
       <div className="max-w-md w-full glass-card rounded-2xl p-8 space-y-6">
         <div className="text-center space-y-2">
-          <span className="font-extrabold text-2xl tracking-tight gradient-text">CommerceSphere</span>
+          <span className="font-extrabold text-2xl tracking-tight gradient-text">
+            CommerceSphere
+          </span>
           <h1 className="text-xl font-bold text-[var(--color-on-surface)]">Enterprise Sign In</h1>
-          <p className="text-xs text-[var(--color-on-surface-variant)]">Access your corporate dashboard & catalog.</p>
+          <p className="text-xs text-[var(--color-on-surface-variant)]">
+            Access your corporate dashboard & catalog.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div>
-            <label htmlFor="login-email" className="text-xs font-semibold text-on-surface-variant block mb-1">Corporate Email</label>
+            <label
+              htmlFor="login-email"
+              className="text-xs font-semibold text-on-surface-variant block mb-1"
+            >
+              Corporate Email
+            </label>
             <input
               id="login-email"
               type="email"
@@ -92,8 +81,18 @@ export default function LoginPage() {
 
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label htmlFor="login-password" className="text-xs font-semibold text-on-surface-variant">Password</label>
-              <Link to={ROUTES.SUPPORT} className="text-xs text-primary font-semibold hover:underline">Forgot password?</Link>
+              <label
+                htmlFor="login-password"
+                className="text-xs font-semibold text-on-surface-variant"
+              >
+                Password
+              </label>
+              <Link
+                to={ROUTES.SUPPORT}
+                className="text-xs text-primary font-semibold hover:underline"
+              >
+                Forgot password?
+              </Link>
             </div>
             <input
               id="login-password"
@@ -118,7 +117,10 @@ export default function LoginPage() {
 
         <div className="text-center text-xs text-[var(--color-on-surface-variant)]">
           Don't have an enterprise account?{' '}
-          <Link to={ROUTES.REGISTER} className="text-[var(--color-primary)] font-bold hover:underline">
+          <Link
+            to={ROUTES.REGISTER}
+            className="text-[var(--color-primary)] font-bold hover:underline"
+          >
             Register Company
           </Link>
         </div>
